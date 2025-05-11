@@ -1,12 +1,112 @@
-# React + Vite
+# 🌐 Website Komunitas GenBI Unsika
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Website resmi komunitas **Generasi Baru Indonesia (GenBI)** Universitas Singaperbangsa Karawang. Dibangun menggunakan **MERN Stack (MongoDB, Express, React, Node.js)** dengan **Tailwind CSS** untuk frontend styling.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 📌 Fitur Utama
 
-## Expanding the ESLint configuration
+### 🧑‍🎓 GenBI Profil
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- Halaman berisi informasi seputar GenBI Unsika
+- Halaman detail profil setiap anggota GenBI
+- Edit dan manajemen profil untuk admin
+
+### 📚 Artikel & Berita
+
+- Buat, edit, hapus artikel
+- Sistem kategori dan tag
+- Artikel publik & internal
+
+### 🎓 Pendaftaran Beasiswa
+
+- Formulir online pendaftaran
+- Validasi data otomatis
+- Sistem seleksi tahap awal oleh admin
+
+### 📈 Tracking Beasiswa
+
+- Status real-time: _Dikirim → Diproses → Diterima / Ditolak_
+- Notifikasi email
+
+### 🔐 Autentikasi & Role
+
+- Login, register, lupa password
+- Role: Admin, Anggota, Pengunjung
+- Middleware proteksi route
+
+---
+
+## 🛠️ Teknologi yang Digunakan
+
+| Layer      | Teknologi                    |
+| ---------- | ---------------------------- |
+| Frontend   | React.js, Vite, Tailwind CSS |
+| Backend    | Node.js, Express.js          |
+| Database   | MongoDB                      |
+| Auth       | JSON Web Token (JWT), bcrypt |
+| Styling    | Tailwind CSS                 |
+| API Client | Axios                        |
+| Dev Tools  | Postman, ESLint, Prettier    |
+
+---
+
+## 🚀 Instalasi
+
+### 1. Instalasi Frontend (React + Tailwind)
+
+#### a. Clone Repositori
+
+```bash
+git clone https://github.com/GenBI-Unsika/genbi-client.git
+```
+
+#### b. Instalasi Depedensi
+
+```bash
+cd genbi-client
+npm install
+npm run dev
+```
+
+### 2. Instalasi Backend (Express + MongoDB)
+
+#### a. Clone Repositori
+
+```bash
+git clone https://github.com/GenBI-Unsika/genbi-server.git
+```
+
+#### b. Instalasi Depedensi
+
+```bash
+cd genbi-server
+npm install
+```
+
+#### c. Buat File .env
+
+```bash
+PORT=5000
+MONGO_URI=mongodb://localhost:27017/genbi-db
+JWT_SECRET=your_jwt_secret_key
+```
+
+#### d. Jalankan Server
+
+```bash
+node index.js
+# atau jika pakai nodemon
+npx nodemon index.js
+```
+
+## 📡 API Endpoint
+
+## 👥 Kontribusi
+
+Pull request sangat diterima. Untuk kontribusi, buat branch baru:
+
+```bash
+git checkout -b fitur-nama
+git push origin fitur-nama
+```
