@@ -50,28 +50,28 @@ function MissionItem({ item }) {
 
 const VisionMissionSection = () => {
   return (
-    <section aria-labelledby="vision-mission-heading" className="py-16 bg-white">
+    <section aria-labelledby="vision-mission-heading" className="py-8 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <header className="mb-8">
-          <h2 id="vision-mission-heading" className="text-3xl font-bold text-primary-500">
+          <h2 id="vision-mission-heading" className="font-heading text-4xl font-semibold text-primary-500">
             Visi Misi GenBI Unsika
           </h2>
         </header>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Ilustrasi Kiri */}
-          <figure className="flex justify-center">
-            <img src="https://placehold.co/800x600" alt="Ilustrasi kolaborasi tim" className="w-full h-auto rounded-2xl object-fit aspect-[4/3]" loading="lazy" decoding="async" width={800} height={600} />
+          <figure className="flex items-center justify-center">
+            <img src="./team-work.webp" alt="Ilustrasi kolaborasi tim" className="w-[500px] h-auto object-fit" loading="lazy" decoding="async" width={800} height={600} />
           </figure>
 
           {/* Konten Kanan */}
           <div className="space-y-8">
             <div className="flex flex-col items-start space-y-4 mb-6">
-              <h3 className="text-2xl font-semibold text-primary-900">Visi</h3>
+              <h3 className="text-3xl font-semibold text-primary-900">Visi</h3>
               <p className="text-gray-600 leading-relaxed">Bersinergi mewujudkan komunitas GenBI UNSIKA yang dapat membawa perubahan positif, berkarakter, berintegritas, dan menjadi inspirasi bagi sekitar.</p>
             </div>
 
-            <h3 className="text-2xl font-semibold text-primary-900 mb-6">Misi</h3>
+            <h3 className="text-3xl font-semibold text-primary-900 mb-6">Misi</h3>
             <ul className="space-y-6">
               {VISION_MISSION_DATA.map((item) => (
                 <MissionItem key={item.subtitle || item.description.slice(0, 24)} item={item} />
