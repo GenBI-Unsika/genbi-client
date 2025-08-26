@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Play, X } from 'lucide-react';
 
 const AboutSection = ({
-  imageSrc = '/group-of-students-in-university-setting.png',
+  imageSrc = 'https://placehold.co/800x500',
   videoUrl, // optional: kasih embed URL (mis. YouTube embed) nanti
 }) => {
   const [open, setOpen] = useState(false);
@@ -24,7 +24,7 @@ const AboutSection = ({
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Left content */}
           <div className="space-y-6">
-            <h2 id="about-heading" className="text-3xl font-bold text-primary-900">
+            <h2 id="about-heading" className="text-4xl font-semibold text-primary-500">
               Tentang Kami
             </h2>
             <p className="text-gray-600 leading-relaxed">
