@@ -6,7 +6,7 @@ const HeroSection = () => {
           {/* Left content */}
           <div className="space-y-6">
             <h1 className="font-heading text-balance text-3xl md:text-4xl lg:text-5xl font-semibold text-primary-900 leading-tight">Tumbuh dan Berdampak Bagi Sesama Bersama GenBI Unsika</h1>
-            <p className="text-base md:text-md text-gray-600 leading-relaxed">Ayo, daftar Beasiswa GenBI Unsika sekarang dan raih kesempatan untuk mendukung perjalanan akademikmu.</p>
+            <p className="text-md md:text-lg leading-relaxed">Ayo, daftar Beasiswa GenBI Unsika sekarang dan raih kesempatan untuk mendukung perjalanan akademikmu.</p>
             <button className="btn-primary px-6 py-3 md:px-8 md:py-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500" type="button">
               Daftar Sekarang
             </button>
