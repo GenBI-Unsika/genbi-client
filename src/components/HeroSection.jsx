@@ -51,15 +51,32 @@ const HeroSection = () => {
           </div>
 
           {/* Right illustration */}
-          <div className="relative">
-            {/* <div className="relative z-0">
-              <img src="http://placehold.co/800x600" alt="Mahasiswa GenBI UNSIKA merayakan kelulusan" className="w-full h-auto" loading="eager" decoding="async" fetchpriority="high" />
+          <div className="relative aspect-[4/3] w-full isolate">
+            <div className="absolute -top-10 right-135 w-20 h-20 bg-secondary-300 rounded-2xl z-1" aria-hidden="true"></div>
+            <div className="absolute top-12 left-16 w-25 h-25 bg-secondary-400 rounded-3xl z-5" aria-hidden="true"></div>
+            <div className="absolute -top-6 right-111 w-10 h-10 bg-secondary-300 rounded-full z-3" aria-hidden="true"></div>
+            <div className="absolute top-43 right-134 w-10 h-10 bg-secondary-400 rounded-full z-3" aria-hidden="true"></div>
+            <div className="absolute -top-10 right-63 w-80 h-60 bg-white rounded-xl opacity-70" aria-hidden="true"></div>
+            <div className="absolute top-10 right-20 w-100 h-[497px] bg-gradient-to-r from-[var(--primary-500)] to-[var(--primary-400)] rounded-t-full z-4" aria-hidden="true"></div>
+            <div className="absolute top-10 right-10 w-[420px] h-[497px] rounded-t-full z-50">
+              <img src="./graduation-women.webp" alt="Mahasiswa GenBI UNSIKA merayakan kelulusan" className="absolute inset-0 w-full h-full object-fit" loading="eager" decoding="async" fetchpriority="high" />
             </div>
-            <div className="absolute top-0 right-140 w-16 h-16 bg-secondary-300 rounded-lg z-1" aria-hidden="true"></div>
-            <div className="absolute bottom-65 left-12 w-25 h-25 bg-secondary-400 rounded-lg z-2" aria-hidden="true"></div>
-            <div className="absolute top-3 right-115 w-10 h-10 bg-secondary-300 rounded-full z-3" aria-hidden="true"></div>
-            <div className="absolute top-48 right-140 w-10 h-10 bg-secondary-400 rounded-full z-3" aria-hidden="true"></div>
-            <div className="absolute top-0 right-47 w-100 h-50 bg-white rounded-xl opacity-80" aria-hidden="true"></div> */}
+
+            <div
+              className="absolute top-10 right-17 w-100 h-[497px] rounded-t-full
+             border-[1px] border-primary-300 z-3"
+              aria-hidden="true"
+            />
+            <div
+              className="absolute top-10 right-14 w-100 h-[497px] rounded-t-full
+             border-[1px] border-primary-200 z-3"
+              aria-hidden="true"
+            />
+            <div
+              className="absolute top-10 right-11 w-100 h-[497px] rounded-t-full
+             border-[1px] border-primary-200 opacity-50 z-3"
+              aria-hidden="true"
+            />
           </div>
         </div>
       </div>
