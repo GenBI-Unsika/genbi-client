@@ -217,6 +217,38 @@
   border-color: var(--primary-500);
 }
 
+/* shadow utilities */
+.shadow-primary-50 {
+  background-color: var(--primary-50);
+}
+.shadow-primary-100 {
+  background-color: var(--primary-100);
+}
+.shadow-primary-200 {
+  background-color: var(--primary-200);
+}
+.shadow-primary-300 {
+  background-color: var(--primary-300);
+}
+.shadow-primary-400 {
+  background-color: var(--primary-400);
+}
+.shadow-primary-500 {
+  background-color: var(--primary-500);
+}
+.shadow-primary-600 {
+  background-color: var(--primary-600);
+}
+.shadow-primary-700 {
+  background-color: var(--primary-700);
+}
+.shadow-primary-800 {
+  background-color: var(--primary-800);
+}
+.shadow-primary-900 {
+  background-color: var(--primary-900);
+}
+
 .text-balance {
   text-wrap: balance;
 }

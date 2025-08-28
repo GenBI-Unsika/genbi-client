@@ -130,18 +130,22 @@ export default function TestimonialsSection() {
             </div>
 
             {/* Carousel */}
-            <div className="carousel rounded-box p-4">
+            <div className="carousel rounded-box p-8">
               <div className="carousel-body gap-4 opacity-0">
                 {testimonials.map((item, idx) => (
                   <div className="carousel-slide" key={idx}>
                     <div
                       className="
-                        relative group rounded-3xl cursor-pointer border border-neutral-200 bg-white
-                        transition-all duration-300 ease-out
-                        hover:shadow-xl hover:-translate-y-1 hover:scale-[1.03] hover:bg-primary-300
-                        w-64 sm:w-72 md:w-72 lg:w-80
-                        h-54 md:h-80
-                      "
+    relative cursor-pointer rounded-3xl border border-neutral-200 bg-white
+    transition-transform duration-300 ease-out
+    hover:-translate-y-1 hover:scale-[1.03]
+    focus:outline-none focus-visible:outline-non hover:ring-primary-300 hover:ring-offset-0
+    hover:shadow-xl
+    hover:shadow-primary-300
+    w-60 sm:w-64 md:w-64 lg:w-72
+    h-54 md:h-80
+  "
+                      tabIndex={0} // biar bisa focus tanpa outline biru
                     >
                       <div className="card-body gap-4 flex flex-col justify-between">
                         <div className="flex flex-col justify-center items-center gap-3">
@@ -162,19 +166,18 @@ export default function TestimonialsSection() {
                           </p>
                         </div>
 
-                        {/* Quote */}
                         <p className="text-neutral-700 text-reguler overflow-hidden text-center">
                           {item.quote}
                         </p>
                       </div>
 
-                      {/* Accent bar bawah saat hover */}
+                      {/* Accent bar bawah */}
                       <div
                         className="
-                          absolute inset-x-0 bottom-0 h-1 bg-primary-500
-                          origin-left scale-x-0 group-hover:scale-x-100
-                          transition-transform duration-300
-                        "
+      absolute inset-x-0 bottom-0 h-1 bg-primary-500
+      origin-left scale-x-0 group-hover:scale-x-100
+      transition-transform duration-300
+    "
                       />
                     </div>
                   </div>
