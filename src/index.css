@@ -2,6 +2,8 @@
 @import "@fontsource-variable/inter";
 @plugin "flyonui";
 @import "flyonui/variants.css";
+@import "tailwindcss-intersect";
+@plugin "tailwindcss-motion";
 
 /* Let Tailwind scan the FlyonUI JS for classes */
 @source "../node_modules/flyonui/flyonui.js";
@@ -218,36 +220,46 @@
 }
 
 /* shadow utilities */
-.shadow-primary-50 {
-  background-color: var(--primary-50);
+/* === Primary colored shadows @ 30% (mengikuti ukuran Tailwind) === */
+
+/* sm: 0 1px 2px 0 */
+.shadow-sm-primary-500\/30 {
+  box-shadow: 0 1px 2px 0 oklch(var(--primary-500)/0.30);
 }
-.shadow-primary-100 {
-  background-color: var(--primary-100);
+
+/* md: 0 4px 6px -1px, 0 2px 4px -2px */
+.shadow-md-primary-500\/30 {
+  box-shadow:
+    0 4px 6px -1px oklch(var(--primary-500)/0.30),
+    0 2px 4px -2px oklch(var(--primary-500)/0.30);
 }
-.shadow-primary-200 {
-  background-color: var(--primary-200);
+
+/* lg: 0 10px 15px -3px, 0 4px 6px -4px */
+.shadow-lg-primary-500\/30 {
+  box-shadow:
+    0 10px 15px -3px oklch(var(--primary-500)/0.30),
+    0 4px 6px -4px  oklch(var(--p)/0.30);
 }
-.shadow-primary-300 {
-  background-color: var(--primary-300);
+
+/* xl: 0 20px 25px -5px, 0 8px 10px -6px */
+.shadow-xl-primary-500\/30 {
+  box-shadow:
+    0 20px 25px -5px oklch(var(--primary-500)/0.30),
+    0 8px 10px -6px  oklch(var(--primary-500)/0.30);
 }
-.shadow-primary-400 {
-  background-color: var(--primary-400);
+
+/* 2xl: 0 25px 50px -12px */
+.shadow-2xl-primary-500\/30 {
+  box-shadow: 0 25px 50px -12px oklch(var(--primary-500)/0.30);
 }
-.shadow-primary-500 {
-  background-color: var(--primary-500);
-}
-.shadow-primary-600 {
-  background-color: var(--primary-600);
-}
-.shadow-primary-700 {
-  background-color: var(--primary-700);
-}
-.shadow-primary-800 {
-  background-color: var(--primary-800);
-}
-.shadow-primary-900 {
-  background-color: var(--primary-900);
-}
+
+/* Hover variants (opsional, contoh) */
+.hover\:shadow-sm-primary-500\/30:hover  { box-shadow: 0 1px 2px 0 oklch(var(--primary-500)/0.30); }
+.hover\:shadow-md-primary-500\/30:hover  { box-shadow: 0 4px 6px -1px oklch(var(--primary-500)/0.30), 0 2px 4px -2px oklch(var(--p)/0.30); }
+.hover\:shadow-lg-primary-500\/30:hover  { box-shadow: 0 10px 15px -3px oklch(var(--primary-500)/0.30), 0 4px 6px -4px oklch(var(--p)/0.30); }
+.hover\:shadow-xl-primary-500\/30:hover  { box-shadow: 0 20px 25px -5px oklch(var(--primary-500)/0.30), 0 8px 10px -6px oklch(var(--p)/0.30); }
+.hover\:shadow-2xl-primary-500\/30:hover { box-shadow: 0 25px 50px -12px oklch(var(--primary-500)/0.30); }
+
 
 .text-balance {
   text-wrap: balance;

@@ -1,28 +1,19 @@
-// HeroSection.jsx
-// Satu file: sudah termasuk AvatarStack versi Tailwind murni
-
-function AvatarStack({ size = "md" }) {
-  const sizeMap = { sm: "h-8 w-8", md: "h-10 w-10", lg: "h-12 w-12" };
-  const imgCls = `${sizeMap[size]} rounded-full object-cover ring-2 ring-white hover:z-10`;
+function AvatarStack({ size = 'md' }) {
+  const sizeMap = { sm: 'h-8 w-8', md: 'h-10 w-10', lg: 'h-12 w-12' };
+  const imgCls = `${sizeMap[size]} aspect-square shrink-0 rounded-full overflow-hidden object-cover ring-2 ring-white hover:motion-scale-out-110 motion-ease-spring-smooth hover:z-30`;
 
   const avatars = [
-    "https://images.unsplash.com/photo-1633332755192-727a05c4013d?auto=format&fit=crop&w=1480&q=80",
-    "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=1061&q=80",
-    "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=1288&q=80",
-    "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=1287&q=80",
-    "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=1760&q=80",
+    'https://images.unsplash.com/photo-1633332755192-727a05c4013d?auto=format&fit=crop&w=1480&q=80',
+    'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=1061&q=80',
+    'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=1288&q=80',
+    'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=1287&q=80',
+    'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=1760&q=80',
   ];
 
   return (
-    <div className="flex items-center -space-x-3">
+    <div className="flex items-center -space-x-3 rtl:space-x-reverse isolate ">
       {avatars.map((src, i) => (
-        <img
-          key={i}
-          src={src}
-          alt={`user ${i + 1}`}
-          className={imgCls}
-          loading="lazy"
-        />
+        <img key={i} src={src} alt={`User ${i + 1}`} className={imgCls} loading="lazy" decoding="async" />
       ))}
     </div>
   );
@@ -30,40 +21,49 @@ function AvatarStack({ size = "md" }) {
 
 const HeroSection = () => {
   return (
-    <section className="bg-primary-50 py-16 lg:py-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-          {/* Left content */}
-          <div className="space-y-6">
-            <h1 className="font-heading text-balance text-3xl md:text-4xl lg:text-5xl font-semibold text-primary-900 leading-tight">
+    <section className="relative overflow-hidden bg-primary-50">
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-primary-100/70 to-transparent" aria-hidden="true" />
+
+        <div className="absolute -top-40 -right-24 h-[48rem] w-[48rem] rounded-full blur-3xl bg-gradient-to-br from-primary-200/80 via-primary-200/30 to-transparent" aria-hidden="true" />
+
+        <div className="absolute -bottom-48 -left-32 h-[42rem] w-[42rem] rounded-full blur-3xl bg-gradient-to-tr from-primary-300/60 via-primary-200/20 to-transparent" aria-hidden="true" />
+
+        <div
+          className="absolute inset-0 opacity-40 [background-image:linear-gradient(to_right,rgba(16,24,40,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(16,24,40,0.06)_1px,transparent_1px)] bg-[length:24px_24px] [mask-image:radial-gradient(60%_60%_at_75%_25%,black_40%,transparent_70%)]"
+          aria-hidden="true"
+        />
+
+        <div className="absolute right-[-8rem] top-1/4 h-[28rem] w-[28rem] rounded-full border border-primary-300/60 [box-shadow:0_0_120px_40px_rgba(0,0,0,0.02)_inset]" aria-hidden="true" />
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 pt-4 sm:pt-8 md:pt-10 lg:pt-14 xl:pt-2 pb-8 sm:pb-10 md:pb-12 lg:pb-0">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center lg:h-[clamp(560px,70vh,820px)] xl:h-[clamp(640px,calc(100dvh-96px),640px)]">
+          <div className="flex flex-col items-center lg:items-start text-center lg:text-left gap-6">
+            <h1 className="font-heading text-balance text-3xl md:text-5xl lg:text-6xl font-semibold text-primary-900 leading-tight animation-button motion-preset-slide-right motion-duration-1500">
               Tumbuh dan Berdampak Bagi Sesama Bersama GenBI Unsika
             </h1>
-            <p className="text-md md:text-lg leading-relaxed">
-              Ayo, daftar Beasiswa GenBI Unsika sekarang dan raih kesempatan
-              untuk mendukung perjalanan akademikmu.
+
+            <p className="text-base md:text-lg lg:text-xl leading-relaxed max-w-2xl animation-button motion-preset-slide-right motion-duration-2000">
+              Ayo, daftar Beasiswa GenBI Unsika sekarang dan raih kesempatan untuk mendukung perjalanan akademikmu.
             </p>
 
-            {/* CTA + AvatarStack rapi, tidak menjepit */}
-            <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-5">
+            {/* CTA + AvatarStack */}
+            <div className="flex w-full flex-col sm:flex-row sm:items-center sm:justify-center lg:justify-start gap-4 sm:gap-5">
               <button
-                className="btn-primary px-6 py-3 md:px-8 md:py-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 shrink-0 self-start"
+                className="btn-primary px-6 py-3 md:px-8 md:py-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 shrink-0 self-center lg:self-start animation-button motion-preset-shrink motion-duration-1000"
                 type="button"
               >
                 Daftar Sekarang
               </button>
 
               {/* Divider hanya di sm+ */}
-              <span
-                className="hidden sm:block h-6 w-px bg-gray-300"
-                aria-hidden="true"
-              />
+              <span className="hidden sm:block h-6 w-px bg-gray-300" aria-hidden="true" />
 
-              <div className="flex items-center gap-3">
+              <div className="flex items-center justify-center gap-3">
                 <AvatarStack size="md" />
-                <p className="text-sm sm:text-base text-gray-600">
-                  Lebih dari{" "}
-                  <span className="font-extrabold text-gray-900">500+</span>{" "}
-                  orang <span className="font-semibold">penerima manfaat.</span>
+                <p className="text-sm sm:text-base text-gray-600 motion-preset-slide-right motion-duration-1000">
+                  Lebih dari <span className="font-extrabold text-gray-900">500+</span> orang <span className="font-semibold">penerima manfaat.</span>
                 </p>
               </div>
             </div>
@@ -97,12 +97,10 @@ const HeroSection = () => {
               aria-hidden="true"
             />
           </div> */}
-          <div className="relative">
-            <img
-              src="./women-graduation.webp"
-              alt=""
-              className="absolute -top-[210.5px] w-115"
-            />
+          <div className="relative hidden lg:flex h-full items-end justify-end ">
+            <div className="relative w-full max-w-[600px] motion-preset-blur-right motion-duration-1000">
+              <img src="./women-graduation.webp" alt="Mahasiswi GenBI UNSIKA merayakan kelulusan" className="block max-h-full w-auto object-contain " loading="eager" decoding="async" fetchpriority="high" />
+            </div>
           </div>
         </div>
       </div>

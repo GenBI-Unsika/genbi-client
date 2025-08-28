@@ -1,38 +1,38 @@
-import { Calendar, Clock, ArrowRight } from "lucide-react";
+import { Calendar, Clock, ArrowRight } from 'lucide-react';
 
 const ArticlesSection = () => {
   const articles = [
     {
-      title: "Menyambut Tantangan Baru di Era Digital",
-      excerpt: "Bagaimana GenBI Unsika mempersiapkan diri menghadapi tantangan era digital...",
-      image: "/digital-technology-students.png",
-      date: "15 Des 2023",
-      readTime: "5 min read",
+      title: 'Menyambut Tantangan Baru di Era Digital',
+      excerpt: 'Bagaimana GenBI Unsika mempersiapkan diri menghadapi tantangan era digital...',
+      image: '/digital-technology-students.png',
+      date: '15 Des 2023',
+      readTime: '5 min read',
     },
     {
-      title: "Tips & Trik: Sukses Studi di Perguruan Tinggi",
-      excerpt: "Strategi efektif untuk meraih prestasi akademik yang gemilang...",
-      image: "/students-studying-success-tips.png",
-      date: "12 Des 2023",
-      readTime: "7 min read",
+      title: 'Tips & Trik: Sukses Studi di Perguruan Tinggi',
+      excerpt: 'Strategi efektif untuk meraih prestasi akademik yang gemilang...',
+      image: '/students-studying-success-tips.png',
+      date: '12 Des 2023',
+      readTime: '7 min read',
     },
     {
-      title: "Membangun Digital Ecosystem Terintegrasi",
-      excerpt: "Pentingnya membangun ekosistem digital yang terintegrasi untuk kemajuan...",
-      image: "/digital-ecosystem-integration.png",
-      date: "10 Des 2023",
-      readTime: "6 min read",
+      title: 'Membangun Digital Ecosystem Terintegrasi',
+      excerpt: 'Pentingnya membangun ekosistem digital yang terintegrasi untuk kemajuan...',
+      image: '/digital-ecosystem-integration.png',
+      date: '10 Des 2023',
+      readTime: '6 min read',
     },
     {
-      title: "GenBI dan Pemberdayaan Masyarakat",
-      excerpt: "Peran GenBI dalam memberdayakan masyarakat melalui berbagai program...",
-      image: "/community-empowerment-program.png",
-      date: "8 Des 2023",
-      readTime: "4 min read",
+      title: 'GenBI dan Pemberdayaan Masyarakat',
+      excerpt: 'Peran GenBI dalam memberdayakan masyarakat melalui berbagai program...',
+      image: '/community-empowerment-program.png',
+      date: '8 Des 2023',
+      readTime: '4 min read',
     },
   ];
 
-  const placeholder = "https://placehold.co/800x500";
+  const placeholder = 'https://placehold.co/800x500';
 
   return (
     <section className="bg-white">
@@ -45,10 +45,7 @@ const ArticlesSection = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {articles.map((article, index) => (
-              <article
-                key={index}
-                className="bg-white rounded-xl overflow-hidden border border-[#F3F5F9] shadow-sm hover:shadow-md transition-shadow h-full flex flex-col cursor-pointer"
-              >
+              <article key={index} className="bg-white rounded-xl overflow-hidden border border-[#F3F5F9] shadow-sm hover:shadow-md transition-shadow h-full flex flex-col cursor-pointer">
                 {/* Media */}
                 <div className="relative">
                   <div className="w-full aspect-[16/10] bg-gray-100">
@@ -58,7 +55,9 @@ const ArticlesSection = () => {
                       className="absolute inset-0 w-full h-full object-cover"
                       loading="lazy"
                       decoding="async"
-                      onError={(e) => { e.currentTarget.src = placeholder; }}
+                      onError={(e) => {
+                        e.currentTarget.src = placeholder;
+                      }}
                     />
                   </div>
 

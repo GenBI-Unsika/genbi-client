@@ -1,159 +1,132 @@
+// src/components/Footer.jsx
+import { Icon } from '@iconify/react';
+
 const Footer = () => {
+  const year = new Date().getFullYear();
+
+  const handleSubscribe = (e) => {
+    e.preventDefault();
+    const email = new FormData(e.currentTarget).get('email');
+    alert(`Subscribed: ${email}`);
+    e.currentTarget.reset();
+  };
+
   return (
-    <footer className="bg-primary-50 py-12 pt-32">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Footer content */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Logo and description */}
-          <div className="md:col-span-1">
-            <div className="flex items-center space-x-2 mb-4">
-              <div className="w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center">
-                <span className="text-white font-bold text-sm">G</span>
-              </div>
-              <span className="text-primary-700 font-semibold text-lg">GenBI Unsika</span>
+    <div className="w-full">
+      {/* MAIN */}
+      <footer className="footer bg-primary-50 py-12 pt-32 px-30 text-gray-600">
+        {/* Brand + deskripsi + newsletter */}
+        <form className="gap-6" onSubmit={handleSubscribe}>
+          <div className="flex items-center gap-2 text-xl font-bold text-primary-700">
+            <div className="w-6 h-6 rounded-full bg-primary-500 grid place-items-center text-white">
+              <span className="text-xs font-extrabold">G</span>
             </div>
-            <p className="text-gray-600 text-sm leading-relaxed">
-              Komunitas mahasiswa penerima beasiswa Bank Indonesia di Universitas Singaperbangsa Karawang yang
-              berkomitmen untuk mengembangkan potensi diri dan berkontribusi kepada masyarakat.
+            <span>GenBI Unsika</span>
+          </div>
+
+          <p className="text-sm leading-relaxed">Komunitas mahasiswa penerima beasiswa Bank Indonesia di Universitas Singaperbangsa Karawang yang berkomitmen untuk mengembangkan potensi diri dan berkontribusi kepada masyarakat.</p>
+
+          <fieldset>
+            <label className="label-text text-gray-900" htmlFor="subscribeNewsletter">
+              Subscribe to newsletter
+            </label>
+            <div className="flex flex-wrap sm:flex-nowrap w-full gap-1">
+              <input
+                className="input input-sm bg-white border border-gray-300 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                id="subscribeNewsletter"
+                name="email"
+                type="email"
+                placeholder="johndoe@gmail.com"
+                autoComplete="email"
+                required
+              />
+              <button className="btn btn-sm bg-primary-500 border-primary-500 text-white hover:bg-primary-600 hover:border-primary-600" type="submit">
+                Subscribe
+              </button>
+            </div>
+          </fieldset>
+        </form>
+
+        {/* Tentang Kami */}
+        <nav>
+          <h6 className="footer-title text-gray-900">Tentang Kami</h6>
+          <a href="#" className="link link-hover text-gray-600 hover:text-primary-600">
+            Visi Misi
+          </a>
+          <a href="#" className="link link-hover text-gray-600 hover:text-primary-600">
+            Sejarah
+          </a>
+          <a href="#" className="link link-hover text-gray-600 hover:text-primary-600">
+            Struktur Organisasi
+          </a>
+          <a href="#" className="link link-hover text-gray-600 hover:text-primary-600">
+            Prestasi
+          </a>
+        </nav>
+
+        {/* Layanan */}
+        <nav>
+          <h6 className="footer-title text-gray-900">Layanan</h6>
+          <a href="#" className="link link-hover text-gray-600 hover:text-primary-600">
+            Beasiswa BI
+          </a>
+          <a href="#" className="link link-hover text-gray-600 hover:text-primary-600">
+            Pelatihan Kepemimpinan
+          </a>
+          <a href="#" className="link link-hover text-gray-600 hover:text-primary-600">
+            Program Sosial
+          </a>
+          <a href="#" className="link link-hover text-gray-600 hover:text-primary-600">
+            Pengembangan Karir
+          </a>
+        </nav>
+
+        {/* Kontak */}
+        <nav>
+          <h6 className="footer-title text-gray-900">Kontak</h6>
+          <a href="https://maps.google.com/?q=Universitas%20Singaperbangsa%20Karawang" className="link link-hover inline-flex items-center gap-2 text-gray-600 hover:text-primary-600" target="_blank" rel="noreferrer">
+            <Icon icon="tabler:map-pin" className="size-4" />
+            <span>Universitas Singaperbangsa Karawang</span>
+          </a>
+          <a href="mailto:genbi@unsika.ac.id" className="link link-hover inline-flex items-center gap-2 text-gray-600 hover:text-primary-600">
+            <Icon icon="tabler:mail" className="size-4" />
+            <span>genbi@unsika.ac.id</span>
+          </a>
+          <a href="tel:+62123456789" className="link link-hover inline-flex items-center gap-2 text-gray-600 hover:text-primary-600">
+            <Icon icon="tabler:phone" className="size-4" />
+            <span>+62 123 456 789</span>
+          </a>
+        </nav>
+      </footer>
+
+      {/* BOTTOM BAR */}
+      <footer className="footer bg-primary-50 border-t border-gray-200 px-6 py-4">
+        <div className="flex w-full items-center justify-between">
+          <aside className="grid-flow-col items-center">
+            <p className="text-gray-600">
+              &copy;{year}{' '}
+              <a className="link link-hover font-medium text-primary-700 hover:text-primary-600" href="#">
+                GenBI Unsika
+              </a>
             </p>
-          </div>
+          </aside>
 
-          {/* Quick Links */}
-          <div>
-            <h4 className="font-semibold text-gray-900 mb-4">Tentang Kami</h4>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <a href="#" className="text-gray-600 hover:text-primary-600">
-                  Visi Misi
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-600 hover:text-primary-600">
-                  Sejarah
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-600 hover:text-primary-600">
-                  Struktur Organisasi
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-600 hover:text-primary-600">
-                  Prestasi
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Programs */}
-          <div>
-            <h4 className="font-semibold text-gray-900 mb-4">Layanan</h4>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <a href="#" className="text-gray-600 hover:text-primary-600">
-                  Beasiswa BI
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-600 hover:text-primary-600">
-                  Pelatihan Kepemimpinan
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-600 hover:text-primary-600">
-                  Program Sosial
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-600 hover:text-primary-600">
-                  Pengembangan Karir
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Contact */}
-          <div>
-            <h4 className="font-semibold text-gray-900 mb-4">Kontak</h4>
-            <div className="space-y-3 text-sm">
-              <div className="flex items-center space-x-2">
-                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                  />
-                </svg>
-                <span className="text-gray-600">Universitas Singaperbangsa Karawang</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                  />
-                </svg>
-                <span className="text-gray-600">genbi@unsika.ac.id</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                  />
-                </svg>
-                <span className="text-gray-600">+62 123 456 789</span>
-              </div>
-            </div>
-
-            {/* Social Media */}
-            <div className="flex space-x-3 mt-4">
-              <a
-                href="#"
-                className="w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center text-white hover:bg-primary-600 transition-colors"
-              >
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z" />
-                </svg>
-              </a>
-              <a
-                href="#"
-                className="w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center text-white hover:bg-primary-600 transition-colors"
-              >
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.71 0-1.37-.2-1.95-.5v.03c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.521 8.521 0 0 1-5.33 1.84c-.34 0-.68-.02-1.02-.06C3.44 20.29 5.7 21 8.12 21 16 21 20.33 14.46 20.33 8.79c0-.19 0-.37-.01-.56.84-.6 1.56-1.36 2.14-2.23z" />
-                </svg>
-              </a>
-              <a
-                href="#"
-                className="w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center text-white hover:bg-primary-600 transition-colors"
-              >
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.174-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.402.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.357-.629-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24.009 12.017 24.009c6.624 0 11.99-5.367 11.99-11.988C24.007 5.367 18.641.001.012.001z" />
-                </svg>
-              </a>
-            </div>
+          {/* Sosial: gaya bulat bg primary seperti versi lama */}
+          <div className="flex gap-3">
+            <a href="#" className="w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center text-white hover:bg-primary-600 transition-colors" aria-label="Instagram">
+              <Icon icon="tabler:brand-instagram" className="size-4" />
+            </a>
+            <a href="#" className="w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center text-white hover:bg-primary-600 transition-colors" aria-label="X (Twitter)">
+              <Icon icon="tabler:brand-x" className="size-4" />
+            </a>
+            <a href="#" className="w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center text-white hover:bg-primary-600 transition-colors" aria-label="YouTube">
+              <Icon icon="tabler:brand-youtube" className="size-4" />
+            </a>
           </div>
         </div>
+      </footer>
+    </div>
+  );
+};
 
-        {/* Bottom */}
-        <div className="border-t border-gray-200 mt-12 pt-8 text-center">
-          <p className="text-gray-600 text-sm">© GenBI Unsika. All Rights Reserved 2024</p>
-        </div>
-      </div>
-    </footer>
-  )
-}
-
-export default Footer
+export default Footer;
