@@ -1,247 +1,190 @@
-"use client";
-
-import { useMemo, useCallback, useEffect, useState } from "react";
-import useEmblaCarousel from "embla-carousel-react";
-
-// Data dipisahkan agar tidak dibuat ulang di setiap render
-const TESTIMONIALS = [
-  {
-    name: "Arif Syarifudin",
-    role: "GenBI Unsika 2021",
-    image: "https://placehold.co/160x160?text=Arif",
-    quote:
-      "Pengalaman menjadi bagian dari GenBI sangat berharga. Saya belajar banyak tentang kepemimpinan, kerjasama tim, dan pengabdian kepada masyarakat.",
-  },
-  {
-    name: "Siti Nurhaliza",
-    role: "GenBI Unsika 2021",
-    image: "https://placehold.co/160x160?text=Siti",
-    quote:
-      "GenBI memberikan kesempatan luar biasa untuk berkembang dan berkontribusi. Melalui berbagai kegiatan, saya dapat mengasah kemampuan public speaking dan manajemen proyek.",
-  },
-  {
-    name: "Ahmad Fauzi",
-    role: "GenBI Unsika 2020",
-    image: "https://placehold.co/160x160?text=Ahmad",
-    quote:
-      "Bergabung dengan GenBI adalah keputusan terbaik selama kuliah. Tidak hanya mendapat beasiswa, tapi juga pengalaman organisasi yang sangat berharga untuk karier.",
-  },
-];
+import { useEffect } from "react";
+import "flyonui/flyonui";
+import {
+  Quote,
+  GraduationCap,
+  ShieldCheck,
+  Crown,
+  ArrowLeft,
+  ArrowRight,
+} from "lucide-react";
 
 export default function TestimonialsSection() {
-  const [current, setCurrent] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
-
-  const [emblaRef, emblaApi] = useEmblaCarousel({
-    align: "center",
-    loop: true, // infinite loop
-    skipSnaps: false,
-    containScroll: "trimSnaps",
-  });
-
-  const len = TESTIMONIALS.length;
-  const prevIndex = useMemo(() => (current - 1 + len) % len, [current, len]);
-  const nextIndex = useMemo(() => (current + 1) % len, [current, len]);
-
-  const scrollPrev = useCallback(() => emblaApi && emblaApi.scrollPrev(), [emblaApi]);
-  const scrollNext = useCallback(() => emblaApi && emblaApi.scrollNext(), [emblaApi]);
-  const scrollTo = useCallback((i) => emblaApi && emblaApi.scrollTo(i), [emblaApi]);
-
-  // Sync current index
-  useEffect(() => {
-    if (!emblaApi) return;
-    const onSelect = () => setCurrent(emblaApi.selectedScrollSnap());
-    onSelect();
-    emblaApi.on("select", onSelect);
-    return () => emblaApi.off("select", onSelect);
-  }, [emblaApi]);
-
-  // Autoplay (infinite scroll) — pause saat hover/focus
-  useEffect(() => {
-    if (!emblaApi || isPaused) return;
-    const id = setInterval(() => emblaApi && emblaApi.scrollNext(), 3500);
-    return () => clearInterval(id);
-  }, [emblaApi, isPaused]);
-
-  const onKeyDown = useCallback(
-    (e) => {
-      if (e.key === "ArrowLeft") scrollPrev();
-      if (e.key === "ArrowRight") scrollNext();
+  const testimonials = [
+    {
+      photo_profile: "https://cdn.flyonui.com/fy-assets/avatar/avatar-8.png",
+      name: "Raka Pratama",
+      role: "Alumni GenBI 2022",
+      quote:
+        "Program ini ngebantu banget ngerapihin portfolio dan jaringan. Sekarang kerjaan jauh lebih terarah.",
     },
-    [scrollPrev, scrollNext]
-  );
+    {
+      photo_profile: "https://cdn.flyonui.com/fy-assets/avatar/avatar-14.png",
+      name: "Nadia Putri",
+      role: "Pembina GenBI Jawa Barat",
+      quote:
+        "Anak-anaknya progresif dan kolaboratif. Ekosistemnya kondusif buat tumbuh bareng.",
+    },
+    {
+      photo_profile: "https://cdn.flyonui.com/fy-assets/avatar/avatar-9.png",
+      name: "Arya Maulana",
+      role: "Ketua Umum GenBI UI 2024",
+      quote:
+        "Framework kegiatan yang rapi bikin eksekusi program lebih cepat dan terukur.",
+    },
+    {
+      photo_profile: "https://cdn.flyonui.com/fy-assets/avatar/avatar-7.png",
+      name: "Salsa Nabila",
+      role: "Alumni GenBI 2021",
+      quote:
+        "Mentoringnya daging semua. Banyak insight praktikal yang langsung bisa dipakai.",
+    },
+    {
+      photo_profile: "https://cdn.flyonui.com/fy-assets/avatar/avatar-4.png",
+      name: "Bintang Ramadhan",
+      role: "Koordinator Wilayah",
+      quote:
+        "Kolaborasi lintas kampus makin kuat. Impact kegiatannya kerasa sampai komunitas.",
+    },
+    {
+      photo_profile: "https://cdn.flyonui.com/fy-assets/avatar/avatar-2.png",
+      name: "Keisha Aurel",
+      role: "Pembina GenBI Sumatera Barat",
+      quote:
+        "Sistem dokumentasi dan evaluasinya rapi, gampang ditindaklanjuti untuk batch berikutnya.",
+    },
+  ];
+
+  const RoleIcon = ({ role, size = 18 }) => {
+    const r = role.toLowerCase();
+    if (r.includes("ketua")) return <Crown size={size} />;
+    if (r.includes("pembina")) return <ShieldCheck size={size} />;
+    if (r.includes("alumni")) return <GraduationCap size={size} />;
+    return <ShieldCheck size={size} />; // default
+  };
+
+  useEffect(() => {
+    if (!window.__flyonui_loaded) {
+      import("flyonui/flyonui")
+        .then(() => {
+          window.__flyonui_loaded = true;
+        })
+        .catch(console.error);
+    }
+  }, []);
 
   return (
     <section className="py-16 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-4xl font-semibold text-primary-900 mb-10">
-          Pengalaman Alumni
-        </h2>
-
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-          {/* Left intro */}
-          <div className="lg:col-span-4 space-y-3">
-            <h3 className="text-2xl font-semibold text-neutral-900 leading-snug">
-              Bagaimana Pendapat Alumni GenBI Unsika
-            </h3>
-            <p className="text-gray-600">
-              Yuk, cari tahu bagaimana pengalaman alumni selama menjadi anggota GenBI Unsika
-            </p>
-          </div>
-
-          {/* Right carousel */}
-          <div className="lg:col-span-8 relative">
-            {/* Stage / Embla viewport */}
-            <div
-              className="relative outline-none"
-              role="region"
-              aria-roledescription="carousel"
-              aria-label="Testimoni Alumni GenBI Unsika"
-              onMouseEnter={() => setIsPaused(true)}
-              onMouseLeave={() => setIsPaused(false)}
-              onFocus={() => setIsPaused(true)}
-              onBlur={() => setIsPaused(false)}
-            >
-              <div
-                className="overflow-hidden h-[280px] sm:h-[320px] md:h-[380px] lg:h-[420px]"
-                ref={emblaRef}
-                tabIndex={0}
-                onKeyDown={onKeyDown}
-              >
-                <div className="flex h-full touch-pan-y">
-                  {TESTIMONIALS.map((t, i) => {
-                    const variant =
-                      i === current
-                        ? "active"
-                        : i === prevIndex
-                        ? "neighbor-left"
-                        : i === nextIndex
-                        ? "neighbor-right"
-                        : "other";
-
-                    return (
-                      <div
-                        key={i}
-                        className="basis-[240px] sm:basis-[280px] md:basis-[340px] lg:basis-[380px] shrink-0 px-3"
-                        aria-roledescription="slide"
-                        aria-label={`${t.name} — ${t.role}`}
-                      >
-                        <TestimonialCard t={t} variant={variant} />
-                      </div>
-                    );
-                  })}
-                </div>
+      <div className="py-8 sm:py-16 lg:py-24">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div
+            id="multi-slide"
+            data-carousel='{ "loadingClasses": "opacity-0", "slidesQty": { "xs": 1, "md": 2 } }'
+            className="relative flex w-full gap-12 max-lg:flex-col md:gap-16 lg:items-center lg:gap-24"
+          >
+            <div>
+              <div className="space-y-4">
+                <p className="inline-block text-primary-500 text-sm font-medium bg-primary-50 p-2 rounded-xl">
+                  Pengalaman Alumni
+                </p>
+                <h2 className="text-neutral-800 text-2xl font-semibold md:text-3xl lg:text-4xl">
+                  Bagaimana Pendapat Alumni GenBI Unsika
+                </h2>
+                <p className="text-neutral-500 text-xl">
+                  Yuk, cari tahu bagaimana pengalaman alumni selama menjadi
+                  anggota GenBI Unsika.
+                </p>
               </div>
 
-              {/* Nav buttons */}
-              <button
-                onClick={scrollPrev}
-                aria-label="Sebelumnya"
-                className="absolute left-[-6px] sm:left-0 md:left-2 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-primary-500 text-white grid place-items-center shadow-md hover:shadow-[0_8px_20px_rgba(1,49,159,0.25)] hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[rgba(1,49,159,0.6)]"
-              >
-                <svg
-                  className="w-4 h-4"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
+              {/* Tombol navigasi: ganti ke lucide-react */}
+              <div className="mt-10 flex gap-4">
+                <button
+                  className="
+      flex items-center justify-center
+      w-9 h-9 rounded-md
+      bg-primary-300 text-white
+      hover:bg-primary-500
+      disabled:opacity-50 disabled:cursor-not-allowed
+      transition-colors duration-200
+    "
+                  disabled
+                  aria-label="Sebelumnya"
                 >
-                  <path d="M15 18l-6-6 6-6" />
-                </svg>
-                <span className="sr-only">Sebelumnya</span>
-              </button>
-              <button
-                onClick={scrollNext}
-                aria-label="Berikutnya"
-                className="absolute right-[-6px] sm:right-0 md:right-2 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-primary-500 text-white grid place-items-center shadow-md hover:shadow-[0_8px_20px_rgba(1,49,159,0.25)] hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[rgba(1,49,159,0.6)]"
-              >
-                <svg
-                  className="w-4 h-4"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
+                  <ArrowLeft className="w-5 h-5" />
+                </button>
+
+                <button
+                  className="
+      flex items-center justify-center
+      w-9 h-9 rounded-md
+      bg-primary-400 text-white
+      hover:bg-primary-600
+      disabled:opacity-50 disabled:cursor-not-allowed
+      transition-colors duration-200
+    "
+                  aria-label="Berikutnya"
                 >
-                  <path d="M9 6l6 6-6 6" />
-                </svg>
-                <span className="sr-only">Berikutnya</span>
-              </button>
+                  <ArrowRight className="w-5 h-5" />
+                </button>
+              </div>
             </div>
 
-            {/* Dots indicator */}
-            <div className="mt-6 flex justify-center gap-2">
-              {TESTIMONIALS.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => scrollTo(i)}
-                  aria-label={`Ke slide ${i + 1}`}
-                  aria-current={i === current ? "true" : undefined}
-                  className={`h-2.5 w-2.5 rounded-full transition-all ${
-                    i === current ? "bg-primary-500 scale-110" : "bg-gray-300 hover:bg-gray-400"
-                  }`}
-                />
-              ))}
+            {/* Carousel */}
+            <div className="carousel rounded-box p-4">
+              <div className="carousel-body gap-4 opacity-0">
+                {testimonials.map((item, idx) => (
+                  <div className="carousel-slide" key={idx}>
+                    <div
+                      className="
+                        relative group rounded-3xl cursor-pointer border border-neutral-200 bg-white
+                        transition-all duration-300 ease-out
+                        hover:shadow-xl hover:-translate-y-1 hover:scale-[1.03] hover:bg-primary-300
+                        w-64 sm:w-72 md:w-72 lg:w-80
+                        h-54 md:h-80
+                      "
+                    >
+                      <div className="card-body gap-4 flex flex-col justify-between">
+                        <div className="flex flex-col justify-center items-center gap-3">
+                          <div className="avatar">
+                            <div className="size-14 rounded-full">
+                              <img
+                                src={item.photo_profile}
+                                alt={item.name}
+                                loading="lazy"
+                              />
+                            </div>
+                          </div>
+                          <h4 className="text-neutral-800 font-medium">
+                            {item.name}
+                          </h4>
+                          <p className="text-neutral-600 text-sm">
+                            {item.role}
+                          </p>
+                        </div>
+
+                        {/* Quote */}
+                        <p className="text-neutral-700 text-reguler overflow-hidden text-center">
+                          {item.quote}
+                        </p>
+                      </div>
+
+                      {/* Accent bar bawah saat hover */}
+                      <div
+                        className="
+                          absolute inset-x-0 bottom-0 h-1 bg-primary-500
+                          origin-left scale-x-0 group-hover:scale-x-100
+                          transition-transform duration-300
+                        "
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
+            {/* End Carousel */}
           </div>
         </div>
       </div>
     </section>
-  );
-}
-
-function TestimonialCard({ t, variant }) {
-  const isActive = variant === "active";
-
-  const base =
-    "relative mx-auto w-full aspect-square rounded-2xl transition-all duration-300 select-none";
-
-  const look =
-    variant === "active"
-      ? "bg-gradient-to-br from-white to-slate-50 border border-slate-200 shadow-[0_8px_30px_rgba(0,0,0,0.06)] hover:shadow-[0_16px_40px_rgba(1,49,159,0.18)] scale-100"
-      : variant === "neighbor-left" || variant === "neighbor-right"
-      ? "pointer-events-none bg-white/70 border border-slate-200/60 scale-[.96] saturate-90 opacity-80"
-      : "opacity-0 scale-[.96] pointer-events-none";
-
-  const onImgError = (e) => {
-    e.currentTarget.src = "https://placehold.co/160x160";
-  };
-
-  return (
-    <article className={`${base} ${look}`} aria-hidden={!isActive}>
-      {/* content */}
-      <div className="h-full px-6 sm:px-7 py-6 sm:py-7 flex flex-col items-center justify-between text-center">
-        {/* avatar + name */}
-        <div className="flex flex-col items-center">
-          <span className="block w-16 h-16 rounded-full overflow-hidden ring-4 ring-white shadow">
-            <img
-              src={t.image || "https://placehold.co/160x160"}
-              alt={t.name}
-              className="w-full h-full object-cover"
-              loading="lazy"
-              decoding="async"
-              onError={onImgError}
-            />
-          </span>
-          <h4 className="mt-4 font-semibold text-neutral-900">{t.name}</h4>
-          <p className="text-sm text-gray-600">{t.role}</p>
-        </div>
-
-        {/* quote */}
-        <p className="text-gray-700 max-w-[40ch] mx-auto leading-relaxed">
-          {t.quote}
-        </p>
-
-        {/* subtle accent */}
-        <div className="w-full flex justify-center" aria-hidden>
-          <span className="h-1 w-10 rounded-full bg-[rgba(1,49,159,0.4)]"></span>
-        </div>
-      </div>
-    </article>
   );
 }
