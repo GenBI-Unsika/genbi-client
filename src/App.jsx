@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 
 import Header from "./components/Header";
@@ -24,6 +22,14 @@ import ActivityHistoryPage from "./pages/ActivityHistoryPage";
 import TransactionPage from "./pages/TransactionsPage";
 import SettingsPage from "./pages/SettingsPage";
 
+// Halaman baru
+import HistoryPage from "./pages/HistoryPage";
+import TeamsPage from "./pages/TeamsPage";
+import EventsPage from "./pages/EventsPage";
+import ProkerPage from "./pages/ProkerPage";
+import ScholarshipPageDetailed from "./pages/ScholarshipPage";
+import ArticlesPage from "./pages/ArticlesPage";
+
 import ProfileLayout from "./components/ProfileLayout";
 
 import "./App.css";
@@ -34,14 +40,10 @@ function App() {
 
   const handleLoginToggle = () => {
     setIsLoggedIn(!isLoggedIn);
-    if (!isLoggedIn) {
-      setCurrentPage("home");
-    }
+    if (!isLoggedIn) setCurrentPage("home");
   };
 
-  const navigateTo = (page) => {
-    setCurrentPage(page);
-  };
+  const navigateTo = (page) => setCurrentPage(page);
 
   const handleLogout = () => {
     setIsLoggedIn(false);
@@ -50,6 +52,7 @@ function App() {
 
   const renderPage = () => {
     switch (currentPage) {
+      // Auth pages
       case "signin":
         return (
           <SignInPage onNavigate={navigateTo} onLogin={handleLoginToggle} />
@@ -62,6 +65,8 @@ function App() {
         return <TwoFactorAuthPage onNavigate={navigateTo} />;
       case "verify-email":
         return <VerifyEmailPage onNavigate={navigateTo} />;
+
+      // Profile pages
       case "profile":
       case "activity-history":
       case "transactions":
@@ -78,6 +83,53 @@ function App() {
             {currentPage === "settings" && <SettingsPage />}
           </ProfileLayout>
         );
+
+      // ===== FIX: Samakan keys dengan Header =====
+      // (Header mengirim "history", "teams", "events", "proker", "scholarship", "articles")
+      case "history":
+        return (
+          <>
+            <HistoryPage />
+            <Footer />
+          </>
+        );
+      case "teams":
+        return (
+          <>
+            <TeamsPage />
+            <Footer />
+          </>
+        );
+      case "events":
+        return (
+          <>
+            <EventsPage />
+            <Footer />
+          </>
+        );
+      case "proker":
+        return (
+          <>
+            <ProkerPage />
+            <Footer />
+          </>
+        );
+      case "scholarship":
+        return (
+          <>
+            <ScholarshipPageDetailed />
+            <Footer />
+          </>
+        );
+      case "articles":
+        return (
+          <>
+            <ArticlesPage />
+            <Footer />
+          </>
+        );
+
+      // Default home page
       default:
         return (
           <>
