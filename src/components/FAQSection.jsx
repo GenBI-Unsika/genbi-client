@@ -1,7 +1,8 @@
 const FAQSection = () => {
   const faqs = [
     {
-      question: "Apakah setiap lulusan mahasiswa Bank Indonesia wajib mengikuti kegiatan GenBI?",
+      question:
+        "Apakah setiap lulusan mahasiswa Bank Indonesia wajib mengikuti kegiatan GenBI?",
       answer:
         "Ya, setiap penerima beasiswa Bank Indonesia diharapkan untuk aktif dalam kegiatan GenBI sebagai bagian dari komitmen pengembangan diri dan kontribusi kepada masyarakat.",
     },
@@ -16,36 +17,69 @@ const FAQSection = () => {
         "Kegiatan GenBI terbuka untuk umum, namun keanggotaan penuh hanya untuk penerima beasiswa Bank Indonesia.",
     },
     {
-      question: "Apakah setiap mahasiswa dapat berpartisipasi dalam kegiatan GenBI?",
-      answer: "Ya, mahasiswa non-GenBI dapat berpartisipasi dalam berbagai kegiatan yang bersifat terbuka dan umum.",
+      question:
+        "Apakah setiap mahasiswa dapat berpartisipasi dalam kegiatan GenBI?",
+      answer:
+        "Ya, mahasiswa non-GenBI dapat berpartisipasi dalam berbagai kegiatan yang bersifat terbuka dan umum.",
     },
-  ]
+  ];
 
   return (
-    <section className="py-16 bg-gray-50">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-3xl font-bold text-primary-900 text-center mb-12">Pertanyaan Umum</h2>
+    <section className="bg-base-100 py-8 sm:py-16 lg:py-24">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="mb-12 space-y-4 text-center sm:mb-16 lg:mb-24">
+          <h2 className="text-base-content text-2xl font-semibold md:text-3xl lg:text-4xl">
+            Pertanyaan Umum
+          </h2>
+          <p className="text-base-content/80 text-xl">
+            Jelajahi pertanyaan yang sering diajukan dan temukan informasi yang
+            Anda butuhkan.
+          </p>
+        </div>
 
-        <div className="space-y-4">
-          {faqs.map((faq, index) => (
-            <div key={index} className="bg-white rounded-lg border border-gray-200">
-              <div className="p-6">
-                <div className="flex justify-between items-start">
-                  <h3 className="text-lg font-medium text-gray-900 pr-4">{faq.question}</h3>
-                  <button className="flex-shrink-0 w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center text-white hover:bg-primary-600 transition-colors">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </button>
+        {/* FlyonUI Accordion */}
+        <div className="accordion divide-neutral/20 w-full divide-y">
+          {faqs.map((faq, index) => {
+            const itemId = `faq-item-${index}`;
+            const collapseId = `faq-collapse-${index}`;
+            const isFirst = index === 1; // buka item pertama
+
+            return (
+              <div
+                key={index}
+                id={itemId}
+                className={`accordion-item ${isFirst ? "active" : ""}`}
+              >
+                <button
+                  className="accordion-toggle inline-flex items-center justify-between text-start"
+                  aria-controls={collapseId}
+                  aria-expanded={isFirst ? "true" : "false"}
+                >
+                  {faq.question}
+                  <span className="icon-[tabler--plus] accordion-item-active:hidden text-base-content block size-4.5 shrink-0"></span>
+                  <span className="icon-[tabler--minus] accordion-item-active:block text-base-content hidden size-4.5 shrink-0"></span>
+                </button>
+
+                <div
+                  id={collapseId}
+                  className={`accordion-content w-full overflow-hidden transition-[height] duration-300 ${
+                    isFirst ? "" : "hidden"
+                  }`}
+                  aria-labelledby={itemId}
+                  role="region"
+                >
+                  <div className="px-5 pb-4">
+                    <p className="text-base-content/80">{faq.answer}</p>
+                  </div>
                 </div>
-                <p className="mt-4 text-gray-600">{faq.answer}</p>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>
-  )
-}
+  );
+};
 
-export default FAQSection
+export default FAQSection;
