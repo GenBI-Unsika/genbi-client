@@ -1,9 +1,9 @@
-name: Automatic Mirror Sync (Manual Method)
+name: Final Automatic Mirror Sync
 
 on:
   push:
     branches:
-      - main # <-- Pastikan ini nama branch utama Anda
+      - main
 
 jobs:
   mirror:
@@ -16,4 +16,4 @@ jobs:
 
       - name: Push to personal mirror
         run: |
-          git push --mirror "https://ranggamuktii:${{ secrets.SYNC_PAT }}@github.com/ranggamuktii/genbi-client.git"
+          git push --mirror "https://${{ secrets.SYNC_PAT }}@github.com/ranggamuktii/genbi-client.git"
