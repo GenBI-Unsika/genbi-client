@@ -1,0 +1,23 @@
+# Nama workflow yang akan muncul di tab Actions
+name: Automatic Mirror Sync
+
+# Pemicu: Jalankan workflow ini setiap kali ada 'push' ke branch 'main'
+on:
+  push:
+    branches:
+      - main # <-- GANTI INI jika nama branch utama Anda 'master' atau lainnya
+
+# Pekerjaan yang harus dilakukan
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Mirroring repository
+        uses: pixta-dev/repository-mirroring-action@v1
+        with:
+          # Repositori sumber (tidak perlu diubah)
+          source_repo: 'git@github.com:${{ github.repository }}.git'
+
+          # Repositori tujuan (pribadi Anda)
+          # Ganti <USERNAME_ANDA> dan <NAMA_REPO_PRIBADI>
+          destination_repo: 'https://ranggamuktii:${{ secrets.SYNC_PAT }}@github.com/ranggamuktii/genbi-client.git'
