@@ -34,7 +34,7 @@ const ArticlesPage = () => {
               badge={a.badge}
               readTime={a.readTime}
               image={a.image || undefined}
-              href={`/articles/${a.id}`}
+              to={`/articles/${a.id}`}
             />
           ))}
         </div>

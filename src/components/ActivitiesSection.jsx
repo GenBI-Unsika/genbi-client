@@ -32,7 +32,7 @@ const ActivitiesSection = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {activities.map((a, i) => (
-              <EventCard key={i} {...a} />
+              <EventCard title={a.title} key={i} {...a} to={a.href} />
             ))}
           </div>
         </div>
@@ -48,7 +48,7 @@ const ActivitiesSection = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {projects.map((p, i) => (
-              <ProkerCard key={i} {...p} />
+              <ProkerCard title={p.title} key={i} {...p} to={p.href} />
             ))}
           </div>
         </div>

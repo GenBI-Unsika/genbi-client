@@ -1,19 +1,14 @@
 import PropTypes from 'prop-types';
 import { Calendar, Clock, ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
-const ArticleCard = ({ title, excerpt, image, date, readTime, badge, href, placeholder = 'https://placehold.co/800x500', className = '' }) => {
-  const Wrapper = href ? 'a' : 'div';
+const ArticleCard = ({ title, excerpt, image, date, readTime, badge, href, to, placeholder = 'https://placehold.co/800x500', className = '' }) => {
+  const Wrapper = to ? Link : href ? 'a' : 'div';
+  const wrapperProps = to ? { to } : href ? { href } : {};
 
   return (
     <article
-      className={[
-        'group bg-white rounded-xl overflow-hidden border border-[#F3F5F9] shadow-sm h-full flex flex-col',
-        'transform-gpu transition-transform transition-shadow duration-200 ease-out motion-reduce:transition-none',
-        'cursor-pointer hover:scale-[1.02] will-change-transform',
-        // ⬇️ pakai util shadow kamu
-        'hover:shadow-xl-primary-500/30',
-        className,
-      ].join(' ')}
+      className={`group bg-white rounded-xl overflow-hidden border border-[#F3F5F9] shadow-sm h-full flex flex-col transform-gpu transition-transform duration-200 ease-out cursor-pointer hover:scale-[1.02] hover:shadow-xl-primary-500/30 ${className}`}
     >
       <div className="relative">
         <div className="w-full aspect-[16/10] bg-gray-100 overflow-hidden">
@@ -31,7 +26,7 @@ const ArticleCard = ({ title, excerpt, image, date, readTime, badge, href, place
         {badge && <span className="absolute top-3 right-3 bg-[#E3EEFC] text-[#01319F] text-xs font-medium px-2 py-1 rounded-md leading-none">{badge}</span>}
       </div>
 
-      <Wrapper {...(href ? { href, 'aria-label': title } : {})} className="p-4 flex-1 flex flex-col focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300 focus-visible:ring-offset-2">
+      <Wrapper {...wrapperProps} aria-label={title} className="p-4 flex-1 flex flex-col focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300 focus-visible:ring-offset-2">
         <h4 className="font-semibold text-neutral-800 mb-1 leading-snug line-clamp-2">{title}</h4>
         {excerpt && <p className="text-sm text-gray-600 mb-3 line-clamp-2">{excerpt}</p>}
 
