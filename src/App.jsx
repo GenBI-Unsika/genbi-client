@@ -36,6 +36,12 @@ import RegistrationRoute from './router/RegistrationRoute';
 import ArticleContentRoute from './router/ArticleContentRoute';
 import ArticleDetailRoute from './router/ArticleDetailRoute';
 
+import ScholarshipRegister from './pages/scholarship/ScholarshipRegister';
+import ScholarshipSelectionAdmin from './pages/scholarship/ScholarshipSelectionAdmin';
+import ScholarshipSelectionInterview from './pages/scholarship/ScholarshipSelectionInterview';
+import ScholarshipSelectionAnnouncement from './pages/scholarship/ScholarshipSelectionAnnouncement';
+import ScholarshipRegisterSuccess from './pages/scholarship/ScholarshipRegisterSuccess';
+
 import ProfileLayout from './components/ProfileLayout';
 
 import './App.css';
@@ -200,6 +206,51 @@ function App() {
           element={
             <>
               <ScholarshipPageDetailed />
+              <Footer />
+            </>
+          }
+        />
+        <Route
+          path="/scholarship/register"
+          element={
+            <>
+              <ScholarshipRegister />
+              <Footer />
+            </>
+          }
+        />
+        <Route
+          path="/scholarship/success"
+          element={
+            <>
+              <ScholarshipRegisterSuccess />
+              <Footer />
+            </>
+          }
+        />
+        <Route
+          path="/scholarship/selection/admin"
+          element={
+            <>
+              <ScholarshipSelectionAdmin />
+              <Footer />
+            </>
+          }
+        />
+        <Route
+          path="/scholarship/selection/interview"
+          element={
+            <>
+              <ScholarshipSelectionInterview />
+              <Footer />
+            </>
+          }
+        />
+        <Route
+          path="/scholarship/selection/announcement"
+          element={
+            <>
+              <ScholarshipSelectionAnnouncement />
               <Footer />
             </>
           }
