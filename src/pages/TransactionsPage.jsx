@@ -1,28 +1,47 @@
+import { useEffect, useState } from 'react';
+import { apiFetch } from '../services/api.js';
+import EmptyState from '../components/EmptyState';
+
 const TransactionsPage = () => {
-  const transactions = [
-    {
-      id: 1,
-      type: 'Pembayaran Beasiswa',
-      amount: 'Rp 2.500.000',
-      date: '15 Mei 2024',
-      status: 'Berhasil',
-      statusColor: 'bg-green-100 text-green-800'
-    },
-    {
-      id: 2,
-      type: 'Pendaftaran Event',
-      amount: 'Rp 50.000',
-      date: '10 Mei 2024',
-      status: 'Pending',
-      statusColor: 'bg-yellow-100 text-yellow-800'
-    }
-  ]
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      try {
+        setError('');
+        setLoading(true);
+
+        // NOTE: Endpoint transaksi belum tersedia di backend saat ini.
+        const json = await apiFetch('/me/transactions', { method: 'GET' });
+        const items = json?.data?.items || json?.data || [];
+        if (alive) setTransactions(Array.isArray(items) ? items : []);
+      } catch (e) {
+        if (!alive) return;
+        if (e?.status === 404) {
+          setTransactions([]);
+          return;
+        }
+        setError(e?.message || 'Gagal memuat transaksi');
+      } finally {
+        if (alive) setLoading(false);
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   return (
     <div className="bg-white rounded-lg shadow-sm p-8">
       <h2 className="text-2xl font-bold text-gray-900 mb-8">Transaksi</h2>
-      
+
       <div className="space-y-4">
+        {loading ? <div className="text-gray-500">Memuat...</div> : null}
+        {!loading && error ? <div className="text-sm text-red-600">{error}</div> : null}
+        {!loading && !error && transactions.length === 0 ? <EmptyState icon="clipboard" title="Belum ada transaksi" description="Transaksi Anda akan muncul di sini." /> : null}
         {transactions.map((transaction) => (
           <div key={transaction.id} className="flex items-center justify-between p-6 border border-gray-200 rounded-lg">
             <div>
@@ -31,15 +50,13 @@ const TransactionsPage = () => {
             </div>
             <div className="text-right">
               <p className="font-semibold text-gray-900 mb-1">{transaction.amount}</p>
-              <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${transaction.statusColor}`}>
-                {transaction.status}
-              </span>
+              <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${transaction.statusColor || 'bg-gray-100 text-gray-800'}`}>{transaction.status}</span>
             </div>
           </div>
         ))}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default TransactionsPage
+export default TransactionsPage;
