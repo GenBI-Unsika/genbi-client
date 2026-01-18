@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 import { loginWithGoogle, register } from '../utils/auth.js';
 import GoogleLoginButton from '../components/GoogleLoginButton.jsx';
 
@@ -13,7 +14,6 @@ const SignUpPage = ({ onNavigate, onLogin }) => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
   const handleInputChange = (e) => {
@@ -25,10 +25,9 @@ const SignUpPage = ({ onNavigate, onLogin }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
 
     if (formData.password !== formData.confirmPassword) {
-      setError('Konfirmasi password tidak sama');
+      toast.error('Konfirmasi password tidak sama');
       return;
     }
 
@@ -38,7 +37,7 @@ const SignUpPage = ({ onNavigate, onLogin }) => {
       localStorage.setItem('pendingVerifyEmail', formData.email);
       onNavigate('verify-email');
     } catch (e2) {
-      setError(e2?.message || 'Registrasi gagal');
+      toast.error(e2?.message || 'Registrasi gagal');
     } finally {
       setSubmitting(false);
     }
@@ -61,7 +60,6 @@ const SignUpPage = ({ onNavigate, onLogin }) => {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            {error ? <div className="text-sm text-red-600">{error}</div> : null}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap</label>
               <input
@@ -180,15 +178,14 @@ const SignUpPage = ({ onNavigate, onLogin }) => {
               <GoogleLoginButton
                 onIdToken={async (idToken) => {
                   try {
-                    setError('');
                     await loginWithGoogle(idToken);
                     if (onLogin) onLogin();
                     onNavigate('home');
                   } catch (e2) {
-                    setError(e2?.message || 'Daftar/Login dengan Google gagal');
+                    toast.error(e2?.message || 'Daftar/Login dengan Google gagal');
                   }
                 }}
-                onError={(msg) => setError(msg || 'Daftar/Login dengan Google gagal')}
+                onError={(msg) => toast.error(msg || 'Daftar/Login dengan Google gagal')}
               />
             </div>
           </form>

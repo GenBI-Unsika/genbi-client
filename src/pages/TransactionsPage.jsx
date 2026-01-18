@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import { apiFetch } from '../services/api.js';
 import EmptyState from '../components/EmptyState';
 
@@ -24,7 +25,9 @@ const TransactionsPage = () => {
           setTransactions([]);
           return;
         }
-        setError(e?.message || 'Gagal memuat transaksi');
+        const msg = e?.message || 'Gagal memuat transaksi';
+        toast.error(msg);
+        setError(msg);
       } finally {
         if (alive) setLoading(false);
       }
@@ -40,7 +43,6 @@ const TransactionsPage = () => {
 
       <div className="space-y-4">
         {loading ? <div className="text-gray-500">Memuat...</div> : null}
-        {!loading && error ? <div className="text-sm text-red-600">{error}</div> : null}
         {!loading && !error && transactions.length === 0 ? <EmptyState icon="clipboard" title="Belum ada transaksi" description="Transaksi Anda akan muncul di sini." /> : null}
         {transactions.map((transaction) => (
           <div key={transaction.id} className="flex items-center justify-between p-6 border border-gray-200 rounded-lg">

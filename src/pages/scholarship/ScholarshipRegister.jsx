@@ -1,16 +1,14 @@
 import { useMemo, useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import StepperFlyon from '../../components/ui/StepperFlyon';
 import { Field, FieldLabel, TextInput, Select, Textarea } from '../../components/ui/FormControls';
-import Alert from '../../components/ui/Alert';
 import { getMe } from '../../utils/auth.js';
 import { scholarshipSubmitApplication, uploadFile } from '../../utils/api.js';
 
 const ScholarshipRegister = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
-  const [showAgreeError, setShowAgreeError] = useState(false);
-  const [submitError, setSubmitError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const actionsRef = useRef(null);
 
@@ -64,24 +62,21 @@ const ScholarshipRegister = () => {
       { key: 'lainnya1', title: 'Dokumen Tambahan 1' },
       { key: 'lainnya2', title: 'Dokumen Tambahan 2' },
     ],
-    []
+    [],
   );
 
   const next = () => {
-    setShowAgreeError(false);
     setStep((s) => Math.min(2, s + 1));
   };
   const prev = () => {
-    setShowAgreeError(false);
     setStep((s) => Math.max(0, s - 1));
   };
 
   const submit = async (e) => {
     e.preventDefault();
-    setSubmitError('');
 
     if (step === 2 && !form.agree) {
-      setShowAgreeError(true);
+      toast.error('Mohon centang pernyataan persetujuan sebelum mengirim data.');
       actionsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
@@ -127,7 +122,7 @@ const ScholarshipRegister = () => {
 
       navigate('/scholarship/success');
     } catch (err) {
-      setSubmitError(err?.message || 'Gagal mengirim pendaftaran.');
+      toast.error(err?.message || 'Gagal mengirim pendaftaran.');
       actionsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     } finally {
       setSubmitting(false);
@@ -303,10 +298,6 @@ const ScholarshipRegister = () => {
                 </label>
                 <p className="mt-3 text-xs text-neutral-500">Dengan menyetujui di atas, Anda menyerahkan data diri untuk pendaftaran Beasiswa Bank Indonesia.</p>
               </div>
-
-              {/* Alert profesional (muncul hanya di step 3 dan saat submit gagal) */}
-              <Alert show={showAgreeError} title="Konfirmasi diperlukan" message="Mohon centang pernyataan persetujuan sebelum mengirim data." onClose={() => setShowAgreeError(false)} />
-              <Alert show={!!submitError} title="Gagal mengirim" message={submitError} onClose={() => setSubmitError('')} />
             </div>
           )}
 

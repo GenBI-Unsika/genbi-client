@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import toast from 'react-hot-toast';
 import { resendVerification, verifyEmail } from '../utils/auth.js';
 
 const VerifyEmailPage = ({ onNavigate }) => {
@@ -31,7 +32,9 @@ const VerifyEmailPage = ({ onNavigate }) => {
         setStatus('Email berhasil diverifikasi. Silakan login.');
       } catch (e2) {
         if (!alive) return;
-        setError(e2?.message || 'Verifikasi gagal');
+        const msg = e2?.message || 'Verifikasi gagal';
+        toast.error(msg);
+        setError(msg);
         setStatus('');
       }
     })();
@@ -44,7 +47,9 @@ const VerifyEmailPage = ({ onNavigate }) => {
   const handleResend = async () => {
     setError('');
     if (!email) {
-      setError('Masukkan email @unsika.ac.id atau @student.unsika.ac.id untuk kirim ulang');
+      const msg = 'Masukkan email @unsika.ac.id atau @student.unsika.ac.id untuk kirim ulang';
+      toast.error(msg);
+      setError(msg);
       return;
     }
     try {
@@ -53,7 +58,9 @@ const VerifyEmailPage = ({ onNavigate }) => {
       localStorage.setItem('pendingVerifyEmail', email);
       setStatus('Email verifikasi telah dikirim ulang. Silakan cek inbox/spam.');
     } catch (e2) {
-      setError(e2?.message || 'Gagal mengirim ulang');
+      const msg = e2?.message || 'Gagal mengirim ulang';
+      toast.error(msg);
+      setError(msg);
     } finally {
       setSubmitting(false);
     }
@@ -78,7 +85,6 @@ const VerifyEmailPage = ({ onNavigate }) => {
         </div>
 
         {status ? <div className="mb-4 text-sm text-green-700">{status}</div> : null}
-        {error ? <div className="mb-4 text-sm text-red-600">{error}</div> : null}
 
         {!token ? (
           <div className="mb-4">

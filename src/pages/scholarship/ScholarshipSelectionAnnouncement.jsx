@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import toast from 'react-hot-toast';
 import StepperFlyonVertical from '../../components/ui/StepperFlyonVertical';
 import { getMe } from '../../utils/auth.js';
 import { scholarshipGetMyApplication } from '../../utils/api.js';
@@ -108,7 +109,9 @@ const ScholarshipSelectionAnnouncement = () => {
         setApp(data || null);
       } catch (e) {
         if (!alive) return;
-        setError(e?.message || 'Gagal memuat status seleksi.');
+        const msg = e?.message || 'Gagal memuat status seleksi.';
+        toast.error(msg);
+        setError(msg);
         setApp(null);
       } finally {
         if (alive) setLoading(false);
@@ -146,7 +149,6 @@ const ScholarshipSelectionAnnouncement = () => {
           <h1 className="text-3xl font-bold text-body">Proses Seleksi</h1>
 
           {loading && <div className="rounded-xl border border-neutral-200 bg-surface p-6 text-sm text-neutral-600">Memuat...</div>}
-          {!loading && error && <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-sm text-red-700">{error}</div>}
 
           {!loading && !error && !app && (
             <Card title="Status" badge="Belum Daftar">
@@ -181,8 +183,8 @@ const ScholarshipSelectionAnnouncement = () => {
                 {app.administrasiStatus === 'ADMINISTRASI_DITOLAK'
                   ? 'Mohon maaf, Anda belum lolos seleksi administrasi.'
                   : app.administrasiStatus === 'LOLOS_ADMINISTRASI'
-                  ? 'Selamat, Anda lolos seleksi administrasi.'
-                  : 'Dokumen Anda sedang diverifikasi oleh panitia.'}
+                    ? 'Selamat, Anda lolos seleksi administrasi.'
+                    : 'Dokumen Anda sedang diverifikasi oleh panitia.'}
               </Card>
             </>
           )}

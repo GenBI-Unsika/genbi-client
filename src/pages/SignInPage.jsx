@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 import { login, loginWithGoogle } from '../utils/auth.js';
 import GoogleLoginButton from '../components/GoogleLoginButton.jsx';
 
@@ -8,20 +9,17 @@ const SignInPage = ({ onNavigate, onLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    setError('');
     setSubmitting(true);
     try {
       await login(email, password);
       if (onLogin) onLogin();
       onNavigate('home');
     } catch (err) {
-      setError(err?.message || 'Login gagal');
+      toast.error(err?.message || 'Login gagal');
     } finally {
       setSubmitting(false);
     }
@@ -44,7 +42,6 @@ const SignInPage = ({ onNavigate, onLogin }) => {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            {error ? <div className="text-sm text-red-600">{error}</div> : null}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Email Unsika (unsika.ac.id / student.unsika.ac.id)</label>
               <input
@@ -114,15 +111,14 @@ const SignInPage = ({ onNavigate, onLogin }) => {
               <GoogleLoginButton
                 onIdToken={async (idToken) => {
                   try {
-                    setError('');
                     await loginWithGoogle(idToken);
                     if (onLogin) onLogin();
                     onNavigate('home');
                   } catch (e2) {
-                    setError(e2?.message || 'Login Google gagal');
+                    toast.error(e2?.message || 'Login Google gagal');
                   }
                 }}
-                onError={(msg) => setError(msg || 'Login Google gagal')}
+                onError={(msg) => toast.error(msg || 'Login Google gagal')}
               />
             </div>
           </form>

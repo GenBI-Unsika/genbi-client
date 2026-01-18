@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import { apiFetch } from '../services/api.js';
 import EmptyState from '../components/EmptyState';
 
@@ -29,7 +30,9 @@ const ActivitiesPage = () => {
         setEventData(Array.isArray(evtItems) ? evtItems : []);
       } catch (e) {
         if (!alive) return;
-        setError(e?.message || 'Gagal memuat aktivitas');
+        const msg = e?.message || 'Gagal memuat aktivitas';
+        toast.error(msg);
+        setError(msg);
       } finally {
         if (alive) setLoading(false);
       }
@@ -59,7 +62,6 @@ const ActivitiesPage = () => {
         {activeTab === 'beasiswa' && (
           <>
             {loading ? <div className="text-gray-500">Memuat...</div> : null}
-            {!loading && error ? <div className="text-sm text-red-600">{error}</div> : null}
             {!loading && !error && scholarshipData.length === 0 ? <EmptyState icon="clipboard" title="Belum ada riwayat beasiswa" description="Riwayat beasiswa Anda akan muncul di sini." /> : null}
             {scholarshipData.map((item) => (
               <div key={item.id} className="flex items-center gap-6 p-6 border border-gray-200 rounded-lg">
@@ -81,7 +83,6 @@ const ActivitiesPage = () => {
         {activeTab === 'event' && (
           <>
             {loading ? <div className="text-gray-500">Memuat...</div> : null}
-            {!loading && error ? <div className="text-sm text-red-600">{error}</div> : null}
             {!loading && !error && eventData.length === 0 ? <EmptyState icon="calendar" title="Belum ada riwayat event" description="Riwayat event Anda akan muncul di sini." /> : null}
             {eventData.map((item) => (
               <div key={item.id} className="flex items-center gap-6 p-6 border border-gray-200 rounded-lg">

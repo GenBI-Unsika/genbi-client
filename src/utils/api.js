@@ -1,5 +1,29 @@
 const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api/v1';
 
+function normalizeErrorMessage(message, status) {
+  if (!message) return message;
+  const raw = String(message);
+  const lower = raw.toLowerCase();
+
+  const looksLikeDbUnreachable =
+    lower.includes("can't reach database server") ||
+    lower.includes('p1001') ||
+    lower.includes('localhost:3306') ||
+    lower.includes('127.0.0.1:3306') ||
+    lower.includes('econnrefused') ||
+    (lower.includes('invalid prisma') && lower.includes("can't reach"));
+
+  if (looksLikeDbUnreachable) {
+    return 'Database server tidak bisa diakses. Pastikan MySQL/MariaDB berjalan di localhost:3306.';
+  }
+
+  if (status === 503) {
+    return 'Layanan sedang tidak tersedia. Coba lagi beberapa saat.';
+  }
+
+  return raw;
+}
+
 export class ApiError extends Error {
   /** @param {{ status:number, message:string, details?:any }} params */
   constructor({ status, message, details }) {
@@ -71,7 +95,8 @@ export async function apiFetch(path, options = {}) {
       }
     }
     const message = json?.error?.message || json?.message || res.statusText || 'Request failed';
-    throw new ApiError({ status: res.status, message, details: json?.error?.details || json?.details });
+    const normalizedMessage = normalizeErrorMessage(message, res.status);
+    throw new ApiError({ status: res.status, message: normalizedMessage, details: json?.error?.details || json?.details });
   }
 
   return json;

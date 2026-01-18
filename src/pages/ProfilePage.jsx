@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import { getMe, syncMe } from '../utils/auth.js';
 import { apiFetch } from '../services/api.js';
 
 const ProfilePage = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
   const user = getMe();
@@ -39,7 +39,9 @@ const ProfilePage = () => {
         });
       } catch (e) {
         if (!alive) return;
-        setError('Gagal memuat profil');
+        const msg = 'Gagal memuat profil';
+        toast.error(msg);
+        setError(msg);
       } finally {
         if (alive) setLoading(false);
       }
@@ -58,7 +60,6 @@ const ProfilePage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage('');
     setError('');
     setSaving(true);
 
@@ -75,9 +76,11 @@ const ProfilePage = () => {
         },
       });
       await syncMe();
-      setMessage('Profil berhasil diperbarui');
+      toast.success('Profil berhasil diperbarui');
     } catch (e) {
-      setError(e?.message || 'Gagal memperbarui profil');
+      const msg = e?.message || 'Gagal memperbarui profil';
+      toast.error(msg);
+      setError(msg);
     } finally {
       setSaving(false);
     }
@@ -105,9 +108,6 @@ const ProfilePage = () => {
               </button>
             </div>
           </div>
-
-          {error && <div className="mb-4 p-3 bg-red-50 text-red-700 rounded-lg text-sm">{error}</div>}
-          {message && <div className="mb-4 p-3 bg-green-50 text-green-700 rounded-lg text-sm">{message}</div>}
 
           {/* Profile Form */}
           <form onSubmit={handleSubmit} className="space-y-6">

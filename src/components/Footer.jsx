@@ -1,5 +1,6 @@
 // src/components/Footer.jsx
 import { Icon } from '@iconify/react';
+import toast from 'react-hot-toast';
 
 const Footer = () => {
   const year = new Date().getFullYear();
@@ -7,7 +8,7 @@ const Footer = () => {
   const handleSubscribe = (e) => {
     e.preventDefault();
     const email = new FormData(e.currentTarget).get('email');
-    alert(`Subscribed: ${email}`);
+    toast.success(`Subscribed: ${email}`);
     e.currentTarget.reset();
   };
 

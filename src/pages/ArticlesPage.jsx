@@ -1,5 +1,6 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import ArticleCard from '../components/cards/ArticleCard';
 import { apiFetch } from '../services/api.js';
 import EmptyState from '../components/EmptyState';
@@ -27,7 +28,9 @@ const ArticlesPage = () => {
           setArticles([]);
           return;
         }
-        setError(e?.message || 'Gagal memuat artikel');
+        const msg = e?.message || 'Gagal memuat artikel';
+        toast.error(msg);
+        setError(msg);
       } finally {
         if (alive) setLoading(false);
       }
@@ -49,7 +52,6 @@ const ArticlesPage = () => {
         {/* Articles Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
           {loading ? <div className="text-gray-500">Memuat...</div> : null}
-          {!loading && error ? <div className="text-sm text-red-600">{error}</div> : null}
           {!loading && !error && articles.length === 0 ? (
             <div className="col-span-full">
               <EmptyState icon="files" title="Belum ada artikel" description="Artikel akan muncul di sini." />
