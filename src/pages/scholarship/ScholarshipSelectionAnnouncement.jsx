@@ -1,5 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import StepperFlyonVertical from '../../components/ui/StepperFlyonVertical';
+import { getMe } from '../../utils/auth.js';
+import { scholarshipGetMyApplication } from '../../utils/api.js';
 
 const Card = ({ title, badge, children, action }) => (
   <div className="rounded-xl border border-neutral-200 bg-surface p-6">
@@ -24,23 +26,22 @@ const Field = ({ label, children }) => (
 );
 
 /* ---------- Modal Detail Pengumuman ---------- */
-const AnnouncementDetailModal = ({ open, onClose }) => {
+const AnnouncementDetailModal = ({ open, onClose, userData }) => {
   if (!open) return null;
 
   const data = {
-    name: 'Devi Fitriani Maulana',
-    npm: '2010631250037',
-    faculty: 'Fakultas Ilmu Komputer',
-    study: 'Sistem Informasi',
-    semester: '8',
-    moreInfo: 'https://chat.whatsapp.com/DRivS4sK085964DoRBzA66779900',
+    name: userData?.profile?.name || userData?.email?.split('@')[0] || 'Calon Peserta',
+    npm: userData?.profile?.npm || '-',
+    faculty: userData?.profile?.faculty || '-',
+    study: userData?.profile?.study || '-',
+    semester: userData?.profile?.semester || '-',
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
       <div className="relative z-10 w-full max-w-3xl rounded-xl border border-neutral-200 bg-white p-6 shadow-lg">
-        <h2 className="mb-4 text-2xl font-bold text-body">Selamat! Anda dinyatakan sebagai penerima Beasiswa Bank Indonesia Komisariat Universitas Singaperbangsa Karawang periode 2024–2025.</h2>
+        <h2 className="mb-4 text-2xl font-bold text-body">Detail Seleksi Beasiswa</h2>
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
           {/* Detail kiri */}
@@ -65,17 +66,7 @@ const AnnouncementDetailModal = ({ open, onClose }) => {
               <p className="font-semibold">Semester</p>
               <p>{data.semester}</p>
             </div>
-            <div>
-              <p className="font-semibold">Informasi Lebih Lanjut</p>
-              <div className="flex items-center gap-2">
-                <a href={data.moreInfo} target="_blank" rel="noreferrer" className="truncate text-blue-600 underline">
-                  {data.moreInfo}
-                </a>
-                <button type="button" title="Salin" onClick={() => navigator.clipboard.writeText(data.moreInfo)} className="btn btn-ghost btn-xs">
-                  Salin
-                </button>
-              </div>
-            </div>
+            <div className="rounded-lg border border-neutral-200 bg-page p-3 text-xs text-neutral-700">Informasi lanjutan (jadwal, link, dan pengumuman) akan ditampilkan otomatis jika sudah diinput oleh admin.</div>
           </div>
 
           {/* Kanan: QR placeholder (ganti ke generator bila siap) */}
@@ -99,6 +90,47 @@ const AnnouncementDetailModal = ({ open, onClose }) => {
 
 const ScholarshipSelectionAnnouncement = () => {
   const [open, setOpen] = useState(false);
+  const user = getMe();
+  const userName = user?.profile?.name || user?.email?.split('@')[0] || 'Calon Peserta';
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [app, setApp] = useState(null);
+
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      setLoading(true);
+      setError('');
+      try {
+        const data = await scholarshipGetMyApplication();
+        if (!alive) return;
+        setApp(data || null);
+      } catch (e) {
+        if (!alive) return;
+        setError(e?.message || 'Gagal memuat status seleksi.');
+        setApp(null);
+      } finally {
+        if (alive) setLoading(false);
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  const administrasiLabel = useMemo(() => {
+    const s = app?.administrasiStatus;
+    if (s === 'LOLOS_ADMINISTRASI') return 'Lolos Seleksi';
+    if (s === 'ADMINISTRASI_DITOLAK') return 'Tidak Lolos';
+    return 'Menunggu';
+  }, [app]);
+
+  const stepCurrent = useMemo(() => {
+    const s = app?.administrasiStatus;
+    if (s === 'LOLOS_ADMINISTRASI') return 1;
+    return 0;
+  }, [app]);
 
   return (
     <div className="min-h-screen bg-white">
@@ -106,45 +138,58 @@ const ScholarshipSelectionAnnouncement = () => {
         {/* Left: Vertical stepper */}
         <div className="rounded-xl border border-neutral-200 bg-surface p-6">
           <h3 className="mb-6 text-xl font-semibold text-body">Tahap Seleksi</h3>
-          <StepperFlyonVertical current={2} items={['Seleksi Administrasi', 'Seleksi Wawancara', 'Pengumuman']} />
+          <StepperFlyonVertical current={stepCurrent} items={['Seleksi Administrasi', 'Seleksi Wawancara', 'Pengumuman']} />
         </div>
 
         {/* Right */}
         <div className="md:col-span-2 space-y-6">
           <h1 className="text-3xl font-bold text-body">Proses Seleksi</h1>
 
-          <Card
-            title="Pengumuman"
-            badge="Lolos Seleksi"
-            action={
-              <button onClick={() => setOpen(true)} className="btn btn-primary">
-                Lihat Detail
-              </button>
-            }
-          >
-            Selamat! Anda sebagai penerima beasiswa Bank Indonesia Komisariat Universitas Singaperbangsa Karawang periode 2024–2025.
-          </Card>
+          {loading && <div className="rounded-xl border border-neutral-200 bg-surface p-6 text-sm text-neutral-600">Memuat...</div>}
+          {!loading && error && <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-sm text-red-700">{error}</div>}
 
-          <Card title="Seleksi Wawancara" badge="Lolos Seleksi">
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <Field label="Nama">Devi Fitriani Maulana</Field>
-              <Field label="Jadwal Wawancara">Senin, 06 Juni 2024</Field>
-              <Field label="Waktu Wawancara">10.00 – 10.30 WIB</Field>
-              <Field label="Room Wawancara">
-                <a href="#" className="break-all text-blue-600 underline">
-                  https://us02web.zoom.us/j/83272175692?pwd=NVV6cWZhY2NYRlBxVzZ5K3llMF...
-                </a>
-              </Field>
-            </div>
-          </Card>
+          {!loading && !error && !app && (
+            <Card title="Status" badge="Belum Daftar">
+              Anda belum memiliki pengajuan beasiswa. Silakan isi formulir pendaftaran ketika dibuka.
+            </Card>
+          )}
 
-          <Card title="Seleksi Administrasi" badge="Lolos Seleksi">
-            Selamat dokumen Anda telah kami terima. Anda dinyatakan lulus seleksi administrasi.
-          </Card>
+          {!loading && !error && app && (
+            <>
+              <Card
+                title="Pengumuman"
+                badge={app.administrasiStatus === 'LOLOS_ADMINISTRASI' ? 'Diproses' : 'Menunggu'}
+                action={
+                  <button onClick={() => setOpen(true)} className="btn btn-primary">
+                    Lihat Detail
+                  </button>
+                }
+              >
+                Status pengumuman akan tampil otomatis setelah panitia mengunci hasil seleksi.
+              </Card>
+
+              <Card title="Seleksi Wawancara" badge="Menunggu">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <Field label="Nama">{userName}</Field>
+                  <Field label="Jadwal Wawancara">-</Field>
+                  <Field label="Waktu Wawancara">-</Field>
+                  <Field label="Room Wawancara">-</Field>
+                </div>
+              </Card>
+
+              <Card title="Seleksi Administrasi" badge={administrasiLabel}>
+                {app.administrasiStatus === 'ADMINISTRASI_DITOLAK'
+                  ? 'Mohon maaf, Anda belum lolos seleksi administrasi.'
+                  : app.administrasiStatus === 'LOLOS_ADMINISTRASI'
+                  ? 'Selamat, Anda lolos seleksi administrasi.'
+                  : 'Dokumen Anda sedang diverifikasi oleh panitia.'}
+              </Card>
+            </>
+          )}
         </div>
       </div>
 
-      <AnnouncementDetailModal open={open} onClose={() => setOpen(false)} />
+      <AnnouncementDetailModal open={open} onClose={() => setOpen(false)} userData={user} />
     </div>
   );
 };

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import StepperFlyonVertical from '../../components/ui/StepperFlyonVertical';
+import { getMe } from '../../utils/auth.js';
 
 const Card = ({ title, badge, children }) => (
   <div className="rounded-xl border border-neutral-200 bg-surface p-6">
@@ -23,6 +24,9 @@ const Field = ({ label, children }) => (
 );
 
 const ScholarshipSelectionInterview = () => {
+  const user = getMe();
+  const userName = user?.profile?.name || user?.email?.split('@')[0] || 'Calon Peserta';
+
   return (
     <div className="min-h-screen bg-page">
       <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 px-4 py-10 md:grid-cols-3">
@@ -38,7 +42,7 @@ const ScholarshipSelectionInterview = () => {
 
           <Card title="Seleksi Wawancara" badge="Proses Seleksi">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <Field label="Nama">Devi Fitriani Maulana</Field>
+              <Field label="Nama">{userName}</Field>
               <Field label="Jadwal Wawancara">Senin, 06 Juni 2024</Field>
               <Field label="Waktu Wawancara">10.00 – 10.30 WIB</Field>
               <Field label="Room Wawancara">
