@@ -1,26 +1,37 @@
-function AvatarStack({ size = "md" }) {
-  const sizeMap = { sm: "h-8 w-8", md: "h-10 w-10", lg: "h-12 w-12" };
+import { useEffect, useState } from 'react';
+import { apiFetch } from '../services/api.js';
+
+function AvatarStack({ size = 'md' }) {
+  const [avatars, setAvatars] = useState([]);
+  const sizeMap = { sm: 'h-8 w-8', md: 'h-10 w-10', lg: 'h-12 w-12' };
   const imgCls = `${sizeMap[size]} aspect-square shrink-0 rounded-full overflow-hidden object-cover ring-2 ring-white hover:motion-scale-out-110 motion-ease-spring-smooth hover:z-30`;
 
-  const avatars = [
-    "https://images.unsplash.com/photo-1633332755192-727a05c4013d?auto=format&fit=crop&w=1480&q=80",
-    "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=1061&q=80",
-    "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=1288&q=80",
-    "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=1287&q=80",
-    "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=1760&q=80",
-  ];
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      try {
+        const json = await apiFetch('/public/hero-avatars', { method: 'GET', skipAuth: true });
+        const items = json?.data?.avatars || json?.data || [];
+        if (alive && Array.isArray(items) && items.length > 0) {
+          setAvatars(items);
+        } else {
+          setAvatars([]);
+        }
+      } catch {
+        if (alive) setAvatars([]);
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  if (avatars.length === 0) return null;
 
   return (
     <div className="flex items-center -space-x-3 rtl:space-x-reverse isolate ">
       {avatars.map((src, i) => (
-        <img
-          key={i}
-          src={src}
-          alt={`User ${i + 1}`}
-          className={imgCls}
-          loading="lazy"
-          decoding="async"
-        />
+        <img key={i} src={typeof src === 'string' ? src : src.url || src.image} alt={`Anggota ${i + 1}`} className={imgCls} loading="lazy" decoding="async" />
       ))}
     </div>
   );
@@ -30,30 +41,18 @@ const HeroSection = () => {
   return (
     <section className="relative overflow-hidden bg-primary-50">
       <div className="pointer-events-none absolute inset-0 -z-10">
-        <div
-          className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-primary-100/70 to-transparent"
-          aria-hidden="true"
-        />
+        <div className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-primary-100/70 to-transparent" aria-hidden="true" />
 
-        <div
-          className="absolute -top-40 -right-24 h-[48rem] w-[48rem] rounded-full blur-3xl bg-gradient-to-br from-primary-200/80 via-primary-200/30 to-transparent"
-          aria-hidden="true"
-        />
+        <div className="absolute -top-40 -right-24 h-[48rem] w-[48rem] rounded-full blur-3xl bg-gradient-to-br from-primary-200/80 via-primary-200/30 to-transparent" aria-hidden="true" />
 
-        <div
-          className="absolute -bottom-48 -left-32 h-[42rem] w-[42rem] rounded-full blur-3xl bg-gradient-to-tr from-primary-300/60 via-primary-200/20 to-transparent"
-          aria-hidden="true"
-        />
+        <div className="absolute -bottom-48 -left-32 h-[42rem] w-[42rem] rounded-full blur-3xl bg-gradient-to-tr from-primary-300/60 via-primary-200/20 to-transparent" aria-hidden="true" />
 
         <div
           className="absolute inset-0 opacity-40 [background-image:linear-gradient(to_right,rgba(16,24,40,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(16,24,40,0.06)_1px,transparent_1px)] bg-[length:24px_24px] [mask-image:radial-gradient(60%_60%_at_75%_25%,black_40%,transparent_70%)]"
           aria-hidden="true"
         />
 
-        <div
-          className="absolute right-[-8rem] top-1/4 h-[28rem] w-[28rem] rounded-full border border-primary-300/60 [box-shadow:0_0_120px_40px_rgba(0,0,0,0.02)_inset]"
-          aria-hidden="true"
-        />
+        <div className="absolute right-[-8rem] top-1/4 h-[28rem] w-[28rem] rounded-full border border-primary-300/60 [box-shadow:0_0_120px_40px_rgba(0,0,0,0.02)_inset]" aria-hidden="true" />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 pt-4 sm:pt-8 md:pt-10 lg:pt-14 xl:pt-2 pb-8 sm:pb-10 md:pb-12 lg:pb-0">
@@ -64,8 +63,7 @@ const HeroSection = () => {
             </h1>
 
             <p className="text-base md:text-lg lg:text-xl leading-relaxed max-w-2xl animation-button motion-preset-slide-right motion-duration-2000">
-              Ayo, daftar Beasiswa GenBI Unsika sekarang dan raih kesempatan
-              untuk mendukung perjalanan akademikmu.
+              Ayo, daftar Beasiswa GenBI Unsika sekarang dan raih kesempatan untuk mendukung perjalanan akademikmu.
             </p>
 
             {/* CTA + AvatarStack */}
@@ -78,17 +76,12 @@ const HeroSection = () => {
               </button>
 
               {/* Divider hanya di sm+ */}
-              <span
-                className="hidden sm:block h-6 w-px bg-gray-300"
-                aria-hidden="true"
-              />
+              <span className="hidden sm:block h-6 w-px bg-gray-300" aria-hidden="true" />
 
               <div className="flex items-center justify-center gap-3">
                 <AvatarStack size="md" />
                 <p className="text-sm sm:text-base text-gray-600 motion-preset-slide-right motion-duration-1000">
-                  Lebih dari{" "}
-                  <span className="font-extrabold text-gray-900">500+</span>{" "}
-                  orang <span className="font-semibold">penerima manfaat.</span>
+                  Lebih dari <span className="font-extrabold text-gray-900">500+</span> orang <span className="font-semibold">penerima manfaat.</span>
                 </p>
               </div>
             </div>
@@ -124,13 +117,7 @@ const HeroSection = () => {
           </div> */}
           <div className="relative hidden lg:flex h-full items-end justify-end ">
             <div className="relative w-full max-w-[600px] motion-preset-blur-right motion-duration-1000">
-              <img
-                src="./women-graduation.webp"
-                alt="Mahasiswi GenBI UNSIKA merayakan kelulusan"
-                className="block max-h-full w-auto object-contain "
-                loading="eager"
-                decoding="async"
-              />
+              <img src="./women-graduation.webp" alt="Mahasiswi GenBI UNSIKA merayakan kelulusan" className="block max-h-full w-auto object-contain " loading="eager" decoding="async" />
             </div>
           </div>
         </div>

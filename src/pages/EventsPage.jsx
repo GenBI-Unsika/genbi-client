@@ -1,13 +1,38 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import EventCard from '../components/cards/EventCard';
+import { apiFetch } from '../services/api.js';
+import EmptyState from '../components/EmptyState';
 
 const EventsPage = () => {
-  const events = [
-    { id: 1, title: 'Nama Event', subtitle: 'Deskripsi singkat', date: '2025-01-20', badge: 'Terbaru', image: 'https://placehold.co/800x450', category: 'Event', href: '/events/1' },
-    { id: 2, title: 'Nama Event', subtitle: 'Deskripsi singkat', date: '2025-02-10', image: 'https://placehold.co/800x450', category: 'Seminar', href: '/events/2' },
-    { id: 3, title: 'Nama Event', subtitle: 'Deskripsi singkat', date: '2025-03-05', image: 'https://placehold.co/800x450', category: 'Workshop', href: '/events/3' },
-    // ...
-  ];
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      try {
+        setError('');
+        setLoading(true);
+        const json = await apiFetch('/public/events', { method: 'GET', skipAuth: true });
+        const items = json?.data?.items || json?.data || [];
+        if (alive) setEvents(Array.isArray(items) ? items : []);
+      } catch (e) {
+        if (!alive) return;
+        if (e?.status === 404) {
+          setEvents([]);
+          return;
+        }
+        setError(e?.message || 'Gagal memuat event');
+      } finally {
+        if (alive) setLoading(false);
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -18,8 +43,15 @@ const EventsPage = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+          {loading ? <div className="text-gray-500">Memuat...</div> : null}
+          {!loading && error ? <div className="text-sm text-red-600">{error}</div> : null}
+          {!loading && !error && events.length === 0 ? (
+            <div className="col-span-full">
+              <EmptyState icon="calendar" title="Belum ada event" description="Event akan muncul di sini." />
+            </div>
+          ) : null}
           {events.map((e) => (
-            <EventCard key={e.id} {...e} />
+            <EventCard key={e.id || e.slug || e.title} {...e} />
           ))}
         </div>
 

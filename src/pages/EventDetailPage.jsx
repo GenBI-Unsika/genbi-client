@@ -12,12 +12,9 @@ const EventDetailPage = ({ onNavigate }) => {
 
         {/* Event Content */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-8 transform hover:shadow-lg transition-shadow duration-300">
-          <h1 className="text-3xl font-bold text-gray-900 mb-6">Nama Event</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-6">Event</h1>
 
-          <p className="text-gray-700 leading-relaxed mb-8">
-            Lorem ipsum dolor sit amet consectetur. Hac et pharetra ante tellus et consectetur est at dignissim. Ultrices ac lectus lectus eu ipsum mattis ut vestibulum. Metus leo turpis duis praesent a dignissim. Ut fermentum id facilisis
-            quis.
-          </p>
+          <p className="text-gray-700 leading-relaxed mb-8">Detail event akan ditampilkan dari backend setelah endpoint event tersedia.</p>
 
           {/* Event Details */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -25,7 +22,7 @@ const EventDetailPage = ({ onNavigate }) => {
               <MapPin className="w-5 h-5 text-primary-600" />
               <div>
                 <p className="text-sm text-gray-500">Lokasi</p>
-                <p className="font-medium text-gray-900">Place</p>
+                <p className="font-medium text-gray-900">-</p>
               </div>
             </div>
 
@@ -33,7 +30,7 @@ const EventDetailPage = ({ onNavigate }) => {
               <Calendar className="w-5 h-5 text-primary-600" />
               <div>
                 <p className="text-sm text-gray-500">Tanggal</p>
-                <p className="font-medium text-gray-900">Date</p>
+                <p className="font-medium text-gray-900">-</p>
               </div>
             </div>
 
@@ -41,7 +38,7 @@ const EventDetailPage = ({ onNavigate }) => {
               <Clock className="w-5 h-5 text-primary-600" />
               <div>
                 <p className="text-sm text-gray-500">Waktu</p>
-                <p className="font-medium text-gray-900">Time</p>
+                <p className="font-medium text-gray-900">-</p>
               </div>
             </div>
           </div>
@@ -50,9 +47,7 @@ const EventDetailPage = ({ onNavigate }) => {
           <div className="mb-8">
             <h3 className="text-lg font-bold text-gray-900 mb-4">Benefit :</h3>
             <ul className="space-y-2 text-gray-700">
-              <li>• benefit 1</li>
-              <li>• benefit 2</li>
-              <li>• benefit 3</li>
+              <li>• -</li>
             </ul>
           </div>
 

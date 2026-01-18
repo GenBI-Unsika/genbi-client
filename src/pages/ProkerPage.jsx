@@ -1,13 +1,38 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import ProkerCard from '../components/cards/ProkerCard';
+import { apiFetch } from '../services/api.js';
+import EmptyState from '../components/EmptyState';
 
 const ProkerPage = () => {
-  const programs = [
-    { id: 1, title: 'Nama Program', subtitle: 'Deskripsi singkat', date: '2025-02-10', badge: 'Terbaru', image: 'https://placehold.co/800x450', category: 'Kewirausahaan', href: '/proker/1' },
-    { id: 2, title: 'Nama Program', subtitle: 'Deskripsi singkat', date: '2025-03-02', image: 'https://placehold.co/800x450', category: 'Lingkungan', href: '/proker/2' },
-    { id: 3, title: 'Nama Program', subtitle: 'Deskripsi singkat', date: '2025-03-15', image: 'https://placehold.co/800x450', category: 'Edukasi', href: '/proker/3' },
-    // ...
-  ];
+  const [programs, setPrograms] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      try {
+        setError('');
+        setLoading(true);
+        const json = await apiFetch('/public/programs', { method: 'GET', skipAuth: true });
+        const items = json?.data?.items || json?.data || [];
+        if (alive) setPrograms(Array.isArray(items) ? items : []);
+      } catch (e) {
+        if (!alive) return;
+        if (e?.status === 404) {
+          setPrograms([]);
+          return;
+        }
+        setError(e?.message || 'Gagal memuat proker');
+      } finally {
+        if (alive) setLoading(false);
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -18,8 +43,15 @@ const ProkerPage = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+          {loading ? <div className="text-gray-500">Memuat...</div> : null}
+          {!loading && error ? <div className="text-sm text-red-600">{error}</div> : null}
+          {!loading && !error && programs.length === 0 ? (
+            <div className="col-span-full">
+              <EmptyState icon="calendar" title="Belum ada proker" description="Program kerja akan muncul di sini." />
+            </div>
+          ) : null}
           {programs.map((p) => (
-            <ProkerCard key={p.id} {...p} />
+            <ProkerCard key={p.id || p.slug || p.title} {...p} />
           ))}
         </div>
 

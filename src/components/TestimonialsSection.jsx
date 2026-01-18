@@ -1,16 +1,33 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import 'flyonui/flyonui';
 import { GraduationCap, ShieldCheck, Crown, ArrowLeft, ArrowRight } from 'lucide-react';
+import { apiFetch } from '../services/api.js';
+import EmptyState from './EmptyState';
 
 export default function TestimonialsSection() {
-  const testimonials = [
-    { photo_profile: 'https://cdn.flyonui.com/fy-assets/avatar/avatar-8.png', name: 'Raka Pratama', role: 'Alumni GenBI 2022', quote: 'Program ini ngebantu banget ngerapihin portfolio dan jaringan. Sekarang kerjaan jauh lebih terarah.' },
-    { photo_profile: 'https://cdn.flyonui.com/fy-assets/avatar/avatar-14.png', name: 'Nadia Putri', role: 'Pembina GenBI Jawa Barat', quote: 'Anak-anaknya progresif dan kolaboratif. Ekosistemnya kondusif buat tumbuh bareng.' },
-    { photo_profile: 'https://cdn.flyonui.com/fy-assets/avatar/avatar-9.png', name: 'Arya Maulana', role: 'Ketua Umum GenBI UI 2024', quote: 'Framework kegiatan yang rapi bikin eksekusi program lebih cepat dan terukur.' },
-    { photo_profile: 'https://cdn.flyonui.com/fy-assets/avatar/avatar-7.png', name: 'Salsa Nabila', role: 'Alumni GenBI 2021', quote: 'Mentoringnya daging semua. Banyak insight praktikal yang langsung bisa dipakai.' },
-    { photo_profile: 'https://cdn.flyonui.com/fy-assets/avatar/avatar-4.png', name: 'Bintang Ramadhan', role: 'Koordinator Wilayah', quote: 'Kolaborasi lintas kampus makin kuat. Impact kegiatannya kerasa sampai komunitas.' },
-    { photo_profile: 'https://cdn.flyonui.com/fy-assets/avatar/avatar-2.png', name: 'Keisha Aurel', role: 'Pembina GenBI Sumatera Barat', quote: 'Sistem dokumentasi dan evaluasinya rapi, gampang ditindaklanjuti untuk batch berikutnya.' },
-  ];
+  const [testimonials, setTestimonials] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      try {
+        setLoading(true);
+        const json = await apiFetch('/public/testimonials', { method: 'GET', skipAuth: true });
+        const items = json?.data?.items || json?.data || [];
+        if (alive) setTestimonials(Array.isArray(items) ? items : []);
+      } catch (e) {
+        if (!alive) return;
+        if (e?.status !== 404) console.error('Failed to load testimonials:', e);
+        setTestimonials([]);
+      } finally {
+        if (alive) setLoading(false);
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   const RoleIcon = ({ role, size = 18 }) => {
     const r = role.toLowerCase();
@@ -80,12 +97,18 @@ export default function TestimonialsSection() {
 
             {/* Carousel */}
             <div className="carousel rounded-box p-8 overflow-hidden">
-              {/* GAP DIPERKECIL: gap-2 */}
-              <div className="carousel-body gap-2 opacity-0">
-                {testimonials.map((item, idx) => (
-                  <div className="carousel-slide" key={idx}>
-                    <div
-                      className="
+              {loading ? (
+                <div className="text-gray-500 py-8">Memuat testimoni...</div>
+              ) : testimonials.length === 0 ? (
+                <div className="py-8">
+                  <EmptyState icon="users" title="Belum ada testimoni" description="Testimoni dari anggota akan muncul di sini." />
+                </div>
+              ) : (
+                <div className="carousel-body gap-2 opacity-0">
+                  {testimonials.map((item, idx) => (
+                    <div className="carousel-slide" key={idx}>
+                      <div
+                        className="
                         relative cursor-pointer rounded-3xl border border-neutral-200 bg-white
                         transition-transform duration-300 ease-out
                         hover:-translate-y-1 hover:scale-[1.03]
@@ -94,33 +117,34 @@ export default function TestimonialsSection() {
                         h-54 md:h-80
                         shadow-sm-primary-500/30 hover:shadow-lg-primary-500/30
                       "
-                      tabIndex={0}
-                    >
-                      <div className="card-body gap-4 flex flex-col justify-between">
-                        <div className="flex flex-col justify-center items-center gap-3">
-                          <div className="avatar">
-                            <div className="size-14 rounded-full">
-                              <img src={item.photo_profile} alt={item.name} loading="lazy" />
+                        tabIndex={0}
+                      >
+                        <div className="card-body gap-4 flex flex-col justify-between">
+                          <div className="flex flex-col justify-center items-center gap-3">
+                            <div className="avatar">
+                              <div className="size-14 rounded-full">
+                                <img src={item.photo_profile} alt={item.name} loading="lazy" />
+                              </div>
                             </div>
+                            <h4 className="text-neutral-800 font-medium">{item.name}</h4>
+                            <p className="text-neutral-600 text-sm">{item.role}</p>
                           </div>
-                          <h4 className="text-neutral-800 font-medium">{item.name}</h4>
-                          <p className="text-neutral-600 text-sm">{item.role}</p>
+                          <p className="text-neutral-700 text-reguler overflow-hidden text-center">{item.quote}</p>
                         </div>
-                        <p className="text-neutral-700 text-reguler overflow-hidden text-center">{item.quote}</p>
-                      </div>
 
-                      {/* Accent bar bawah */}
-                      <div
-                        className="
+                        {/* Accent bar bawah */}
+                        <div
+                          className="
         absolute inset-x-0 bottom-0 h-1 bg-primary-500
         origin-left scale-x-0 group-hover:scale-x-100
         transition-transform duration-300
       "
-                      />
+                        />
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
             {/* End Carousel */}
           </div>

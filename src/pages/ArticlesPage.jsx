@@ -1,18 +1,41 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import ArticleCard from '../components/cards/ArticleCard';
+import { apiFetch } from '../services/api.js';
+import EmptyState from '../components/EmptyState';
 
 const ArticlesPage = () => {
-  const articles = [
-    { id: 1, title: 'Judul Artikel', description: 'Lorem ipsum dolor sit amet consectetur...', date: '12 Jan 2025', badge: 'New', readTime: '5 min read', image: '' },
-    { id: 2, title: 'Judul Artikel', description: 'Lorem ipsum dolor sit amet consectetur...', date: '05 Jan 2025', readTime: '6 min read', image: '' },
-    { id: 3, title: 'Judul Artikel', description: 'Lorem ipsum dolor sit amet consectetur...', date: '22 Des 2024', readTime: '7 min read', image: '' },
-    { id: 4, title: 'Judul Artikel', description: 'Lorem ipsum dolor sit amet consectetur...', date: '20 Des 2024', badge: 'New', readTime: '4 min read', image: '' },
-    { id: 5, title: 'Judul Artikel', description: 'Lorem ipsum dolor sit amet consectetur...', date: '10 Des 2024', readTime: '5 min read', image: '' },
-    { id: 6, title: 'Judul Artikel', description: 'Lorem ipsum dolor sit amet consectetur...', date: '01 Des 2024', readTime: '8 min read', image: '' },
-    { id: 7, title: 'Judul Artikel', description: 'Lorem ipsum dolor sit amet consectetur...', date: '25 Nov 2024', badge: 'New', readTime: '6 min read', image: '' },
-    { id: 8, title: 'Judul Artikel', description: 'Lorem ipsum dolor sit amet consectetur...', date: '15 Nov 2024', readTime: '5 min read', image: '' },
-    { id: 9, title: 'Judul Artikel', description: 'Lorem ipsum dolor sit amet consectetur...', date: '01 Nov 2024', readTime: '9 min read', image: '' },
-  ];
+  const [articles, setArticles] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      try {
+        setError('');
+        setLoading(true);
+
+        // NOTE: Endpoint ini belum tersedia di backend saat ini.
+        // Saat endpoint tersedia, sesuaikan path & mapping sesuai response API.
+        const json = await apiFetch('/public/articles', { method: 'GET', skipAuth: true });
+        const items = json?.data?.items || json?.data || [];
+        if (alive) setArticles(Array.isArray(items) ? items : []);
+      } catch (e) {
+        if (!alive) return;
+        if (e?.status === 404) {
+          setArticles([]);
+          return;
+        }
+        setError(e?.message || 'Gagal memuat artikel');
+      } finally {
+        if (alive) setLoading(false);
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -25,16 +48,23 @@ const ArticlesPage = () => {
 
         {/* Articles Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+          {loading ? <div className="text-gray-500">Memuat...</div> : null}
+          {!loading && error ? <div className="text-sm text-red-600">{error}</div> : null}
+          {!loading && !error && articles.length === 0 ? (
+            <div className="col-span-full">
+              <EmptyState icon="files" title="Belum ada artikel" description="Artikel akan muncul di sini." />
+            </div>
+          ) : null}
           {articles.map((a) => (
             <ArticleCard
-              key={a.id}
+              key={a.id || a.slug || a.title}
               title={a.title}
-              excerpt={a.description} // map ke prop kartu
+              excerpt={a.excerpt || a.description}
               date={a.date}
               badge={a.badge}
               readTime={a.readTime}
               image={a.image || undefined}
-              to={`/articles/${a.id}`}
+              to={a.href || (a.id ? `/articles/${a.id}` : '/articles')}
             />
           ))}
         </div>

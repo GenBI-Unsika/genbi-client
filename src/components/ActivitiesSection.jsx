@@ -1,20 +1,40 @@
 import EventCard from '../components/cards/EventCard';
 import ProkerCard from '../components/cards/ProkerCard';
+import { useEffect, useState } from 'react';
+import { apiFetch } from '../services/api.js';
+import EmptyState from './EmptyState';
 
 const ActivitiesSection = () => {
-  const activities = [
-    { title: 'CEO EXPO 2024', subtitle: 'Seminar Bisnis dan Kewirausahaan', image: 'https://placehold.co/800x450', category: 'Event', date: '2024-11-10', href: '/events/ceo-expo-2024' },
-    { title: 'GENSPARK', subtitle: 'Workshop Pengembangan Kepemimpinan', image: 'https://placehold.co/800x450', category: 'Workshop', date: '2024-12-02', href: '/events/genspark' },
-    { title: 'GENBI DONOR DARAH', subtitle: 'Kegiatan Sosial Donor Darah', image: 'https://placehold.co/800x450', category: 'Sosial', date: '2024-12-15', href: '/events/donor-darah' },
-    { title: 'GERMAS', subtitle: 'Gerakan Masyarakat Hidup Sehat', image: 'https://placehold.co/800x450', category: 'Kesehatan', date: '2025-01-05', href: '/events/germas' },
-  ];
+  const [activities, setActivities] = useState([]);
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const projects = [
-    { title: 'Bisnis Produk Kreatif', subtitle: 'Program Kewirausahaan', image: 'https://placehold.co/800x450', category: 'Kewirausahaan', date: '2025-02-10', href: '/proker/bisnis-produk-kreatif' },
-    { title: 'Bersih Sampah - Edisi Lingkungan Sehat', subtitle: 'Program Lingkungan', image: 'https://placehold.co/800x450', category: 'Lingkungan', date: '2025-03-02', href: '/proker/bersih-sampah' },
-    { title: 'Seminar Motivasi - Edisi Pendidikan', subtitle: 'Program Edukasi', image: 'https://placehold.co/800x450', category: 'Edukasi', date: '2025-03-15', href: '/proker/seminar-motivasi' },
-    { title: 'Kajian Ekonomi Syariah', subtitle: 'Program Kajian', image: 'https://placehold.co/800x450', category: 'Kajian', date: '2025-04-05', href: '/proker/kajian-ekonomi-syariah' },
-  ];
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      try {
+        setLoading(true);
+        const [evt, prg] = await Promise.all([
+          apiFetch('/public/events?limit=4', { method: 'GET', skipAuth: true }).catch((e) => (e?.status === 404 ? { data: [] } : Promise.reject(e))),
+          apiFetch('/public/programs?limit=4', { method: 'GET', skipAuth: true }).catch((e) => (e?.status === 404 ? { data: [] } : Promise.reject(e))),
+        ]);
+        const evtItems = evt?.data?.items || evt?.data || [];
+        const prgItems = prg?.data?.items || prg?.data || [];
+        if (!alive) return;
+        setActivities(Array.isArray(evtItems) ? evtItems : []);
+        setProjects(Array.isArray(prgItems) ? prgItems : []);
+      } catch {
+        if (!alive) return;
+        setActivities([]);
+        setProjects([]);
+      } finally {
+        if (alive) setLoading(false);
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   return (
     <section className="py-16 bg-white">
@@ -31,8 +51,14 @@ const ActivitiesSection = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {activities.map((a, i) => (
-              <EventCard title={a.title} key={i} {...a} to={a.href} />
+            {loading ? <div className="text-gray-500">Memuat...</div> : null}
+            {!loading && activities.length === 0 ? (
+              <div className="col-span-full">
+                <EmptyState icon="calendar" title="Belum ada event" description="Event terbaru akan muncul di sini." />
+              </div>
+            ) : null}
+            {activities.map((a) => (
+              <EventCard title={a.title} key={a.id || a.slug || a.title} {...a} to={a.href || (a.id ? `/events/${a.id}` : '/events')} />
             ))}
           </div>
         </div>
@@ -47,8 +73,14 @@ const ActivitiesSection = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {projects.map((p, i) => (
-              <ProkerCard title={p.title} key={i} {...p} to={p.href} />
+            {loading ? <div className="text-gray-500">Memuat...</div> : null}
+            {!loading && projects.length === 0 ? (
+              <div className="col-span-full">
+                <EmptyState icon="clipboard" title="Belum ada proker" description="Program kerja akan muncul di sini." />
+              </div>
+            ) : null}
+            {projects.map((p) => (
+              <ProkerCard title={p.title} key={p.id || p.slug || p.title} {...p} to={p.href || (p.id ? `/proker/${p.id}` : '/proker')} />
             ))}
           </div>
         </div>
