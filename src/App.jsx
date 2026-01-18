@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Routes, Route, useNavigate, Navigate, Outlet, useLocation } from 'react-router-dom';
 
 import Header from './components/Header';
@@ -43,6 +43,8 @@ import ScholarshipSelectionAnnouncement from './pages/scholarship/ScholarshipSel
 import ScholarshipRegisterSuccess from './pages/scholarship/ScholarshipRegisterSuccess';
 
 import ProfileLayout from './components/ProfileLayout';
+
+import { ensureAuthed, isAuthed, logout as authLogout } from './utils/auth.js';
 
 import './App.css';
 
@@ -127,26 +129,70 @@ const ProfileRoutesLayout = ({ onNavigate, onLogout }) => {
 };
 
 /* ---------- Proteksi route profile saat belum login ---------- */
-const RequireAuth = ({ isLoggedIn, children }) => {
-  if (!isLoggedIn) return <Navigate to="/signin" replace />;
+const RequireAuth = ({ children }) => {
+  const [checking, setChecking] = useState(true);
+  const [ok, setOk] = useState(false);
+  const ran = useRef(false);
+
+  useEffect(() => {
+    if (ran.current) return;
+    ran.current = true;
+
+    (async () => {
+      try {
+        if (isAuthed()) {
+          setOk(true);
+          return;
+        }
+        const nextOk = await ensureAuthed();
+        setOk(nextOk);
+      } finally {
+        setChecking(false);
+      }
+    })();
+  }, []);
+
+  if (checking) return null;
+  if (!ok) return <Navigate to="/signin" replace />;
   return children;
 };
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(() => isAuthed());
   const navigate = useNavigate();
 
-  const handleLoginToggle = () => {
-    const next = !isLoggedIn;
-    setIsLoggedIn(next);
-    if (next) {
-      navigate('/'); // setelah login balik ke home (bebas diubah)
-    } else {
-      navigate('/'); // logout → home
-    }
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      if (isAuthed()) {
+        if (alive) setIsLoggedIn(true);
+        return;
+      }
+      const ok = await ensureAuthed();
+      if (alive) setIsLoggedIn(ok);
+    })();
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    const onForcedLogout = () => {
+      setIsLoggedIn(false);
+      if (window.location.pathname.startsWith('/profile')) navigate('/signin');
+    };
+    window.addEventListener('auth:logout', onForcedLogout);
+    return () => {
+      window.removeEventListener('auth:logout', onForcedLogout);
+    };
+  }, [navigate]);
+
+  const handleLoginSuccess = () => {
+    setIsLoggedIn(true);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await authLogout();
     setIsLoggedIn(false);
     navigate('/');
   };
@@ -158,7 +204,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-white">
-      <Header isLoggedIn={isLoggedIn} onLoginToggle={handleLoginToggle} onNavigate={onNavigate} onLogout={handleLogout} />
+      <Header isLoggedIn={isLoggedIn} onNavigate={onNavigate} onLogout={handleLogout} />
 
       <Routes>
         {/* Home */}
@@ -272,8 +318,8 @@ function App() {
         <Route path="/proker/:slug" element={<ArticleDetailRoute />} />
 
         {/* Auth */}
-        <Route path="/signin" element={<SignInPage onNavigate={onNavigate} onLogin={handleLoginToggle} />} />
-        <Route path="/signup" element={<SignUpPage onNavigate={onNavigate} />} />
+        <Route path="/signin" element={<SignInPage onNavigate={onNavigate} onLogin={handleLoginSuccess} />} />
+        <Route path="/signup" element={<SignUpPage onNavigate={onNavigate} onLogin={handleLoginSuccess} />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage onNavigate={onNavigate} />} />
         <Route path="/two-factor" element={<TwoFactorAuthPage onNavigate={onNavigate} />} />
         <Route path="/verify-email" element={<VerifyEmailPage onNavigate={onNavigate} />} />
@@ -282,7 +328,7 @@ function App() {
         <Route
           path="/profile"
           element={
-            <RequireAuth isLoggedIn={isLoggedIn}>
+            <RequireAuth>
               <ProfileRoutesLayout onNavigate={onNavigate} onLogout={handleLogout} />
             </RequireAuth>
           }

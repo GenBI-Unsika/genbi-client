@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Menu, X, ChevronDown, Search as SearchIcon, Bell } from "lucide-react";
+import React, { useState, useEffect, useRef } from 'react';
+import { Menu, X, ChevronDown, Search as SearchIcon, Bell } from 'lucide-react';
+import { getMe } from '../utils/auth.js';
 
 /* Hover intent */
 function useHoverIntent(delay = 160) {
@@ -24,20 +25,14 @@ function Dropdown({ label, items = [], onSelect }) {
 
   useEffect(() => {
     const onDocClick = (e) => {
-      if (wrapRef.current && !wrapRef.current.contains(e.target))
-        setOpen(false);
+      if (wrapRef.current && !wrapRef.current.contains(e.target)) setOpen(false);
     };
-    document.addEventListener("mousedown", onDocClick);
-    return () => document.removeEventListener("mousedown", onDocClick);
+    document.addEventListener('mousedown', onDocClick);
+    return () => document.removeEventListener('mousedown', onDocClick);
   }, [setOpen]);
 
   return (
-    <div
-      ref={wrapRef}
-      className="relative"
-      onMouseEnter={onEnter}
-      onMouseLeave={onLeave}
-    >
+    <div ref={wrapRef} className="relative" onMouseEnter={onEnter} onMouseLeave={onLeave}>
       <button
         type="button"
         className="px-3.5 py-2.5 rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary-50 font-medium inline-flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
@@ -46,17 +41,11 @@ function Dropdown({ label, items = [], onSelect }) {
         onClick={() => setOpen((v) => !v)}
       >
         {label}
-        <ChevronDown
-          className={`w-4 h-4 transition ${open ? "rotate-180" : ""}`}
-          aria-hidden="true"
-        />
+        <ChevronDown className={`w-4 h-4 transition ${open ? 'rotate-180' : ''}`} aria-hidden="true" />
       </button>
 
       {open && (
-        <div
-          role="menu"
-          className="absolute left-0 top-full z-50 mt-3 w-60 rounded-xl border border-gray-200 bg-white shadow-lg ring-1 ring-black/5 p-2.5"
-        >
+        <div role="menu" className="absolute left-0 top-full z-50 mt-3 w-60 rounded-xl border border-gray-200 bg-white shadow-lg ring-1 ring-black/5 p-2.5">
           {items.map((it) => (
             <button
               key={it.page}
@@ -86,15 +75,12 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (
-        profileDropdownRef.current &&
-        !profileDropdownRef.current.contains(event.target)
-      ) {
+      if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target)) {
         setIsProfileDropdownOpen(false);
       }
     };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const handleNavigation = (page) => {
@@ -105,17 +91,17 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
     setIsProfileDropdownOpen(false);
     if (onNavigate) {
       switch (path) {
-        case "/profile":
-          onNavigate("profile");
+        case '/profile':
+          onNavigate('profile');
           break;
-        case "/riwayat-aktivitas":
-          onNavigate("activity-history");
+        case '/riwayat-aktivitas':
+          onNavigate('activity-history');
           break;
-        case "/transaksi":
-          onNavigate("transactions");
+        case '/transaksi':
+          onNavigate('transactions');
           break;
-        case "/pengaturan":
-          onNavigate("settings");
+        case '/pengaturan':
+          onNavigate('settings');
           break;
         default:
           break;
@@ -130,14 +116,19 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
   };
 
   const handleSignInClick = () => {
-    if (onNavigate) onNavigate("signin");
+    if (onNavigate) onNavigate('signin');
     else if (onLoginToggle) onLoginToggle();
   };
 
   const handleRegister = () => {
-    if (onNavigate) onNavigate("signup");
+    if (onNavigate) onNavigate('signup');
     else if (onLoginToggle) onLoginToggle();
   };
+
+  // Get user data
+  const user = getMe();
+  const userName = user?.profile?.name || user?.email?.split('@')[0] || 'Pengguna';
+  const userEmail = user?.email || '';
 
   return (
     <header className="sticky top-0 z-50 bg-primary-50 shadow-sm">
@@ -145,58 +136,39 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
         {/* Top bar */}
         <div className="flex justify-between items-center py-2 md:py-3 gap-3">
           {/* Logo */}
-          <button
-            onClick={() => handleNavigation("home")}
-            className="flex items-center gap-3 sm:gap-4 whitespace-nowrap cursor-pointer"
-            aria-label="GenBI Unsika - Beranda"
-          >
-            <img
-              src="./genbi-unsika.webp"
-              alt="Logo GenBI Unsika"
-              className="h-6 md:h-8 lg:h-12 w-auto flex-shrink-0"
-              loading="eager"
-              decoding="async"
-            />
+          <button onClick={() => handleNavigation('home')} className="flex items-center gap-3 sm:gap-4 whitespace-nowrap cursor-pointer" aria-label="GenBI Unsika - Beranda">
+            <img src="./genbi-unsika.webp" alt="Logo GenBI Unsika" className="h-6 md:h-8 lg:h-12 w-auto flex-shrink-0" loading="eager" decoding="async" />
           </button>
 
           {/* Navigation (desktop) */}
           <nav className="hidden md:flex items-center gap-3 lg:gap-6 flex-nowrap">
-            <button
-              onClick={() => handleNavigation("home")}
-              className="px-3.5 py-2.5 rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary-50 font-medium cursor-pointer whitespace-nowrap"
-            >
+            <button onClick={() => handleNavigation('home')} className="px-3.5 py-2.5 rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary-50 font-medium cursor-pointer whitespace-nowrap">
               Beranda
             </button>
 
             <Dropdown
               label="Tentang Kami"
               items={[
-                { label: "Sejarah", page: "history" },
-                { label: "Teams", page: "teams" },
+                { label: 'Sejarah', page: 'history' },
+                { label: 'Teams', page: 'teams' },
               ]}
               onSelect={handleNavigation}
             />
 
-            <button
-              onClick={() => handleNavigation("scholarship")}
-              className="px-3.5 py-2.5 rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary-50 font-medium cursor-pointer whitespace-nowrap"
-            >
+            <button onClick={() => handleNavigation('scholarship')} className="px-3.5 py-2.5 rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary-50 font-medium cursor-pointer whitespace-nowrap">
               Beasiswa
             </button>
 
             <Dropdown
               label="Aktivitas"
               items={[
-                { label: "Event", page: "events" },
-                { label: "Proker", page: "proker" },
+                { label: 'Event', page: 'events' },
+                { label: 'Proker', page: 'proker' },
               ]}
               onSelect={handleNavigation}
             />
 
-            <button
-              onClick={() => handleNavigation("articles")}
-              className="px-3.5 py-2.5 rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary-50 font-medium cursor-pointer whitespace-nowrap"
-            >
+            <button onClick={() => handleNavigation('articles')} className="px-3.5 py-2.5 rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary-50 font-medium cursor-pointer whitespace-nowrap">
               Artikel
             </button>
           </nav>
@@ -214,19 +186,12 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
                            text-sm placeholder:text-[var(--primary-500)] placeholder:opacity-80
                            focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
               />
-              <SearchIcon
-                className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary-500"
-                aria-hidden="true"
-              />
+              <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary-500" aria-hidden="true" />
             </label>
 
             {/* Notifications */}
             {isLoggedIn && (
-              <button
-                className="relative p-2.5 rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary-50 cursor-pointer"
-                aria-label="Notifikasi"
-                title="Notifikasi"
-              >
+              <button className="relative p-2.5 rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary-50 cursor-pointer" aria-label="Notifikasi" title="Notifikasi">
                 <Bell className="h-6 w-6" />
                 <span className="absolute top-1.5 right-1.5 block h-2 w-2 rounded-full bg-secondary-500" />
               </button>
@@ -235,65 +200,35 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
             {/* Auth actions */}
             {isLoggedIn ? (
               <div className="relative" ref={profileDropdownRef}>
-                <button
-                  onClick={() =>
-                    setIsProfileDropdownOpen(!isProfileDropdownOpen)
-                  }
-                  className="flex items-center space-x-2 p-1 rounded-full hover:bg-gray-50 transition-colors"
-                >
-                  <img
-                    src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Profil%20%281%29.jpg-JSb3KuBuAw2tddHZbhZENnbqebV9y3.jpeg"
-                    alt="Profile"
-                    className="w-8 h-8 rounded-full object-cover"
-                  />
+                <button onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)} className="flex items-center space-x-2 p-1 rounded-full hover:bg-gray-50 transition-colors">
+                  <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Profil%20%281%29.jpg-JSb3KuBuAw2tddHZbhZENnbqebV9y3.jpeg" alt="Profile" className="w-8 h-8 rounded-full object-cover" />
                 </button>
 
                 {/* Profile Dropdown */}
                 {isProfileDropdownOpen && (
                   <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
                     <div className="px-4 py-3 border-b border-gray-100">
-                      <p className="text-sm font-medium text-gray-900">
-                        Devi Fitriani Maulana
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        devi@student.unsika.ac.id
-                      </p>
+                      <p className="text-sm font-medium text-gray-900">{userName}</p>
+                      <p className="text-sm text-gray-500">{userEmail}</p>
                     </div>
 
                     <div className="py-1">
-                      <button
-                        onClick={() => handleProfileNavigation("/profile")}
-                        className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                      >
+                      <button onClick={() => handleProfileNavigation('/profile')} className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
                         Profile Saya
                       </button>
-                      <button
-                        onClick={() =>
-                          handleProfileNavigation("/riwayat-aktivitas")
-                        }
-                        className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                      >
+                      <button onClick={() => handleProfileNavigation('/riwayat-aktivitas')} className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
                         Riwayat Aktivitas
                       </button>
-                      <button
-                        onClick={() => handleProfileNavigation("/transaksi")}
-                        className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                      >
+                      <button onClick={() => handleProfileNavigation('/transaksi')} className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
                         Transaksi
                       </button>
-                      <button
-                        onClick={() => handleProfileNavigation("/pengaturan")}
-                        className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                      >
+                      <button onClick={() => handleProfileNavigation('/pengaturan')} className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
                         Pengaturan
                       </button>
                     </div>
 
                     <div className="border-t border-gray-100 py-1">
-                      <button
-                        onClick={handleLogout}
-                        className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
-                      >
+                      <button onClick={handleLogout} className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">
                         Keluar
                       </button>
                     </div>
@@ -302,33 +237,18 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
               </div>
             ) : (
               <div className="hidden md:flex items-center gap-2.5 whitespace-nowrap">
-                <button
-                  onClick={handleSignInClick}
-                  className="cursor-pointer inline-flex items-center gap-2 px-3.5 py-2.5 text-sm font-medium rounded-lg border border-primary-200 text-primary-700 hover:bg-primary-50"
-                >
+                <button onClick={handleSignInClick} className="cursor-pointer inline-flex items-center gap-2 px-3.5 py-2.5 text-sm font-medium rounded-lg border border-primary-200 text-primary-700 hover:bg-primary-50">
                   Masuk
                 </button>
-                <button
-                  onClick={handleRegister}
-                  className="cursor-pointer inline-flex items-center gap-2 px-3.5 py-2.5 text-sm font-medium rounded-lg bg-primary-600 text-white hover:bg-primary-700"
-                >
+                <button onClick={handleRegister} className="cursor-pointer inline-flex items-center gap-2 px-3.5 py-2.5 text-sm font-medium rounded-lg bg-primary-600 text-white hover:bg-primary-700">
                   Daftar Akun
                 </button>
               </div>
             )}
 
             {/* Mobile menu button */}
-            <button
-              onClick={() => setIsMenuOpen((v) => !v)}
-              className="md:hidden p-2.5 rounded-md text-primary-700 hover:text-primary-900 hover:bg-primary-50 cursor-pointer"
-              aria-label="Buka menu"
-              aria-expanded={isMenuOpen}
-            >
-              {isMenuOpen ? (
-                <X className="h-6 w-6" />
-              ) : (
-                <Menu className="h-6 w-6" />
-              )}
+            <button onClick={() => setIsMenuOpen((v) => !v)} className="md:hidden p-2.5 rounded-md text-primary-700 hover:text-primary-900 hover:bg-primary-50 cursor-pointer" aria-label="Buka menu" aria-expanded={isMenuOpen}>
+              {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
           </div>
         </div>
@@ -339,7 +259,7 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
             <div className="flex flex-col">
               <button
                 onClick={() => {
-                  handleNavigation("home");
+                  handleNavigation('home');
                   setIsMenuOpen(false);
                 }}
                 className="px-2 py-3 rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary-50 cursor-pointer text-left"
@@ -355,17 +275,13 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
                 aria-controls="m-about"
               >
                 <span>Tentang Kami</span>
-                <ChevronDown
-                  className={`w-4 h-4 transition ${
-                    mAboutOpen ? "rotate-180" : ""
-                  }`}
-                />
+                <ChevronDown className={`w-4 h-4 transition ${mAboutOpen ? 'rotate-180' : ''}`} />
               </button>
               {mAboutOpen && (
                 <div id="m-about" className="pl-3 pb-2">
                   <button
                     onClick={() => {
-                      handleNavigation("history");
+                      handleNavigation('history');
                       setIsMenuOpen(false);
                     }}
                     className="block w-full text-left py-2.5 rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary-50 cursor-pointer"
@@ -374,7 +290,7 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
                   </button>
                   <button
                     onClick={() => {
-                      handleNavigation("teams");
+                      handleNavigation('teams');
                       setIsMenuOpen(false);
                     }}
                     className="block w-full text-left py-2.5 rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary-50 cursor-pointer"
@@ -386,7 +302,7 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
 
               <button
                 onClick={() => {
-                  handleNavigation("scholarship");
+                  handleNavigation('scholarship');
                   setIsMenuOpen(false);
                 }}
                 className="px-2 py-3 rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary-50 cursor-pointer text-left"
@@ -402,17 +318,13 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
                 aria-controls="m-activity"
               >
                 <span>Aktivitas</span>
-                <ChevronDown
-                  className={`w-4 h-4 transition ${
-                    mActivityOpen ? "rotate-180" : ""
-                  }`}
-                />
+                <ChevronDown className={`w-4 h-4 transition ${mActivityOpen ? 'rotate-180' : ''}`} />
               </button>
               {mActivityOpen && (
                 <div id="m-activity" className="pl-3 pb-2">
                   <button
                     onClick={() => {
-                      handleNavigation("events");
+                      handleNavigation('events');
                       setIsMenuOpen(false);
                     }}
                     className="block w-full text-left py-2.5 rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary-50 cursor-pointer"
@@ -421,7 +333,7 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
                   </button>
                   <button
                     onClick={() => {
-                      handleNavigation("proker");
+                      handleNavigation('proker');
                       setIsMenuOpen(false);
                     }}
                     className="block w-full text-left py-2.5 rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary-50 cursor-pointer"
@@ -433,7 +345,7 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
 
               <button
                 onClick={() => {
-                  handleNavigation("articles");
+                  handleNavigation('articles');
                   setIsMenuOpen(false);
                 }}
                 className="px-2 py-3 rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary-50 cursor-pointer text-left"
