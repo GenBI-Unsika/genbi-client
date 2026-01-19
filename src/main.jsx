@@ -4,13 +4,16 @@ import { BrowserRouter } from 'react-router-dom';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { Toaster } from 'react-hot-toast';
 import App from './App.jsx';
+import { ConfirmProvider } from './contexts/ConfirmContext.jsx';
 import './index.css';
 
 const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 const app = (
   <BrowserRouter>
-    <App />
+    <ConfirmProvider>
+      <App />
+    </ConfirmProvider>
   </BrowserRouter>
 );
 

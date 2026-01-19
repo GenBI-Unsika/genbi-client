@@ -1,365 +1,48 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import MemberCard from '../components/cards/MemberCard';
+import EmptyStateImage from '../components/EmptyStateImage';
+import LoadingSpinner from '../components/shared/LoadingSpinner';
 import Modal from '../components/ui/Modal';
 import SocialLinks from '../components/shared/SocialLinks';
+import { apiFetch } from '../services/api.js';
 
 const TeamsPage = () => {
-  const members = useMemo(
-    () => [
-      // Steering Committee
-      {
-        name: 'Wardatul A.',
-        jabatan: 'Ketua Umum',
-        division: 'Steering Committee',
-        photo: '',
-        motivasi: 'Memberi dampak berarti melalui kolaborasi.',
-        cerita: 'Berangkat dari komunitas kampus kecil hingga memimpin program nasional.',
-        faculty: 'Ekonomi & Bisnis',
-        major: 'Manajemen',
-        cohort: 2022,
-        socials: {
-          instagram: 'https://instagram.com/wardatul',
-          linkedin: 'https://www.linkedin.com/in/wardatul',
-          twitter: 'https://twitter.com/wardatul',
-          email: 'mailto:wardatul@example.com',
-        },
-      },
-      {
-        name: 'M. Fiqri Ferdinan',
-        jabatan: 'Wakil Ketua',
-        division: 'Steering Committee',
-        photo: '',
-        motivasi: 'Inovasi adalah kunci untuk masa depan yang lebih baik.',
-        cerita: 'Aktif dalam berbagai proyek teknologi dan sosial sejak tahun pertama kuliah.',
-        faculty: 'Teknik',
-        major: 'Informatika',
-        cohort: 2022,
-        socials: {
-          instagram: 'https://instagram.com/fiqri',
-          linkedin: 'https://www.linkedin.com/in/mfiqri',
-        },
-      },
-      {
-        name: 'Muhammad Wildan',
-        jabatan: 'Sekretaris Umum',
-        division: 'Steering Committee',
-        photo: '',
-        faculty: 'Hukum',
-        major: 'Ilmu Hukum',
-        cohort: 2021,
-        socials: {
-          instagram: 'https://instagram.com/muhwildan',
-          linkedin: 'https://www.linkedin.com/in/muhwildan',
-        },
-      },
-      {
-        name: 'Ragil Ohat Dirganti',
-        jabatan: 'Bendahara Umum',
-        division: 'Steering Committee',
-        photo: '',
-        faculty: 'Ekonomi & Bisnis',
-        major: 'Akuntansi',
-        cohort: 2021,
-        socials: {
-          instagram: 'https://instagram.com/ragilohat',
-          linkedin: 'https://www.linkedin.com/in/ragilohat',
-        },
-      },
+  const [members, setMembers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-      // Divisi Pengembangan Masyarakat
-      {
-        name: 'Laili Annisyah D.',
-        jabatan: 'Kepala Divisi',
-        division: 'Divisi Pengembangan Masyarakat',
-        photo: '',
-        faculty: 'FKIP',
-        major: 'Pendidikan Bahasa Inggris',
-        cohort: 2022,
-        socials: { instagram: 'https://instagram.com/lailiann' },
-      },
-      {
-        name: 'Sheny Ardrianah',
-        jabatan: 'Wakil Kepala Divisi',
-        division: 'Divisi Pengembangan Masyarakat',
-        photo: '',
-        faculty: 'FKIP',
-        major: 'PGSD',
-        cohort: 2023,
-        socials: { instagram: 'https://instagram.com/sheny' },
-      },
-      {
-        name: 'Anisya Chairunnisa',
-        jabatan: 'Staff Divisi',
-        division: 'Divisi Pengembangan Masyarakat',
-        photo: '',
-        faculty: 'Ilmu Sosial & Politik',
-        major: 'Sosiologi',
-        cohort: 2023,
-        socials: { instagram: 'https://instagram.com/anisya' },
-      },
-      {
-        name: 'Nadira Rahel Putri',
-        jabatan: 'Staff Divisi',
-        division: 'Divisi Pengembangan Masyarakat',
-        photo: '',
-        faculty: 'Kesehatan Masyarakat',
-        major: 'Ilmu Gizi',
-        cohort: 2022,
-        socials: { instagram: 'https://instagram.com/nadirarahel' },
-      },
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      try {
+        setError('');
+        setLoading(true);
 
-      // Divisi Komunikasi
-      {
-        name: 'Reni Rahmania',
-        jabatan: 'Kepala Divisi',
-        division: 'Divisi Komunikasi',
-        photo: '',
-        faculty: 'Ilmu Komunikasi',
-        major: 'Public Relations',
-        cohort: 2021,
-        socials: { instagram: 'https://instagram.com/renirahma' },
-      },
-      {
-        name: 'Anindra Putri Bela T',
-        jabatan: 'Wakil Kepala Divisi',
-        division: 'Divisi Komunikasi',
-        photo: '',
-        faculty: 'Desain Komunikasi Visual',
-        major: 'Desain Grafis',
-        cohort: 2022,
-        socials: { instagram: 'https://instagram.com/anindraputri' },
-      },
-      {
-        name: 'Luthfei Arikinasari',
-        jabatan: 'Staff Ahli Keuangan',
-        division: 'Divisi Komunikasi',
-        photo: '',
-        faculty: 'Ekonomi & Bisnis',
-        major: 'Akuntansi',
-        cohort: 2022,
-        socials: { instagram: 'https://instagram.com/luthfei' },
-      },
-      {
-        name: 'Stevani Lathania',
-        jabatan: 'Staff Ahli Administrasi',
-        division: 'Divisi Komunikasi',
-        photo: '',
-        faculty: 'Ilmu Sosial',
-        major: 'Administrasi Publik',
-        cohort: 2021,
-        socials: { instagram: 'https://instagram.com/stevani' },
-      },
-      {
-        name: 'Fayha Sabrina',
-        jabatan: 'Staff Divisi',
-        division: 'Divisi Komunikasi',
-        photo: '',
-        faculty: 'Ilmu Komunikasi',
-        major: 'Jurnalistik',
-        cohort: 2023,
-        socials: { instagram: 'https://instagram.com/fayhasab' },
-      },
-      {
-        name: 'Najwa Maulida Ashshhfa',
-        jabatan: 'Staff Divisi',
-        division: 'Divisi Komunikasi',
-        photo: '',
-        faculty: 'Ilmu Budaya',
-        major: 'Sastra Indonesia',
-        cohort: 2023,
-        socials: { instagram: 'https://instagram.com/najwamaulida' },
-      },
+        const json = await apiFetch('/teams', { method: 'GET', skipAuth: true });
+        const items = json?.data || [];
+        if (alive) setMembers(Array.isArray(items) ? items : []);
+      } catch (e) {
+        if (!alive) return;
+        // If endpoint isn't available yet (or no data), show empty-state instead of error.
+        if (e?.status === 404) {
+          setMembers([]);
+          setError('');
+          return;
+        }
 
-      // Divisi Riset/Isu
-      {
-        name: 'Ilham Deikhsa',
-        jabatan: 'Kepala Divisi',
-        division: 'Divisi Riset/Isu',
-        photo: '',
-        faculty: 'Sains & Teknologi',
-        major: 'Statistika',
-        cohort: 2021,
-        socials: { instagram: 'https://instagram.com/ilhamdeik' },
-      },
-      {
-        name: 'Sari Rahel Sihoina',
-        jabatan: 'Wakil Kepala Divisi',
-        division: 'Divisi Riset/Isu',
-        photo: '',
-        faculty: 'Sains & Teknologi',
-        major: 'Statistika',
-        cohort: 2022,
-        socials: { instagram: 'https://instagram.com/sarirahel' },
-      },
-      {
-        name: 'Nova Marisa Siregar',
-        jabatan: 'Staff Divisi',
-        division: 'Divisi Riset/Isu',
-        photo: '',
-        faculty: 'Teknik',
-        major: 'Teknik Industri',
-        cohort: 2022,
-        socials: { instagram: 'https://instagram.com/novasiregar' },
-      },
-      {
-        name: 'Larasatila Rahadilia',
-        jabatan: 'Staff Divisi',
-        division: 'Divisi Riset/Isu',
-        photo: '',
-        faculty: 'Hukum',
-        major: 'Hukum Internasional',
-        cohort: 2023,
-        socials: { instagram: 'https://instagram.com/larasatila' },
-      },
+        setMembers([]);
+        setError(e?.message || 'Gagal memuat data anggota');
+      } finally {
+        if (alive) setLoading(false);
+      }
+    })();
 
-      // Divisi Kewirausahaan
-      {
-        name: 'Seto Dwi Pranowo',
-        jabatan: 'Kepala Divisi',
-        division: 'Divisi Kewirausahaan',
-        photo: '',
-        faculty: 'Ekonomi & Bisnis',
-        major: 'Manajemen',
-        cohort: 2023,
-        socials: { instagram: 'https://instagram.com/setodwi' },
-      },
-      {
-        name: 'Vitriyana Br Simeangkir',
-        jabatan: 'Wakil Kepala Divisi',
-        division: 'Divisi Kewirausahaan',
-        photo: '',
-        faculty: 'Ekonomi & Bisnis',
-        major: 'Manajemen',
-        cohort: 2023,
-        socials: { instagram: 'https://instagram.com/vitriyana' },
-      },
-      {
-        name: 'Angel Aurellia Aqeela',
-        jabatan: 'Staff Divisi',
-        division: 'Divisi Kewirausahaan',
-        photo: '',
-        faculty: 'Vokasi',
-        major: 'Manajemen Pemasaran',
-        cohort: 2023,
-        socials: { instagram: 'https://instagram.com/angelaurellia' },
-      },
-      {
-        name: 'Deryan A F A',
-        jabatan: 'Staff Divisi',
-        division: 'Divisi Kewirausahaan',
-        photo: '',
-        faculty: 'Ekonomi & Bisnis',
-        major: 'Bisnis Digital',
-        cohort: 2022,
-        socials: { instagram: 'https://instagram.com/deryan' },
-      },
+    return () => {
+      alive = false;
+    };
+  }, []);
 
-      // Divisi Pendidikan
-      {
-        name: 'M Faizal Wahidatuddin',
-        jabatan: 'Kepala Divisi',
-        division: 'Divisi Pendidikan',
-        photo: '',
-        faculty: 'FKIP',
-        major: 'Pendidikan Sejarah',
-        cohort: 2022,
-        socials: { instagram: 'https://instagram.com/faizalwahid' },
-      },
-      {
-        name: 'Mega Belliana Utami',
-        jabatan: 'Wakil Kepala Divisi',
-        division: 'Divisi Pendidikan',
-        photo: '',
-        faculty: 'FKIP',
-        major: 'Bimbingan Konseling',
-        cohort: 2022,
-        socials: { instagram: 'https://instagram.com/megabelliana' },
-      },
-      {
-        name: 'Aliansin Oktavianti',
-        jabatan: 'Staff Divisi',
-        division: 'Divisi Pendidikan',
-        photo: '',
-        faculty: 'FKIP',
-        major: 'Pendidikan Guru PAUD',
-        cohort: 2022,
-        socials: { instagram: 'https://instagram.com/aliansin' },
-      },
-      {
-        name: 'Nensi Agustina Tarigan',
-        jabatan: 'Staff Divisi',
-        division: 'Divisi Pendidikan',
-        photo: '',
-        faculty: 'FKIP',
-        major: 'Pendidikan Matematika',
-        cohort: 2022,
-        socials: { instagram: 'https://instagram.com/nensitarigan' },
-      },
-      {
-        name: 'Nabil Khafidz',
-        jabatan: 'Staff Divisi',
-        division: 'Divisi Pendidikan',
-        photo: '',
-        faculty: 'FKIP',
-        major: 'Pendidikan Jasmani',
-        cohort: 2022,
-        socials: { instagram: 'https://instagram.com/nabilkhafidz' },
-      },
-      {
-        name: 'Nadia Rasi Marlissa',
-        jabatan: 'Staff Divisi',
-        division: 'Divisi Pendidikan',
-        photo: '',
-        faculty: 'FKIP',
-        major: 'Pendidikan Bahasa Indonesia',
-        cohort: 2022,
-        socials: { instagram: 'https://instagram.com/nadiarasi' },
-      },
-      {
-        name: 'Milhan Kuzin',
-        jabatan: 'Staff Divisi',
-        division: 'Divisi Pendidikan',
-        photo: '',
-        faculty: 'FKIP',
-        major: 'Teknologi Pendidikan',
-        cohort: 2022,
-        socials: { instagram: 'https://instagram.com/milhankuzin' },
-      },
-      {
-        name: 'Farza Humaiza',
-        jabatan: 'Staff Divisi',
-        division: 'Divisi Pendidikan',
-        photo: '',
-        faculty: 'Psikologi',
-        major: 'Psikologi Pendidikan',
-        cohort: 2023,
-        socials: { instagram: 'https://instagram.com/farzahumaiza' },
-      },
-      {
-        name: 'Bentantius M R',
-        jabatan: 'Staff Divisi',
-        division: 'Divisi Pendidikan',
-        photo: '',
-        faculty: 'FKIP',
-        major: 'Pendidikan Fisika',
-        cohort: 2021,
-        socials: { instagram: 'https://instagram.com/bentantius' },
-      },
-      {
-        name: 'Maulidul Khoi Z',
-        jabatan: 'Staff Divisi',
-        division: 'Divisi Pendidikan',
-        photo: '',
-        faculty: 'Sains & Teknologi',
-        major: 'Kimia Murni',
-        cohort: 2022,
-        socials: { instagram: 'https://instagram.com/maulidulkhoi' },
-      },
-    ],
-    []
-  );
-
-  useMemo(() => {
+  useEffect(() => {
     const seen = new Set();
     members.forEach((m) => {
       const k = (m.name || '').trim().toLowerCase();
@@ -400,18 +83,36 @@ const TeamsPage = () => {
           <p className="text-gray-600 text-lg">Yuk, kenal lebih dekat dengan kami</p>
         </div>
 
-        {/* Divisions (hasil grup otomatis) */}
-        {grouped.map(({ title, members: list }) => (
-          <section key={title} className="mb-16">
-            <h2 className="text-2xl font-bold text-gray-900 mb-8">{title}</h2>
+        {loading ? <LoadingSpinner text="Memuat anggota..." /> : null}
+        {!loading && error ? <EmptyStateImage image="https://illustrations.popsy.co/amber/page-not-found.svg" imageAlt="Error loading members" title="Gagal memuat anggota" description={error} variant="primary" imageSize="lg" /> : null}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {list.map((m, i) => (
-                <MemberCard key={`${title}-${i}`} member={m} onClick={handleOpen} />
-              ))}
+        {/* Divisions (hasil grup otomatis) */}
+        {!loading && !error ? (
+          grouped.length === 0 ? (
+            <div className="py-10">
+              <EmptyStateImage
+                image="https://illustrations.popsy.co/amber/team-spirit.svg"
+                imageAlt="No members illustration"
+                title="Belum ada anggota"
+                description="Data anggota GenBI Unsika akan tampil di sini ketika sudah tersedia."
+                variant="primary"
+                imageSize="lg"
+              />
             </div>
-          </section>
-        ))}
+          ) : (
+            grouped.map(({ title, members: list }) => (
+              <section key={title} className="mb-16">
+                <h2 className="text-2xl font-bold text-gray-900 mb-8">{title}</h2>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {list.map((m, i) => (
+                    <MemberCard key={`${title}-${i}`} member={m} onClick={handleOpen} />
+                  ))}
+                </div>
+              </section>
+            ))
+          )
+        ) : null}
       </div>
 
       {/* Modal Detail Anggota */}

@@ -1,6 +1,8 @@
+import ScrollReveal from './ScrollReveal';
+
 const CTASection = () => {
   return (
-    <div className="relative z-10 -mb-15">
+    <ScrollReveal as="div" once className="relative z-10 -mb-15">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-6">
         <div className="bg-primary-500 rounded-2xl p-8 shadow-2xl">
           <div className="flex justify-center items-center px-2 gap-6">
@@ -9,7 +11,7 @@ const CTASection = () => {
           </div>
         </div>
       </div>
-    </div>
+    </ScrollReveal>
   );
 };
 

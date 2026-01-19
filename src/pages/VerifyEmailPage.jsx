@@ -29,6 +29,7 @@ const VerifyEmailPage = ({ onNavigate }) => {
       try {
         await verifyEmail(token);
         if (!alive) return;
+        toast.success('Email berhasil diverifikasi! Silakan login.');
         setStatus('Email berhasil diverifikasi. Silakan login.');
       } catch (e2) {
         if (!alive) return;
@@ -55,6 +56,7 @@ const VerifyEmailPage = ({ onNavigate }) => {
     try {
       setSubmitting(true);
       await resendVerification(email);
+      toast.success('Email verifikasi berhasil dikirim ulang!');
       localStorage.setItem('pendingVerifyEmail', email);
       setStatus('Email verifikasi telah dikirim ulang. Silakan cek inbox/spam.');
     } catch (e2) {

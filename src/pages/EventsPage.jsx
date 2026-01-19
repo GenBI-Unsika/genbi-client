@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import EventCard from '../components/cards/EventCard';
 import { apiFetch } from '../services/api.js';
-import EmptyState from '../components/EmptyState';
+import EmptyStateImage from '../components/EmptyStateImage';
 
 const EventsPage = () => {
   const [events, setEvents] = useState([]);
@@ -49,7 +49,7 @@ const EventsPage = () => {
           {loading ? <div className="text-gray-500">Memuat...</div> : null}
           {!loading && !error && events.length === 0 ? (
             <div className="col-span-full">
-              <EmptyState icon="calendar" title="Belum ada event" description="Event akan muncul di sini." />
+              <EmptyStateImage image="https://illustrations.popsy.co/amber/remote-work.svg" imageAlt="No events illustration" title="Belum ada event" description="Event dan kegiatan akan muncul di sini" variant="primary" imageSize="lg" />
             </div>
           ) : null}
           {events.map((e) => (

@@ -86,12 +86,21 @@ export async function apiFetch(path, options = {}) {
 
   if (!res.ok) {
     if (res.status === 401) {
+      const rawMessage = json?.error?.message || json?.message || res.statusText || 'Unauthorized';
+      const lower = String(rawMessage).toLowerCase();
+      const reason = lower.includes('expired') ? 'token_expired' : 'unauthorized';
+      const logoutMessage = lower.includes('expired') ? 'Sesi kamu sudah berakhir (token expired). Silakan login lagi.' : 'Sesi kamu sudah berakhir. Silakan login lagi.';
+
       setAccessToken(null);
       localStorage.removeItem('me');
       try {
-        window.dispatchEvent(new Event('auth:logout'));
+        window.dispatchEvent(new CustomEvent('auth:logout', { detail: { reason, message: logoutMessage } }));
       } catch {
-        // ignore
+        try {
+          window.dispatchEvent(new Event('auth:logout'));
+        } catch {
+          // ignore
+        }
       }
     }
     const message = json?.error?.message || json?.message || res.statusText || 'Request failed';

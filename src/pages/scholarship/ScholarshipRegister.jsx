@@ -5,9 +5,11 @@ import StepperFlyon from '../../components/ui/StepperFlyon';
 import { Field, FieldLabel, TextInput, Select, Textarea } from '../../components/ui/FormControls';
 import { getMe } from '../../utils/auth.js';
 import { scholarshipSubmitApplication, uploadFile } from '../../utils/api.js';
+import { useConfirm } from '../../contexts/ConfirmContext.jsx';
 
 const ScholarshipRegister = () => {
   const navigate = useNavigate();
+  const { confirm } = useConfirm();
   const [step, setStep] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const actionsRef = useRef(null);
@@ -83,6 +85,15 @@ const ScholarshipRegister = () => {
 
     if (step !== 2) return;
 
+    const ok = await confirm({
+      title: 'Kirim pendaftaran beasiswa?',
+      description: 'Pastikan data dan dokumen sudah benar sebelum mengirim.',
+      confirmText: 'Kirim',
+      cancelText: 'Batal',
+    });
+
+    if (!ok) return;
+
     try {
       setSubmitting(true);
 
@@ -120,6 +131,7 @@ const ScholarshipRegister = () => {
         files: filesPayload,
       });
 
+      toast.success('Pendaftaran beasiswa berhasil dikirim!');
       navigate('/scholarship/success');
     } catch (err) {
       toast.error(err?.message || 'Gagal mengirim pendaftaran.');
@@ -160,7 +172,15 @@ const ScholarshipRegister = () => {
                 <FieldLabel htmlFor="birth" required>
                   Tanggal Lahir
                 </FieldLabel>
-                <TextInput id="birth" type="date" value={form.birth} onChange={(e) => setForm({ ...form, birth: e.target.value })} />
+                <TextInput
+                  id="birth"
+                  type="date"
+                  value={form.birth}
+                  onChange={(e) => setForm({ ...form, birth: e.target.value })}
+                  onClick={(e) => e.currentTarget.showPicker?.()}
+                  onFocus={(e) => e.currentTarget.showPicker?.()}
+                  max={new Date().toISOString().slice(0, 10)}
+                />
               </Field>
 
               <Field>

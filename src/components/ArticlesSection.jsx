@@ -1,7 +1,8 @@
 import ArticleCard from './cards/ArticleCard';
 import { useEffect, useState } from 'react';
 import { apiFetch } from '../services/api.js';
-import EmptyState from './EmptyState';
+import EmptyStateImage from './EmptyStateImage';
+import ScrollReveal from './ScrollReveal';
 
 const ArticlesSection = () => {
   const [articles, setArticles] = useState([]);
@@ -32,7 +33,7 @@ const ArticlesSection = () => {
   }, []);
 
   return (
-    <section className="bg-white">
+    <ScrollReveal as="section" className="bg-white">
       <div className="py-12 sm:py-16 bg-primary-50 rounded-none md:rounded-tl-[72px] xl:rounded-tl-[100px] md:rounded-br-[72px] xl:rounded-br-[100px]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center mb-8">
@@ -46,16 +47,25 @@ const ArticlesSection = () => {
             {loading ? <div className="text-gray-500">Memuat...</div> : null}
             {!loading && articles.length === 0 ? (
               <div className="col-span-full">
-                <EmptyState icon="files" title="Belum ada artikel" description="Artikel terbaru akan muncul di sini." />
+                <EmptyStateImage
+                  image="https://illustrations.popsy.co/amber/work-from-home.svg"
+                  imageAlt="No articles illustration"
+                  title="Belum ada artikel"
+                  description="Artikel terbaru akan muncul di sini"
+                  variant="primary"
+                  imageSize="lg"
+                />
               </div>
             ) : null}
-            {articles.map((a) => (
-              <ArticleCard key={a.id || a.slug || a.title} {...a} to={a.href || (a.id ? `/articles/${a.id}` : '/articles')} />
+            {articles.map((a, idx) => (
+              <ScrollReveal key={a.id || a.slug || a.title} as="div" once className="h-full" delayMs={idx * 70}>
+                <ArticleCard {...a} to={a.href || (a.id ? `/articles/${a.id}` : '/articles')} />
+              </ScrollReveal>
             ))}
           </div>
         </div>
       </div>
-    </section>
+    </ScrollReveal>
   );
 };
 

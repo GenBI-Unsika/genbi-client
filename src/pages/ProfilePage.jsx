@@ -2,31 +2,73 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { getMe, syncMe } from '../utils/auth.js';
 import { apiFetch } from '../services/api.js';
+import { useConfirm } from '../contexts/ConfirmContext.jsx';
+import { fetchFaculties } from '../utils/masterData.js';
 
 const ProfilePage = () => {
+  const { confirm } = useConfirm();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState('');
+  const [userAvatar, setUserAvatar] = useState('');
 
-  const user = getMe();
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
     birthDate: '',
     gender: '',
     npm: '',
-    studyProgram: '',
+    facultyId: '',
+    studyProgramId: '',
     currentSemester: '',
   });
 
+  const [errors, setErrors] = useState({});
+  const [faculties, setFaculties] = useState([]);
+  const [availablePrograms, setAvailablePrograms] = useState([]);
+
+  // Load faculties on mount
   useEffect(() => {
     let alive = true;
+
+    (async () => {
+      try {
+        const data = await fetchFaculties();
+        if (alive) setFaculties(data);
+      } catch (error) {
+        console.error('Failed to load faculties:', error);
+      }
+    })();
+
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  // Load user profile
+  useEffect(() => {
+    let alive = true;
+
     (async () => {
       try {
         setLoading(true);
         await syncMe();
         const me = getMe();
+
         if (!alive) return;
+
+        const defaultAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(me?.profile?.name || me?.email || 'User')}&background=4F46E5&color=fff&size=256`;
+        setUserAvatar(me?.profile?.avatar || defaultAvatar);
+
+        const facultyId = me?.profile?.facultyId || '';
+        const studyProgramId = me?.profile?.studyProgramId || '';
+
+        // Set available programs if faculty is selected
+        if (facultyId && faculties.length > 0) {
+          const selectedFaculty = faculties.find((f) => f.id === facultyId);
+          if (selectedFaculty) {
+            setAvailablePrograms(selectedFaculty.studyPrograms || []);
+          }
+        }
 
         setFormData({
           fullName: me?.profile?.name || '',
@@ -34,136 +76,323 @@ const ProfilePage = () => {
           birthDate: me?.profile?.birthDate ? new Date(me.profile.birthDate).toISOString().split('T')[0] : '',
           gender: me?.profile?.gender || '',
           npm: me?.profile?.npm || '',
-          studyProgram: me?.profile?.study || '',
-          currentSemester: me?.profile?.semester || '',
+          facultyId,
+          studyProgramId,
+          currentSemester: me?.profile?.semester?.toString() || '',
         });
-      } catch (e) {
+      } catch {
         if (!alive) return;
-        const msg = 'Gagal memuat profil';
-        toast.error(msg);
-        setError(msg);
+        toast.error('Gagal memuat profil');
       } finally {
         if (alive) setLoading(false);
       }
     })();
+
     return () => {
       alive = false;
     };
-  }, []);
+  }, [faculties]);
+
+  // Validation functions
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const validateNPM = (npm) => {
+    if (!npm) return true; // NPM is optional
+    const npmRegex = /^\d{13}$/; // 13 digits
+    return npmRegex.test(npm);
+  };
+
+  const validateSemester = (semester) => {
+    if (!semester) return true; // Semester is optional
+    const semesterNum = parseInt(semester, 10);
+    return semesterNum >= 1 && semesterNum <= 14;
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!formData.fullName.trim()) {
+      newErrors.fullName = 'Nama lengkap wajib diisi';
+    }
+
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email wajib diisi';
+    } else if (!validateEmail(formData.email)) {
+      newErrors.email = 'Format email tidak valid';
+    }
+
+    if (formData.npm && !validateNPM(formData.npm)) {
+      newErrors.npm = 'NPM harus 13 digit angka';
+    }
+
+    if (formData.currentSemester && !validateSemester(formData.currentSemester)) {
+      newErrors.currentSemester = 'Semester harus antara 1-14';
+    }
+
+    if (formData.birthDate) {
+      const birthYear = new Date(formData.birthDate).getFullYear();
+      const currentYear = new Date().getFullYear();
+      if (currentYear - birthYear < 16 || currentYear - birthYear > 100) {
+        newErrors.birthDate = 'Tanggal lahir tidak valid';
+      }
+    }
+
+    if (formData.facultyId && !formData.studyProgramId) {
+      newErrors.studyProgramId = 'Pilih program studi';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleInputChange = (e) => {
+    const { name, value } = e.target;
+
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [name]: value,
     });
+
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors({
+        ...errors,
+        [name]: undefined,
+      });
+    }
+  };
+
+  const handleFacultyChange = (e) => {
+    const facultyId = e.target.value;
+    setFormData({
+      ...formData,
+      facultyId,
+      studyProgramId: '', // Reset study program when faculty changes
+    });
+
+    if (facultyId) {
+      const selectedFaculty = faculties.find((f) => f.id === facultyId);
+      setAvailablePrograms(selectedFaculty?.studyPrograms || []);
+    } else {
+      setAvailablePrograms([]);
+    }
+
+    // Clear errors
+    if (errors.facultyId) {
+      setErrors({ ...errors, facultyId: undefined, studyProgramId: undefined });
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+
+    if (!validateForm()) {
+      toast.error('Mohon periksa kembali data yang Anda masukkan');
+      return;
+    }
+
+    const ok = await confirm({
+      title: 'Simpan perubahan profil?',
+      description: 'Perubahan profil akan disimpan ke akun Anda.',
+      confirmText: 'Simpan',
+      cancelText: 'Batal',
+    });
+
+    if (!ok) return;
+
     setSaving(true);
 
     try {
       await apiFetch('/me/profile', {
         method: 'PATCH',
         body: {
-          name: formData.fullName,
-          birthDate: formData.birthDate || null,
+          name: formData.fullName.trim(),
+          birthDate: formData.birthDate ? new Date(formData.birthDate).toISOString() : null,
           gender: formData.gender || null,
           npm: formData.npm || null,
-          study: formData.studyProgram || null,
-          semester: formData.currentSemester || null,
+          facultyId: formData.facultyId || null,
+          studyProgramId: formData.studyProgramId || null,
+          semester: formData.currentSemester ? parseInt(formData.currentSemester, 10) : null,
         },
       });
+
       await syncMe();
       toast.success('Profil berhasil diperbarui');
     } catch (e) {
       const msg = e?.message || 'Gagal memperbarui profil';
       toast.error(msg);
-      setError(msg);
     } finally {
       setSaving(false);
     }
   };
 
-  return (
-    <div className="bg-white rounded-lg shadow-sm p-8">
-      <h2 className="text-2xl font-bold text-gray-900 mb-8">Profil Saya</h2>
+  if (loading) {
+    return (
+      <div className="bg-white rounded-lg p-8">
+        <div className="text-center py-12">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+          <p className="mt-3 text-gray-500">Memuat profil...</p>
+        </div>
+      </div>
+    );
+  }
 
-      {loading ? (
-        <div className="text-center py-8 text-gray-500">Memuat profil...</div>
-      ) : (
-        <>
-          {/* Profile Photo Section */}
-          <div className="flex items-center gap-6 mb-8">
-            <div className="w-24 h-24 bg-primary-200 rounded-full overflow-hidden flex items-center justify-center">
-              <span className="text-4xl font-semibold text-primary-700">{formData.fullName?.charAt(0)?.toUpperCase() || 'P'}</span>
-            </div>
-            <div className="flex gap-3">
-              <button type="button" className="bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-colors">
-                Unggah Foto
-              </button>
-              <button type="button" className="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors">
-                Hapus Foto
-              </button>
-            </div>
+  return (
+    <div className="bg-white rounded-lg p-6 sm:p-8">
+      <h2 className="text-2xl font-bold text-gray-900 mb-6 sm:mb-8">Profil Saya</h2>
+
+      {/* Profile Photo Section */}
+      <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 mb-6 sm:mb-8 pb-6 sm:pb-8 border-b border-gray-200">
+        <div className="relative">
+          <img src={userAvatar} alt={formData.fullName || 'Profile'} className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-4 border-primary-100" referrerPolicy="no-referrer" />
+        </div>
+        <div className="text-center sm:text-left">
+          <h3 className="text-lg font-semibold text-gray-900 mb-1">{formData.fullName || 'Nama belum diisi'}</h3>
+          <p className="text-sm text-gray-600 mb-2">{formData.email}</p>
+          {formData.npm && <p className="text-sm text-gray-500">NPM: {formData.npm}</p>}
+          {formData.studyProgram && <p className="text-xs text-gray-400 mt-1">{formData.studyProgram}</p>}
+        </div>
+      </div>
+
+      {/* Profile Form */}
+      <form onSubmit={handleSubmit} className="space-y-5">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Nama Lengkap <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            name="fullName"
+            value={formData.fullName}
+            onChange={handleInputChange}
+            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${errors.fullName ? 'border-red-500' : 'border-gray-300'}`}
+            placeholder="Masukkan nama lengkap"
+          />
+          {errors.fullName && <p className="mt-1 text-sm text-red-600">{errors.fullName}</p>}
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Email <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleInputChange}
+            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
+            placeholder="nama@email.com"
+          />
+          {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Tanggal Lahir</label>
+            <input
+              type="date"
+              name="birthDate"
+              value={formData.birthDate}
+              onChange={handleInputChange}
+              onClick={(e) => e.currentTarget.showPicker?.()}
+              onFocus={(e) => e.currentTarget.showPicker?.()}
+              max={new Date().toISOString().split('T')[0]}
+              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${errors.birthDate ? 'border-red-500' : 'border-gray-300'}`}
+            />
+            {errors.birthDate && <p className="mt-1 text-sm text-red-600">{errors.birthDate}</p>}
           </div>
 
-          {/* Profile Form */}
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap</label>
-              <input type="text" name="fullName" value={formData.fullName} onChange={handleInputChange} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent" />
-            </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Jenis Kelamin</label>
+            <select name="gender" value={formData.gender} onChange={handleInputChange} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+              <option value="">Pilih jenis kelamin</option>
+              <option value="Laki-laki">Laki-laki</option>
+              <option value="Perempuan">Perempuan</option>
+            </select>
+          </div>
+        </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
-              <input type="email" name="email" value={formData.email} onChange={handleInputChange} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent" />
-            </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">NPM</label>
+          <input
+            type="text"
+            name="npm"
+            value={formData.npm}
+            onChange={handleInputChange}
+            maxLength={13}
+            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${errors.npm ? 'border-red-500' : 'border-gray-300'}`}
+            placeholder="Contoh: 2111010001234"
+          />
+          {errors.npm && <p className="mt-1 text-sm text-red-600">{errors.npm}</p>}
+          <p className="mt-1 text-xs text-gray-500">13 digit angka</p>
+        </div>
 
-            <div className="grid grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Tanggal Lahir</label>
-                <input type="text" name="birthDate" value={formData.birthDate} onChange={handleInputChange} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Gender</label>
-                <select name="gender" value={formData.gender} onChange={handleInputChange} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent">
-                  <option value="Perempuan">Perempuan</option>
-                  <option value="Laki-laki">Laki-laki</option>
-                </select>
-              </div>
-            </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Fakultas</label>
+          <select
+            name="facultyId"
+            value={formData.facultyId}
+            onChange={handleFacultyChange}
+            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${errors.facultyId ? 'border-red-500' : 'border-gray-300'}`}
+          >
+            <option value="">Pilih fakultas</option>
+            {faculties.map((faculty) => (
+              <option key={faculty.id} value={faculty.id}>
+                {faculty.name}
+              </option>
+            ))}
+          </select>
+          {errors.facultyId && <p className="mt-1 text-sm text-red-600">{errors.facultyId}</p>}
+        </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">NPM</label>
-              <input type="text" name="npm" value={formData.npm} onChange={handleInputChange} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent" />
-            </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Program Studi</label>
+          <select
+            name="studyProgramId"
+            value={formData.studyProgramId}
+            onChange={handleInputChange}
+            disabled={!formData.facultyId}
+            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${
+              errors.studyProgramId ? 'border-red-500' : 'border-gray-300'
+            } ${!formData.facultyId ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+          >
+            <option value="">{formData.facultyId ? 'Pilih program studi' : 'Pilih fakultas terlebih dahulu'}</option>
+            {availablePrograms.map((program) => (
+              <option key={program.id} value={program.id}>
+                {program.name} ({program.degree})
+              </option>
+            ))}
+          </select>
+          {errors.studyProgramId && <p className="mt-1 text-sm text-red-600">{errors.studyProgramId}</p>}
+        </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Program Studi</label>
-              <input type="text" name="studyProgram" value={formData.studyProgram} onChange={handleInputChange} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent" />
-            </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Semester Saat Ini</label>
+          <select
+            name="currentSemester"
+            value={formData.currentSemester}
+            onChange={handleInputChange}
+            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${errors.currentSemester ? 'border-red-500' : 'border-gray-300'}`}
+          >
+            <option value="">Pilih semester</option>
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map((sem) => (
+              <option key={sem} value={sem}>
+                Semester {sem}
+              </option>
+            ))}
+          </select>
+          {errors.currentSemester && <p className="mt-1 text-sm text-red-600">{errors.currentSemester}</p>}
+        </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Semester Saat Ini</label>
-              <input
-                type="text"
-                name="currentSemester"
-                value={formData.currentSemester}
-                onChange={handleInputChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-              />
-            </div>
-
-            <div className="flex justify-end">
-              <button type="submit" disabled={saving} className="bg-secondary-500 text-white px-8 py-3 rounded-lg hover:bg-secondary-600 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed">
-                {saving ? 'Menyimpan...' : 'Simpan'}
-              </button>
-            </div>
-          </form>
-        </>
-      )}
+        <div className="flex justify-end pt-4">
+          <button type="submit" disabled={saving} className="bg-secondary-500 text-white px-8 py-3 rounded-lg hover:bg-secondary-600 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed">
+            {saving ? 'Menyimpan...' : 'Simpan Perubahan'}
+          </button>
+        </div>
+      </form>
     </div>
   );
 };

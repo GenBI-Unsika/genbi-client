@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import 'flyonui/flyonui';
 import { GraduationCap, ShieldCheck, Crown, ArrowLeft, ArrowRight } from 'lucide-react';
 import { apiFetch } from '../services/api.js';
-import EmptyState from './EmptyState';
+import EmptyStateImage from './EmptyStateImage';
+import ScrollReveal from './ScrollReveal';
 
 export default function TestimonialsSection() {
   const [testimonials, setTestimonials] = useState([]);
@@ -48,7 +49,7 @@ export default function TestimonialsSection() {
   }, []);
 
   return (
-    <section className="py-16 bg-white">
+    <ScrollReveal as="section" className="py-16 bg-white">
       <div className="py-8 sm:py-16 lg:py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div id="multi-slide" data-carousel='{"loadingClasses":"opacity-0","slidesQty":{"xs":1,"md":2}}' className="relative flex w-full gap-12 max-lg:flex-col md:gap-16 lg:items-center lg:gap-24">
@@ -101,7 +102,14 @@ export default function TestimonialsSection() {
                 <div className="text-gray-500 py-8">Memuat testimoni...</div>
               ) : testimonials.length === 0 ? (
                 <div className="py-8">
-                  <EmptyState icon="users" title="Belum ada testimoni" description="Testimoni dari anggota akan muncul di sini." />
+                  <EmptyStateImage
+                    image="https://illustrations.popsy.co/amber/team-spirit.svg"
+                    imageAlt="No testimonials illustration"
+                    title="Belum ada testimoni"
+                    description="Testimoni dari anggota akan muncul di sini"
+                    variant="primary"
+                    imageSize="lg"
+                  />
                 </div>
               ) : (
                 <div className="carousel-body gap-2 opacity-0">
@@ -150,6 +158,6 @@ export default function TestimonialsSection() {
           </div>
         </div>
       </div>
-    </section>
+    </ScrollReveal>
   );
 }

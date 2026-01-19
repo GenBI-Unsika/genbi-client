@@ -1,31 +1,39 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Menu, X, ChevronDown, Search as SearchIcon, Bell } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { getMe } from '../utils/auth.js';
+import { useConfirm } from '../contexts/ConfirmContext.jsx';
 
-/* Hover intent */
+/* Hover intent hook */
 function useHoverIntent(delay = 160) {
   const [open, setOpen] = useState(false);
   const timerRef = useRef(null);
+
   const onEnter = () => {
     if (timerRef.current) clearTimeout(timerRef.current);
     setOpen(true);
   };
+
   const onLeave = () => {
     if (timerRef.current) clearTimeout(timerRef.current);
     timerRef.current = setTimeout(() => setOpen(false), delay);
   };
+
   useEffect(() => () => timerRef.current && clearTimeout(timerRef.current), []);
+
   return { open, setOpen, onEnter, onLeave };
 }
 
-/* Dropdown (desktop) */
+/* Dropdown component (desktop) */
 function Dropdown({ label, items = [], onSelect }) {
   const { open, setOpen, onEnter, onLeave } = useHoverIntent(160);
   const wrapRef = useRef(null);
 
   useEffect(() => {
     const onDocClick = (e) => {
-      if (wrapRef.current && !wrapRef.current.contains(e.target)) setOpen(false);
+      if (wrapRef.current && !wrapRef.current.contains(e.target)) {
+        setOpen(false);
+      }
     };
     document.addEventListener('mousedown', onDocClick);
     return () => document.removeEventListener('mousedown', onDocClick);
@@ -69,10 +77,13 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [mAboutOpen, setMAboutOpen] = useState(false);
   const [mActivityOpen, setMActivityOpen] = useState(false);
-
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+
+  const { confirm } = useConfirm();
+
   const profileDropdownRef = useRef(null);
 
+  // Close profile dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target)) {
@@ -83,6 +94,7 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Navigation handlers
   const handleNavigation = (page) => {
     if (onNavigate) onNavigate(page);
   };
@@ -90,45 +102,61 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
   const handleProfileNavigation = (path) => {
     setIsProfileDropdownOpen(false);
     if (onNavigate) {
-      switch (path) {
-        case '/profile':
-          onNavigate('profile');
-          break;
-        case '/riwayat-aktivitas':
-          onNavigate('activity-history');
-          break;
-        case '/transaksi':
-          onNavigate('transactions');
-          break;
-        case '/pengaturan':
-          onNavigate('settings');
-          break;
-        default:
-          break;
+      const routeMap = {
+        '/profile': 'profile',
+        '/riwayat-aktivitas': 'activity-history',
+        '/transaksi': 'transactions',
+        '/pengaturan': 'settings',
+      };
+      if (routeMap[path]) {
+        onNavigate(routeMap[path]);
       }
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     setIsProfileDropdownOpen(false);
-    if (onLogout) onLogout();
-    else if (onLoginToggle) onLoginToggle();
+
+    const ok = await confirm({
+      title: 'Logout?',
+      description: 'Anda akan keluar dari akun ini.',
+      confirmText: 'Ya, logout',
+      cancelText: 'Batal',
+      tone: 'danger',
+    });
+
+    if (!ok) return;
+
+    if (onLogout) {
+      await onLogout();
+    } else if (onLoginToggle) {
+      onLoginToggle();
+    }
+
+    toast.success('Berhasil keluar!');
   };
 
   const handleSignInClick = () => {
-    if (onNavigate) onNavigate('signin');
-    else if (onLoginToggle) onLoginToggle();
+    if (onNavigate) {
+      onNavigate('signin');
+    } else if (onLoginToggle) {
+      onLoginToggle();
+    }
   };
 
   const handleRegister = () => {
-    if (onNavigate) onNavigate('signup');
-    else if (onLoginToggle) onLoginToggle();
+    if (onNavigate) {
+      onNavigate('signup');
+    } else if (onLoginToggle) {
+      onLoginToggle();
+    }
   };
 
   // Get user data
   const user = getMe();
   const userName = user?.profile?.name || user?.email?.split('@')[0] || 'Pengguna';
   const userEmail = user?.email || '';
+  const userAvatar = user?.profile?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=4F46E5&color=fff&size=128`;
 
   return (
     <header className="sticky top-0 z-50 bg-primary-50 shadow-sm">
@@ -150,7 +178,7 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
               label="Tentang Kami"
               items={[
                 { label: 'Sejarah', page: 'history' },
-                { label: 'Teams', page: 'teams' },
+                { label: 'Tim', page: 'teams' },
               ]}
               onSelect={handleNavigation}
             />
@@ -181,10 +209,7 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
               <input
                 type="text"
                 placeholder="Telusuri..."
-                className="pl-9 pr-3 h-9 w-60 lg:w-64 py-2
-                           bg-white border border-primary-200 rounded-lg
-                           text-sm placeholder:text-[var(--primary-500)] placeholder:opacity-80
-                           focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="pl-9 pr-3 h-9 w-60 lg:w-64 py-2 bg-white border border-primary-200 rounded-lg text-sm placeholder:text-[var(--primary-500)] placeholder:opacity-80 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
               />
               <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary-500" aria-hidden="true" />
             </label>
@@ -200,8 +225,8 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
             {/* Auth actions */}
             {isLoggedIn ? (
               <div className="relative" ref={profileDropdownRef}>
-                <button onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)} className="flex items-center space-x-2 p-1 rounded-full hover:bg-gray-50 transition-colors">
-                  <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Profil%20%281%29.jpg-JSb3KuBuAw2tddHZbhZENnbqebV9y3.jpeg" alt="Profile" className="w-8 h-8 rounded-full object-cover" />
+                <button onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)} className="flex items-center space-x-2 p-1 rounded-full hover:bg-gray-50 transition-colors" aria-label="Profile menu">
+                  <img src={userAvatar} alt="Profile" className="w-8 h-8 rounded-full object-cover" referrerPolicy="no-referrer" />
                 </button>
 
                 {/* Profile Dropdown */}
@@ -209,12 +234,12 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
                   <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
                     <div className="px-4 py-3 border-b border-gray-100">
                       <p className="text-sm font-medium text-gray-900">{userName}</p>
-                      <p className="text-sm text-gray-500">{userEmail}</p>
+                      <p className="text-sm text-gray-500 truncate">{userEmail}</p>
                     </div>
 
                     <div className="py-1">
                       <button onClick={() => handleProfileNavigation('/profile')} className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
-                        Profile Saya
+                        Profil Saya
                       </button>
                       <button onClick={() => handleProfileNavigation('/riwayat-aktivitas')} className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
                         Riwayat Aktivitas
@@ -295,7 +320,7 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
                     }}
                     className="block w-full text-left py-2.5 rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary-50 cursor-pointer"
                   >
-                    Teams
+                    Tim
                   </button>
                 </div>
               )}

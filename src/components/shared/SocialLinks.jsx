@@ -33,21 +33,26 @@ const SocialLinks = ({ links = {}, size = 'md', variant = 'icons' }) => {
 
   return (
     <div className="flex items-center gap-2">
-      {items.map(({ key, url, Icon, label }) => (
-        <a
-          key={key}
-          href={url}
-          target={url?.startsWith('mailto:') ? '_self' : '_blank'}
-          rel={url?.startsWith('mailto:') ? undefined : 'noopener noreferrer'}
-          className={['inline-flex items-center justify-center rounded-md', 'text-gray-600 hover:text-primary-700', 'bg-gray-100 hover:bg-gray-200', 'transition-colors', size === 'sm' ? 'p-1.5' : size === 'lg' ? 'p-2.5' : 'p-2'].join(' ')}
-          aria-label={label}
-          // supaya klik icon tidak ikut buka modal parent
-          onClick={(e) => e.stopPropagation()}
-        >
-          <Icon className={iconSize(size)} aria-hidden="true" />
-          {variant === 'text' && <span className="ml-2 text-sm">{label}</span>}
-        </a>
-      ))}
+      {items.map(({ key, url, Icon, label }) => {
+        const IconComponent = Icon;
+        return (
+          <a
+            key={key}
+            href={url}
+            target={url?.startsWith('mailto:') ? '_self' : '_blank'}
+            rel={url?.startsWith('mailto:') ? undefined : 'noopener noreferrer'}
+            className={['inline-flex items-center justify-center rounded-md', 'text-gray-600 hover:text-primary-700', 'bg-gray-100 hover:bg-gray-200', 'transition-colors', size === 'sm' ? 'p-1.5' : size === 'lg' ? 'p-2.5' : 'p-2'].join(
+              ' ',
+            )}
+            aria-label={label}
+            // supaya klik icon tidak ikut buka modal parent
+            onClick={(e) => e.stopPropagation()}
+          >
+            <IconComponent className={iconSize(size)} aria-hidden="true" />
+            {variant === 'text' && <span className="ml-2 text-sm">{label}</span>}
+          </a>
+        );
+      })}
     </div>
   );
 };

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { apiFetch } from '../services/api.js';
-import EmptyState from '../components/EmptyState';
+import EmptyStateImage from '../components/EmptyStateImage';
 
 const ActivitiesPage = () => {
   const [activeTab, setActiveTab] = useState('beasiswa');
@@ -62,7 +62,16 @@ const ActivitiesPage = () => {
         {activeTab === 'beasiswa' && (
           <>
             {loading ? <div className="text-gray-500">Memuat...</div> : null}
-            {!loading && !error && scholarshipData.length === 0 ? <EmptyState icon="clipboard" title="Belum ada riwayat beasiswa" description="Riwayat beasiswa Anda akan muncul di sini." /> : null}
+            {!loading && !error && scholarshipData.length === 0 ? (
+              <EmptyStateImage
+                image="https://illustrations.popsy.co/amber/education.svg"
+                imageAlt="No scholarship history"
+                title="Belum ada riwayat beasiswa"
+                description="Riwayat beasiswa Anda akan muncul di sini"
+                variant="primary"
+                imageSize="lg"
+              />
+            ) : null}
             {scholarshipData.map((item) => (
               <div key={item.id} className="flex items-center gap-6 p-6 border border-gray-200 rounded-lg">
                 <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center">
@@ -83,7 +92,9 @@ const ActivitiesPage = () => {
         {activeTab === 'event' && (
           <>
             {loading ? <div className="text-gray-500">Memuat...</div> : null}
-            {!loading && !error && eventData.length === 0 ? <EmptyState icon="calendar" title="Belum ada riwayat event" description="Riwayat event Anda akan muncul di sini." /> : null}
+            {!loading && !error && eventData.length === 0 ? (
+              <EmptyStateImage image="https://illustrations.popsy.co/amber/remote-work.svg" imageAlt="No event history" title="Belum ada riwayat event" description="Riwayat event Anda akan muncul di sini" variant="primary" imageSize="lg" />
+            ) : null}
             {eventData.map((item) => (
               <div key={item.id} className="flex items-center gap-6 p-6 border border-gray-200 rounded-lg">
                 <div className="w-20 h-16 bg-gray-100 rounded-lg overflow-hidden">

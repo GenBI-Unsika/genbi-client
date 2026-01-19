@@ -1,6 +1,7 @@
 import { Brain, Zap, Share2, Sparkles } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { apiFetch } from '../services/api.js';
+import ScrollReveal from './ScrollReveal';
 
 const iconMap = {
   Brain,
@@ -80,7 +81,7 @@ const VisionMissionSection = () => {
   }, []);
 
   return (
-    <section aria-labelledby="vision-mission-heading" className="py-8 bg-white">
+    <ScrollReveal as="section" aria-labelledby="vision-mission-heading" className="py-8 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <header className="mb-8">
           <h2 id="vision-mission-heading" className="font-heading text-4xl font-semibold text-primary-500">
@@ -108,7 +109,7 @@ const VisionMissionSection = () => {
           </div>
         </div>
       </div>
-    </section>
+    </ScrollReveal>
   );
 };
 

@@ -2,7 +2,8 @@ import EventCard from '../components/cards/EventCard';
 import ProkerCard from '../components/cards/ProkerCard';
 import { useEffect, useState } from 'react';
 import { apiFetch } from '../services/api.js';
-import EmptyState from './EmptyState';
+import EmptyStateImage from './EmptyStateImage';
+import ScrollReveal from './ScrollReveal';
 
 const ActivitiesSection = () => {
   const [activities, setActivities] = useState([]);
@@ -37,7 +38,7 @@ const ActivitiesSection = () => {
   }, []);
 
   return (
-    <section className="py-16 bg-white">
+    <ScrollReveal as="section" className="py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Activities */}
         <div className="mb-16">
@@ -54,11 +55,13 @@ const ActivitiesSection = () => {
             {loading ? <div className="text-gray-500">Memuat...</div> : null}
             {!loading && activities.length === 0 ? (
               <div className="col-span-full">
-                <EmptyState icon="calendar" title="Belum ada event" description="Event terbaru akan muncul di sini." />
+                <EmptyStateImage image="https://illustrations.popsy.co/amber/remote-work.svg" imageAlt="No events illustration" title="Belum ada event" description="Event terbaru akan muncul di sini" variant="primary" imageSize="lg" />
               </div>
             ) : null}
-            {activities.map((a) => (
-              <EventCard title={a.title} key={a.id || a.slug || a.title} {...a} to={a.href || (a.id ? `/events/${a.id}` : '/events')} />
+            {activities.map((a, idx) => (
+              <ScrollReveal key={a.id || a.slug || a.title} as="div" once className="h-full" delayMs={idx * 70}>
+                <EventCard title={a.title} {...a} to={a.href || (a.id ? `/events/${a.id}` : '/events')} />
+              </ScrollReveal>
             ))}
           </div>
         </div>
@@ -76,16 +79,25 @@ const ActivitiesSection = () => {
             {loading ? <div className="text-gray-500">Memuat...</div> : null}
             {!loading && projects.length === 0 ? (
               <div className="col-span-full">
-                <EmptyState icon="clipboard" title="Belum ada proker" description="Program kerja akan muncul di sini." />
+                <EmptyStateImage
+                  image="https://illustrations.popsy.co/amber/work-from-home.svg"
+                  imageAlt="No programs illustration"
+                  title="Belum ada proker"
+                  description="Program kerja akan muncul di sini"
+                  variant="primary"
+                  imageSize="lg"
+                />
               </div>
             ) : null}
-            {projects.map((p) => (
-              <ProkerCard title={p.title} key={p.id || p.slug || p.title} {...p} to={p.href || (p.id ? `/proker/${p.id}` : '/proker')} />
+            {projects.map((p, idx) => (
+              <ScrollReveal key={p.id || p.slug || p.title} as="div" once className="h-full" delayMs={idx * 70}>
+                <ProkerCard title={p.title} {...p} to={p.href || (p.id ? `/proker/${p.id}` : '/proker')} />
+              </ScrollReveal>
             ))}
           </div>
         </div>
       </div>
-    </section>
+    </ScrollReveal>
   );
 };
 

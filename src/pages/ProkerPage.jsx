@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import ProkerCard from '../components/cards/ProkerCard';
 import { apiFetch } from '../services/api.js';
-import EmptyState from '../components/EmptyState';
+import EmptyStateImage from '../components/EmptyStateImage';
 
 const ProkerPage = () => {
   const [programs, setPrograms] = useState([]);
@@ -49,7 +49,14 @@ const ProkerPage = () => {
           {loading ? <div className="text-gray-500">Memuat...</div> : null}
           {!loading && !error && programs.length === 0 ? (
             <div className="col-span-full">
-              <EmptyState icon="calendar" title="Belum ada proker" description="Program kerja akan muncul di sini." />
+              <EmptyStateImage
+                image="https://illustrations.popsy.co/amber/work-from-home.svg"
+                imageAlt="No programs illustration"
+                title="Belum ada proker"
+                description="Program kerja akan muncul di sini setelah dipublikasikan"
+                variant="primary"
+                imageSize="lg"
+              />
             </div>
           ) : null}
           {programs.map((p) => (

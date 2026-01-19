@@ -1,11 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Play, X } from 'lucide-react';
+import EmptyStateImage from './EmptyStateImage';
+import ScrollReveal from './ScrollReveal';
 
 const AboutSection = ({
-  imageSrc = 'https://placehold.co/800x500',
+  imageSrc,
   videoUrl, // optional: kasih embed URL (mis. YouTube embed) nanti
 }) => {
   const [open, setOpen] = useState(false);
+  const hasVideo = Boolean(videoUrl);
+  const hasCover = Boolean(imageSrc);
 
   const openPlayer = useCallback(() => setOpen(true), []);
   const closePlayer = useCallback(() => setOpen(false), []);
@@ -19,7 +23,7 @@ const AboutSection = ({
   }, [open, closePlayer]);
 
   return (
-    <section aria-labelledby="about-heading" className="py-16 bg-white">
+    <ScrollReveal as="section" aria-labelledby="about-heading" className="py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Left content */}
@@ -37,23 +41,45 @@ const AboutSection = ({
           {/* Right video/image */}
           <div className="relative">
             <figure className="bg-gray-200 rounded-2xl overflow-hidden ring-1 ring-black/5 shadow-sm">
-              <img src={imageSrc} alt="Mahasiswa GenBI UNSIKA dalam kegiatan kampus" className="w-full h-auto object-cover aspect-[16/9]" loading="lazy" decoding="async" />
+              {hasCover ? (
+                <img src={imageSrc} alt="Mahasiswa GenBI UNSIKA dalam kegiatan kampus" className="w-full h-auto object-cover aspect-[16/9]" loading="lazy" decoding="async" />
+              ) : (
+                <div className="w-full aspect-[16/9] bg-white flex items-center justify-center p-6">
+                  <div className="w-full">
+                    <EmptyStateImage
+                      image="https://illustrations.popsy.co/amber/remote-work.svg"
+                      imageAlt="Konten belum tersedia"
+                      title="Konten belum tersedia"
+                      description="Kami akan menambahkan foto/video profil GenBI UNSIKA secepatnya."
+                      variant="primary"
+                      imageSize="lg"
+                    />
+                  </div>
+                </div>
+              )}
             </figure>
 
-            {/* Play button overlay */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <button
-                type="button"
-                onClick={openPlayer}
-                className="cursor-pointer bg-white/90 backdrop-blur rounded-full p-4 ring-1 ring-black/5 transition
-                           hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
-                aria-label="Putar video profil GenBI UNSIKA"
-                title="Putar video"
-              >
-                <Play className="w-8 h-8 text-primary-500" aria-hidden="true" />
-                <span className="sr-only">Putar video</span>
-              </button>
-            </div>
+            {/* Play button overlay (only when there is a cover image) */}
+            {hasCover ? (
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+                <button
+                  type="button"
+                  onClick={openPlayer}
+                  className={
+                    hasVideo
+                      ? 'cursor-pointer bg-white/90 backdrop-blur rounded-full p-4 ring-1 ring-black/5 transition hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500'
+                      : 'cursor-pointer bg-white/95 backdrop-blur rounded-full p-4 ring-1 ring-black/5 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500'
+                  }
+                  aria-label={hasVideo ? 'Putar video profil GenBI UNSIKA' : 'Video profil belum tersedia (klik untuk info)'}
+                  title={hasVideo ? 'Putar video' : 'Video belum tersedia'}
+                >
+                  <Play className="w-8 h-8 text-primary-500" aria-hidden="true" />
+                  <span className="sr-only">Putar video</span>
+                </button>
+
+                {!hasVideo ? <div className="rounded-full bg-white/90 backdrop-blur px-4 py-1.5 text-xs font-medium text-gray-700 ring-1 ring-black/5">Video segera hadir</div> : null}
+              </div>
+            ) : null}
           </div>
         </div>
       </div>
@@ -90,15 +116,29 @@ const AboutSection = ({
               {videoUrl ? (
                 <iframe title="Pemutar video" src={videoUrl} className="w-full h-full" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-white/85 text-sm">
-                  Tempat video (siap di-embed). Nanti isi prop <code>videoUrl</code>.
+                <div className="w-full h-full flex items-center justify-center bg-white p-6">
+                  <div className="w-full">
+                    <EmptyStateImage
+                      image="https://illustrations.popsy.co/amber/remote-work.svg"
+                      imageAlt="Video belum tersedia"
+                      title="Video belum tersedia"
+                      description="Kami akan menambahkan video profil GenBI UNSIKA secepatnya."
+                      variant="primary"
+                      imageSize="lg"
+                      action={
+                        <button type="button" onClick={closePlayer} className="bg-primary-600 text-white px-5 py-2.5 rounded-lg hover:bg-primary-700 transition-colors font-medium">
+                          Tutup
+                        </button>
+                      }
+                    />
+                  </div>
                 </div>
               )}
             </div>
           </div>
         </div>
       )}
-    </section>
+    </ScrollReveal>
   );
 };
 

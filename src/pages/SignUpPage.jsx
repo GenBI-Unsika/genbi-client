@@ -34,6 +34,7 @@ const SignUpPage = ({ onNavigate, onLogin }) => {
     try {
       setSubmitting(true);
       await register({ email: formData.email, password: formData.password, name: formData.fullName });
+      toast.success('Registrasi berhasil! Silakan cek email untuk verifikasi.');
       localStorage.setItem('pendingVerifyEmail', formData.email);
       onNavigate('verify-email');
     } catch (e2) {
@@ -48,7 +49,7 @@ const SignUpPage = ({ onNavigate, onLogin }) => {
       {/* Left side - Illustration */}
       <div className="hidden lg:flex lg:w-1/2 bg-primary-50 items-center justify-center p-12">
         <div className="max-w-md">
-          <img src="/person-signing-up-with-computer-showing-sign-up-fo.png" alt="Sign up illustration" className="w-full h-auto" />
+          <img src="https://illustrations.popsy.co/amber/work-from-home.svg" alt="Sign up illustration" className="w-full h-auto" loading="eager" />
         </div>
       </div>
 
@@ -179,6 +180,7 @@ const SignUpPage = ({ onNavigate, onLogin }) => {
                 onIdToken={async (idToken) => {
                   try {
                     await loginWithGoogle(idToken);
+                    toast.success('Berhasil masuk dengan Google!');
                     if (onLogin) onLogin();
                     onNavigate('home');
                   } catch (e2) {

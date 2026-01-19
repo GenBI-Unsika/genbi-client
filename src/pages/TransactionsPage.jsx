@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { apiFetch } from '../services/api.js';
-import EmptyState from '../components/EmptyState';
+import EmptyStateImage from '../components/EmptyStateImage';
 
 const TransactionsPage = () => {
   const [transactions, setTransactions] = useState([]);
@@ -43,7 +43,9 @@ const TransactionsPage = () => {
 
       <div className="space-y-4">
         {loading ? <div className="text-gray-500">Memuat...</div> : null}
-        {!loading && !error && transactions.length === 0 ? <EmptyState icon="clipboard" title="Belum ada transaksi" description="Transaksi Anda akan muncul di sini." /> : null}
+        {!loading && !error && transactions.length === 0 ? (
+          <EmptyStateImage image="https://illustrations.popsy.co/amber/finance-app.svg" imageAlt="No transactions illustration" title="Belum ada transaksi" description="Transaksi Anda akan muncul di sini" variant="primary" imageSize="lg" />
+        ) : null}
         {transactions.map((transaction) => (
           <div key={transaction.id} className="flex items-center justify-between p-6 border border-gray-200 rounded-lg">
             <div>

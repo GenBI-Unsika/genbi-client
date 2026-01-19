@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { apiFetch } from '../services/api.js';
-import EmptyState from './EmptyState';
+import EmptyStateImage from './EmptyStateImage';
+import ScrollReveal from './ScrollReveal';
 
 const FAQSection = () => {
   const [faqs, setFaqs] = useState([]);
@@ -28,7 +29,7 @@ const FAQSection = () => {
   }, []);
 
   return (
-    <section className="bg-base-100 py-8 sm:py-16 lg:py-24">
+    <ScrollReveal as="section" className="bg-base-100 py-8 sm:py-16 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-12 space-y-4 text-center sm:mb-16 lg:mb-24">
@@ -41,7 +42,14 @@ const FAQSection = () => {
           <div className="text-center text-gray-500 py-8">Memuat FAQ...</div>
         ) : faqs.length === 0 ? (
           <div className="py-8">
-            <EmptyState icon="inbox" title="Belum ada FAQ" description="Pertanyaan yang sering diajukan akan muncul di sini." />
+            <EmptyStateImage
+              image="https://illustrations.popsy.co/amber/question.svg"
+              imageAlt="No FAQs illustration"
+              title="Belum ada FAQ"
+              description="Pertanyaan yang sering diajukan akan muncul di sini"
+              variant="primary"
+              imageSize="lg"
+            />
           </div>
         ) : (
           <div className="accordion divide-neutral/20 w-full divide-y">
@@ -69,7 +77,7 @@ const FAQSection = () => {
           </div>
         )}
       </div>
-    </section>
+    </ScrollReveal>
   );
 };
 
