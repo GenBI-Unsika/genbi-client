@@ -10,6 +10,7 @@
  * @param {string} props.variant - 'default' | 'primary' | 'secondary' | 'minimal'
  * @param {string} props.imageSize - 'sm' | 'md' | 'lg' | 'xl'
  */
+import { useEffect, useMemo, useState } from 'react';
 import ScrollReveal from './ScrollReveal';
 
 export default function EmptyStateImage({ image, imageAlt = 'Empty state illustration', title, description, action, variant = 'primary', imageSize = 'lg' }) {
@@ -46,13 +47,58 @@ export default function EmptyStateImage({ image, imageAlt = 'Empty state illustr
   const style = variantStyles[variant] || variantStyles.default;
   const imgSize = imageSizes[imageSize] || imageSizes.md;
 
+  const fallbackSrc = useMemo(() => {
+    const base = import.meta?.env?.BASE_URL ?? '/';
+    const normalizedBase = base.endsWith('/') ? base : `${base}/`;
+    return `${normalizedBase}genbi-unsika.webp`;
+  }, []);
+
+  const initialSrc = useMemo(() => {
+    if (!image) return fallbackSrc;
+    if (typeof image !== 'string') return image;
+    if (image.startsWith('data:')) return image;
+    if (image.startsWith('http://') || image.startsWith('https://')) return image;
+    if (image.startsWith('/')) return image;
+
+    const base = import.meta?.env?.BASE_URL ?? '/';
+    const normalizedBase = base.endsWith('/') ? base : `${base}/`;
+    return `${normalizedBase}${image}`;
+  }, [image, fallbackSrc]);
+
+  const isRemoteImage = useMemo(() => {
+    return typeof image === 'string' && (image.startsWith('http://') || image.startsWith('https://'));
+  }, [image]);
+
+  const [src, setSrc] = useState(initialSrc);
+
+  useEffect(() => {
+    setSrc(initialSrc);
+  }, [initialSrc]);
+
+  const handleImgError = () => {
+    // If remote illustration is blocked (CSP/403/offline), hide it (no local SVG fallback).
+    if (isRemoteImage) {
+      setSrc('');
+      return;
+    }
+
+    // For local/public paths, fall back to bundled WEBP.
+    if (src && src !== fallbackSrc) {
+      setSrc(fallbackSrc);
+      return;
+    }
+
+    // If even the fallback fails, hide the image entirely.
+    setSrc('');
+  };
+
   return (
     <ScrollReveal as="div" once className={`flex flex-col items-center justify-center rounded-2xl ${style.container} px-6 py-16 text-center`}>
-      {image && (
+      {src ? (
         <div className={`mb-6 ${imgSize}`}>
-          <img src={image} alt={imageAlt} className="h-full w-full object-contain" loading="lazy" decoding="async" />
+          <img src={src} alt={imageAlt} className="h-full w-full object-contain" loading="lazy" decoding="async" referrerPolicy="no-referrer" onError={handleImgError} />
         </div>
-      )}
+      ) : null}
 
       {title && <h3 className={`mb-2 text-lg font-semibold ${style.titleColor}`}>{title}</h3>}
 

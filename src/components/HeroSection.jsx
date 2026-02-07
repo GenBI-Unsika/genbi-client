@@ -1,6 +1,15 @@
 import { useEffect, useState } from 'react';
 import { apiFetch } from '../services/api.js';
 
+// Default CMS content (fallback if API fails or returns null)
+const defaultHeroContent = {
+  headline: 'Tumbuh dan Berdampak Bagi Sesama Bersama GenBI Unsika',
+  subheadline: 'Ayo, daftar Beasiswa GenBI Unsika sekarang dan raih kesempatan untuk mendukung perjalanan akademikmu.',
+  ctaText: 'Daftar Sekarang',
+  statsText: '500+ penerima manfaat',
+  heroImage: '',
+};
+
 function AvatarStack({ size = 'md' }) {
   const [avatars, setAvatars] = useState([]);
   const sizeMap = { sm: 'h-8 w-8', md: 'h-10 w-10', lg: 'h-12 w-12' };
@@ -38,6 +47,26 @@ function AvatarStack({ size = 'md' }) {
 }
 
 const HeroSection = () => {
+  const [content, setContent] = useState(defaultHeroContent);
+
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      try {
+        const json = await apiFetch('/site-settings/cms_hero', { method: 'GET', skipAuth: true });
+        const value = json?.data?.value;
+        if (alive && value) {
+          setContent({ ...defaultHeroContent, ...value });
+        }
+      } catch {
+        // Use defaults on error
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, []);
+
   return (
     <section className="relative overflow-hidden bg-primary-50">
       <div className="pointer-events-none absolute inset-0 -z-10">
@@ -58,13 +87,9 @@ const HeroSection = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 pt-4 sm:pt-8 md:pt-10 lg:pt-14 xl:pt-2 pb-8 sm:pb-10 md:pb-12 lg:pb-0">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center lg:h-[clamp(560px,70vh,820px)] xl:h-[clamp(640px,calc(100dvh-96px),640px)]">
           <div className="flex flex-col items-center lg:items-start text-center lg:text-left gap-6">
-            <h1 className="font-heading text-balance text-3xl md:text-5xl lg:text-6xl font-semibold text-primary-900 leading-tight animation-button motion-preset-slide-right motion-duration-1500">
-              Tumbuh dan Berdampak Bagi Sesama Bersama GenBI Unsika
-            </h1>
+            <h1 className="font-heading text-balance text-3xl md:text-5xl lg:text-6xl font-semibold text-primary-900 leading-tight animation-button motion-preset-slide-right motion-duration-1500">{content.headline}</h1>
 
-            <p className="text-base md:text-lg lg:text-xl leading-relaxed max-w-2xl animation-button motion-preset-slide-right motion-duration-2000">
-              Ayo, daftar Beasiswa GenBI Unsika sekarang dan raih kesempatan untuk mendukung perjalanan akademikmu.
-            </p>
+            <p className="text-base md:text-lg lg:text-xl leading-relaxed max-w-2xl animation-button motion-preset-slide-right motion-duration-2000">{content.subheadline}</p>
 
             {/* CTA + AvatarStack */}
             <div className="flex w-full flex-col sm:flex-row sm:items-center sm:justify-center lg:justify-start gap-4 sm:gap-5">
@@ -72,7 +97,7 @@ const HeroSection = () => {
                 className="btn-primary px-6 py-3 md:px-8 md:py-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 shrink-0 self-center lg:self-start animation-button motion-preset-shrink motion-duration-1000"
                 type="button"
               >
-                Daftar Sekarang
+                {content.ctaText}
               </button>
 
               {/* Divider hanya di sm+ */}
@@ -81,7 +106,7 @@ const HeroSection = () => {
               <div className="flex items-center justify-center gap-3">
                 <AvatarStack size="md" />
                 <p className="text-sm sm:text-base text-gray-600 motion-preset-slide-right motion-duration-1000">
-                  Lebih dari <span className="font-extrabold text-gray-900">500+</span> orang <span className="font-semibold">penerima manfaat.</span>
+                  Lebih dari <span className="font-extrabold text-gray-900">{content.statsText}</span> orang <span className="font-semibold">penerima manfaat.</span>
                 </p>
               </div>
             </div>

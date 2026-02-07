@@ -2,12 +2,44 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Play, X } from 'lucide-react';
 import EmptyStateImage from './EmptyStateImage';
 import ScrollReveal from './ScrollReveal';
+import { apiFetch } from '../services/api.js';
 
-const AboutSection = ({
-  imageSrc,
-  videoUrl, // optional: kasih embed URL (mis. YouTube embed) nanti
-}) => {
+// Default CMS content (fallback if API fails or returns null)
+const defaultAboutContent = {
+  title: 'Tentang Kami',
+  description:
+    'Generasi Baru Indonesia (GenBI) Universitas Singaperbangsa Karawang (UNSIKA) adalah komunitas mahasiswa penerima beasiswa Bank Indonesia yang berkomitmen untuk memberikan kontribusi positif kepada masyarakat. GenBI UNSIKA tidak hanya berfokus pada prestasi akademik, tetapi juga aktif dalam berbagai kegiatan sosial, lingkungan, dan ekonomi. Dengan semangat kolaborasi dan inovasi, kami berusaha menciptakan program-program yang bermanfaat bagi masyarakat luas. Melalui upaya ini, GenBI UNSIKA bertekad menjadi agen perubahan yang inspiratif, membantu membangun masa depan Indonesia yang lebih baik.',
+  coverImage: '',
+  videoUrl: '',
+};
+
+const AboutSection = ({ imageSrc: propImageSrc, videoUrl: propVideoUrl }) => {
+  const [content, setContent] = useState(defaultAboutContent);
   const [open, setOpen] = useState(false);
+
+  // Fetch CMS content
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      try {
+        const json = await apiFetch('/site-settings/cms_about', { method: 'GET', skipAuth: true });
+        const value = json?.data?.value;
+        if (alive && value) {
+          setContent({ ...defaultAboutContent, ...value });
+        }
+      } catch {
+        // Use defaults on error
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  // Props override CMS values if provided
+  const imageSrc = propImageSrc || content.coverImage;
+  const videoUrl = propVideoUrl || content.videoUrl;
+
   const hasVideo = Boolean(videoUrl);
   const hasCover = Boolean(imageSrc);
 
@@ -29,13 +61,9 @@ const AboutSection = ({
           {/* Left content */}
           <div className="space-y-6">
             <h2 id="about-heading" className="text-4xl font-semibold text-primary-500">
-              Tentang Kami
+              {content.title}
             </h2>
-            <p className="text-gray-600 leading-relaxed">
-              Generasi Baru Indonesia (GenBI) Universitas Singaperbangsa Karawang (UNSIKA) adalah komunitas mahasiswa penerima beasiswa Bank Indonesia yang berkomitmen untuk memberikan kontribusi positif kepada masyarakat. GenBI UNSIKA
-              tidak hanya berfokus pada prestasi akademik, tetapi juga aktif dalam berbagai kegiatan sosial, lingkungan, dan ekonomi. Dengan semangat kolaborasi dan inovasi, kami berusaha menciptakan program-program yang bermanfaat bagi
-              masyarakat luas. Melalui upaya ini, GenBI UNSIKA bertekad menjadi agen perubahan yang inspiratif, membantu membangun masa depan Indonesia yang lebih baik.
-            </p>
+            <p className="text-gray-600 leading-relaxed">{content.description}</p>
           </div>
 
           {/* Right video/image */}

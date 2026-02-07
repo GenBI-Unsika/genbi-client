@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import 'flyonui/flyonui';
-import { GraduationCap, ShieldCheck, Crown, ArrowLeft, ArrowRight } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
+import useEmblaCarousel from 'embla-carousel-react';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { apiFetch } from '../services/api.js';
 import EmptyStateImage from './EmptyStateImage';
 import ScrollReveal from './ScrollReveal';
@@ -8,6 +8,10 @@ import ScrollReveal from './ScrollReveal';
 export default function TestimonialsSection() {
   const [testimonials, setTestimonials] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const [emblaRef, emblaApi] = useEmblaCarousel({ align: 'start', loop: false });
+  const [canPrev, setCanPrev] = useState(false);
+  const [canNext, setCanNext] = useState(false);
 
   useEffect(() => {
     let alive = true;
@@ -30,29 +34,31 @@ export default function TestimonialsSection() {
     };
   }, []);
 
-  const RoleIcon = ({ role, size = 18 }) => {
-    const r = role.toLowerCase();
-    if (r.includes('ketua')) return <Crown size={size} />;
-    if (r.includes('pembina')) return <ShieldCheck size={size} />;
-    if (r.includes('alumni')) return <GraduationCap size={size} />;
-    return <ShieldCheck size={size} />;
-  };
+  const onSelect = useCallback(() => {
+    if (!emblaApi) return;
+    setCanPrev(emblaApi.canScrollPrev());
+    setCanNext(emblaApi.canScrollNext());
+  }, [emblaApi]);
 
   useEffect(() => {
-    if (!window.__flyonui_loaded) {
-      import('flyonui/flyonui')
-        .then(() => {
-          window.__flyonui_loaded = true;
-        })
-        .catch(console.error);
-    }
-  }, []);
+    if (!emblaApi) return;
+    onSelect();
+    emblaApi.on('select', onSelect);
+    emblaApi.on('reInit', onSelect);
+    return () => {
+      emblaApi.off('select', onSelect);
+      emblaApi.off('reInit', onSelect);
+    };
+  }, [emblaApi, onSelect]);
+
+  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
+  const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
 
   return (
     <ScrollReveal as="section" className="py-16 bg-white">
       <div className="py-8 sm:py-16 lg:py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div id="multi-slide" data-carousel='{"loadingClasses":"opacity-0","slidesQty":{"xs":1,"md":2}}' className="relative flex w-full gap-12 max-lg:flex-col md:gap-16 lg:items-center lg:gap-24">
+          <div className="relative flex w-full gap-12 max-lg:flex-col md:gap-16 lg:items-center lg:gap-24">
             <div>
               <div className="space-y-4">
                 <p className="inline-block text-primary-500 text-sm font-medium bg-primary-50 p-2 rounded-xl">Pengalaman Alumni</p>
@@ -65,13 +71,14 @@ export default function TestimonialsSection() {
                 <button
                   type="button"
                   aria-label="Sebelumnya"
+                  onClick={scrollPrev}
+                  disabled={!canPrev}
                   className="
-                    carousel-prev relative
                     flex items-center justify-center
                     w-9 h-9 rounded-md
                     bg-primary-300 text-white
                     hover:bg-primary-500
-                    carousel-disabled:opacity-50 carousel-disabled:cursor-not-allowed
+                    disabled:opacity-50 disabled:cursor-not-allowed
                     transition-colors duration-200
                   "
                 >
@@ -81,13 +88,14 @@ export default function TestimonialsSection() {
                 <button
                   type="button"
                   aria-label="Berikutnya"
+                  onClick={scrollNext}
+                  disabled={!canNext}
                   className="
-                    carousel-next relative
                     flex items-center justify-center
                     w-9 h-9 rounded-md
                     bg-primary-400 text-white
                     hover:bg-primary-600
-                    carousel-disabled:opacity-50 carousel-disabled:cursor-not-allowed
+                    disabled:opacity-50 disabled:cursor-not-allowed
                     transition-colors duration-200
                   "
                 >
@@ -97,13 +105,13 @@ export default function TestimonialsSection() {
             </div>
 
             {/* Carousel */}
-            <div className="carousel rounded-box p-8 overflow-hidden">
+            <div className="rounded-2xl p-8 overflow-hidden border border-neutral-200 bg-white">
               {loading ? (
                 <div className="text-gray-500 py-8">Memuat testimoni...</div>
               ) : testimonials.length === 0 ? (
                 <div className="py-8">
                   <EmptyStateImage
-                    image="https://illustrations.popsy.co/amber/team-spirit.svg"
+                    image="https://illustrations.popsy.co/amber/remote-work.svg"
                     imageAlt="No testimonials illustration"
                     title="Belum ada testimoni"
                     description="Testimoni dari anggota akan muncul di sini"
@@ -112,45 +120,36 @@ export default function TestimonialsSection() {
                   />
                 </div>
               ) : (
-                <div className="carousel-body gap-2 opacity-0">
-                  {testimonials.map((item, idx) => (
-                    <div className="carousel-slide" key={idx}>
-                      <div
-                        className="
-                        relative cursor-pointer rounded-3xl border border-neutral-200 bg-white
-                        transition-transform duration-300 ease-out
-                        hover:-translate-y-1 hover:scale-[1.03]
-                        focus:outline-none focus-visible:outline-none hover:ring-primary-300 hover:ring-offset-0
-                        w-60 sm:w-64 md:w-64 lg:w-72
-                        h-54 md:h-80
-                        shadow-sm-primary-500/30 hover:shadow-lg-primary-500/30
-                      "
-                        tabIndex={0}
-                      >
-                        <div className="card-body gap-4 flex flex-col justify-between">
-                          <div className="flex flex-col justify-center items-center gap-3">
-                            <div className="avatar">
-                              <div className="size-14 rounded-full">
-                                <img src={item.photo_profile} alt={item.name} loading="lazy" />
-                              </div>
-                            </div>
-                            <h4 className="text-neutral-800 font-medium">{item.name}</h4>
-                            <p className="text-neutral-600 text-sm">{item.role}</p>
-                          </div>
-                          <p className="text-neutral-700 text-reguler overflow-hidden text-center">{item.quote}</p>
-                        </div>
-
-                        {/* Accent bar bawah */}
+                <div ref={emblaRef} className="overflow-hidden">
+                  <div className="flex gap-6">
+                    {testimonials.map((item, idx) => (
+                      <div className="flex-[0_0_100%] md:flex-[0_0_50%] min-w-0" key={idx}>
                         <div
                           className="
-        absolute inset-x-0 bottom-0 h-1 bg-primary-500
-        origin-left scale-x-0 group-hover:scale-x-100
-        transition-transform duration-300
-      "
-                        />
+                            relative h-full rounded-3xl border border-neutral-200 bg-white
+                            transition-transform duration-300 ease-out
+                            hover:-translate-y-1 hover:scale-[1.01]
+                            focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-300
+                            shadow-sm-primary-500/30 hover:shadow-lg-primary-500/30
+                          "
+                          tabIndex={0}
+                        >
+                          <div className="p-6 md:p-7 flex flex-col justify-between gap-6 min-h-[18rem]">
+                            <div className="flex flex-col justify-center items-center gap-3">
+                              <div className="size-14 rounded-full overflow-hidden bg-neutral-100">
+                                <img src={item.photo_profile} alt={item.name} loading="lazy" className="w-full h-full object-cover" />
+                              </div>
+                              <h4 className="text-neutral-800 font-medium text-center">{item.name}</h4>
+                              <p className="text-neutral-600 text-sm text-center">{item.role}</p>
+                            </div>
+                            <p className="text-neutral-700 text-sm overflow-hidden text-center">{item.quote}</p>
+                          </div>
+
+                          <div className="absolute inset-x-0 bottom-0 h-1 bg-primary-500" />
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               )}
             </div>

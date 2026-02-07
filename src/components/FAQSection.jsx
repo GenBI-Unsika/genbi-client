@@ -6,6 +6,7 @@ import ScrollReveal from './ScrollReveal';
 const FAQSection = () => {
   const [faqs, setFaqs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [openIndex, setOpenIndex] = useState(0);
 
   useEffect(() => {
     let alive = true;
@@ -37,13 +38,13 @@ const FAQSection = () => {
           <p className="text-base-content/80 text-xl">Jelajahi pertanyaan yang sering diajukan dan temukan informasi yang Anda butuhkan.</p>
         </div>
 
-        {/* FlyonUI Accordion */}
+        {/* Accordion */}
         {loading ? (
           <div className="text-center text-gray-500 py-8">Memuat FAQ...</div>
         ) : faqs.length === 0 ? (
           <div className="py-8">
             <EmptyStateImage
-              image="https://illustrations.popsy.co/amber/question.svg"
+              image="https://illustrations.popsy.co/amber/remote-work.svg"
               imageAlt="No FAQs illustration"
               title="Belum ada FAQ"
               description="Pertanyaan yang sering diajukan akan muncul di sini"
@@ -52,23 +53,29 @@ const FAQSection = () => {
             />
           </div>
         ) : (
-          <div className="accordion divide-neutral/20 w-full divide-y">
+          <div className="w-full divide-y divide-neutral-200 rounded-2xl border border-neutral-200 bg-white">
             {faqs.map((faq, index) => {
               const itemId = `faq-item-${index}`;
               const collapseId = `faq-collapse-${index}`;
-              const isFirst = index === 1; // buka item pertama
+              const isOpen = openIndex === index;
 
               return (
-                <div key={index} id={itemId} className={`accordion-item ${isFirst ? 'active' : ''}`}>
-                  <button className="accordion-toggle inline-flex items-center justify-between text-start" aria-controls={collapseId} aria-expanded={isFirst ? 'true' : 'false'}>
-                    {faq.question}
-                    <span className="icon-[tabler--plus] accordion-item-active:hidden text-base-content block size-4.5 shrink-0"></span>
-                    <span className="icon-[tabler--minus] accordion-item-active:block text-base-content hidden size-4.5 shrink-0"></span>
+                <div key={index} id={itemId}>
+                  <button
+                    type="button"
+                    className="w-full px-5 py-4 inline-flex items-center justify-between text-start font-medium text-neutral-900 hover:bg-neutral-50 transition-colors"
+                    aria-controls={collapseId}
+                    aria-expanded={isOpen ? 'true' : 'false'}
+                    onClick={() => setOpenIndex((prev) => (prev === index ? -1 : index))}
+                  >
+                    <span>{faq.question}</span>
+                    <span className={`icon-[tabler--plus] text-neutral-700 size-4.5 shrink-0 ${isOpen ? 'hidden' : 'block'}`}></span>
+                    <span className={`icon-[tabler--minus] text-neutral-700 size-4.5 shrink-0 ${isOpen ? 'block' : 'hidden'}`}></span>
                   </button>
 
-                  <div id={collapseId} className={`accordion-content w-full overflow-hidden transition-[height] duration-300 ${isFirst ? '' : 'hidden'}`} aria-labelledby={itemId} role="region">
+                  <div id={collapseId} className={`${isOpen ? 'block' : 'hidden'}`} aria-labelledby={itemId} role="region">
                     <div className="px-5 pb-4">
-                      <p className="text-base-content/80">{faq.answer}</p>
+                      <p className="text-neutral-600">{faq.answer}</p>
                     </div>
                   </div>
                 </div>
