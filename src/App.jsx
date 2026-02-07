@@ -22,6 +22,7 @@ import ArticleDetailRoute from './router/ArticleDetailRoute';
 import ProfileLayout from './components/ProfileLayout';
 
 import { ensureAuthed, isAuthed, logout as authLogout, syncMe } from './utils/auth.js';
+import { trackPageView } from './utils/analytics.js';
 
 import './App.css';
 
@@ -162,7 +163,9 @@ const RequireAuth = ({ children }) => {
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(() => isAuthed());
   const navigate = useNavigate();
+  const location = useLocation();
   const forcedLogoutToastShown = useRef(false);
+  const lastTrackedRef = useRef({ key: '', at: 0 });
 
   useEffect(() => {
     let alive = true;
@@ -191,6 +194,19 @@ function App() {
       alive = false;
     };
   }, []);
+
+  // Track page views (public website analytics)
+  useEffect(() => {
+    const key = `${location.pathname}`;
+    const now = Date.now();
+    // React 18 StrictMode runs effects twice in dev; dedupe within a short window.
+    if (lastTrackedRef.current.key === key && now - lastTrackedRef.current.at < 1500) return;
+    lastTrackedRef.current = { key, at: now };
+
+    trackPageView({ path: location.pathname, referrer: document.referrer }).catch(() => {
+      // ignore tracking errors
+    });
+  }, [location.pathname]);
 
   useEffect(() => {
     const onForcedLogout = (e) => {
