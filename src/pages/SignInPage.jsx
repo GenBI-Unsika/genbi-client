@@ -1,15 +1,33 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { login, loginWithGoogle } from '../utils/auth.js';
 import GoogleLoginButton from '../components/GoogleLoginButton.jsx';
+
+function defaultPasswordFromEmail(email) {
+  const raw = String(email || '')
+    .trim()
+    .toLowerCase();
+  const at = raw.indexOf('@');
+  if (at <= 0) return '';
+  const local = raw.slice(0, at);
+  const domain = raw.slice(at + 1);
+  const isStudent = domain === 'student.unsika.ac.id' && /^\d{8,}$/.test(local);
+  return isStudent ? local : '';
+}
 
 const SignInPage = ({ onNavigate, onLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (password) return;
+    const candidate = defaultPasswordFromEmail(email);
+    if (candidate) setPassword(candidate);
+  }, [email, password]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

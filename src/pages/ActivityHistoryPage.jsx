@@ -9,6 +9,7 @@ const ActivitiesPage = () => {
   const [eventData, setEventData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const fallbackImage = `${import.meta.env.BASE_URL}genbi-unsika.webp`;
 
   useEffect(() => {
     let alive = true;
@@ -75,7 +76,7 @@ const ActivitiesPage = () => {
             {scholarshipData.map((item) => (
               <div key={item.id} className="flex items-center gap-6 p-6 border border-gray-200 rounded-lg">
                 <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center">
-                  <img src={item.logo || '/placeholder.svg'} alt="Logo" className="w-12 h-12 object-contain" />
+                  <img src={item.logo || fallbackImage} alt="Logo" className="w-12 h-12 object-contain" />
                 </div>
                 <div className="flex-1">
                   <h3 className="font-semibold text-gray-900 mb-1">{item.title}</h3>
@@ -98,7 +99,7 @@ const ActivitiesPage = () => {
             {eventData.map((item) => (
               <div key={item.id} className="flex items-center gap-6 p-6 border border-gray-200 rounded-lg">
                 <div className="w-20 h-16 bg-gray-100 rounded-lg overflow-hidden">
-                  <img src={item.image || '/placeholder.svg'} alt="Event" className="w-full h-full object-cover" />
+                  <img src={item.image || fallbackImage} alt="Event" className="w-full h-full object-cover" />
                 </div>
                 <div className="flex-1">
                   <h3 className="font-semibold text-gray-900 mb-1">{item.title}</h3>

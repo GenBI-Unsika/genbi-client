@@ -89,7 +89,7 @@ export async function apiFetch(path, options = {}) {
       const rawMessage = json?.error?.message || json?.message || res.statusText || 'Unauthorized';
       const lower = String(rawMessage).toLowerCase();
       const reason = lower.includes('expired') ? 'token_expired' : 'unauthorized';
-      const logoutMessage = lower.includes('expired') ? 'Sesi kamu sudah berakhir (token expired). Silakan login lagi.' : 'Sesi kamu sudah berakhir. Silakan login lagi.';
+      const logoutMessage = lower.includes('expired') ? 'Sesi kamu sudah berakhir. Silakan login lagi.' : 'Sesi kamu sudah berakhir. Silakan login lagi.';
 
       setAccessToken(null);
       localStorage.removeItem('me');
