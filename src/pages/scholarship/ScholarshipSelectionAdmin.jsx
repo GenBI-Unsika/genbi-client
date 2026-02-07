@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import StepperFlyonVertical from '../../components/ui/StepperFlyonVertical';
+import StepperVertical from '../../components/ui/StepperVertical';
 
 const Card = ({ title, badge, children }) => (
   <div className="rounded-xl border border-neutral-200 bg-surface p-6">
@@ -21,7 +21,7 @@ const ScholarshipSelectionAdmin = () => {
       <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 px-4 py-10 md:grid-cols-3">
         <div className="rounded-xl border border-neutral-200 bg-surface p-6">
           <h3 className="mb-6 text-xl font-semibold text-body">Tahap Seleksi</h3>
-          <StepperFlyonVertical current={0} items={['Seleksi Administrasi', 'Seleksi Wawancara', 'Pengumuman']} heightClass="h-72" />
+          <StepperVertical current={0} items={['Seleksi Administrasi', 'Seleksi Wawancara', 'Pengumuman']} heightClass="h-72" />
         </div>
 
         <div className="md:col-span-2 space-y-6">

@@ -1,7 +1,7 @@
 import { useMemo, useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import StepperFlyon from '../../components/ui/StepperFlyon';
+import Stepper from '../../components/ui/Stepper';
 import { Field, FieldLabel, TextInput, Select, Textarea } from '../../components/ui/FormControls';
 import { getMe } from '../../utils/auth.js';
 import { scholarshipSubmitApplication, uploadFile } from '../../utils/api.js';
@@ -13,6 +13,8 @@ const ScholarshipRegister = () => {
   const [step, setStep] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const actionsRef = useRef(null);
+  const previewUrlsRef = useRef({});
+  const [filePreviews, setFilePreviews] = useState({});
 
   // Get user data
   const user = getMe();
@@ -51,6 +53,46 @@ const ScholarshipRegister = () => {
       }));
     }
   }, [user]);
+
+  useEffect(() => {
+    return () => {
+      // Cleanup blob URLs on unmount
+      for (const url of Object.values(previewUrlsRef.current)) {
+        try {
+          URL.revokeObjectURL(url);
+        } catch {
+          // ignore
+        }
+      }
+      previewUrlsRef.current = {};
+    };
+  }, []);
+
+  const setDocFile = (key, file) => {
+    const existingUrl = previewUrlsRef.current[key];
+    if (existingUrl) {
+      try {
+        URL.revokeObjectURL(existingUrl);
+      } catch {
+        // ignore
+      }
+      delete previewUrlsRef.current[key];
+    }
+
+    if (file instanceof File && file.type?.startsWith('image/')) {
+      const url = URL.createObjectURL(file);
+      previewUrlsRef.current[key] = url;
+      setFilePreviews((prev) => ({ ...prev, [key]: url }));
+    } else {
+      setFilePreviews((prev) => {
+        const next = { ...prev };
+        delete next[key];
+        return next;
+      });
+    }
+
+    setForm((old) => ({ ...old, files: { ...old.files, [key]: file } }));
+  };
 
   const docs = useMemo(
     () => [
@@ -147,7 +189,7 @@ const ScholarshipRegister = () => {
         <h1 className="mb-6 text-3xl font-bold text-body">Formulir Pendaftaran</h1>
 
         <div className="mb-6 rounded-xl border border-neutral-200 bg-surface p-6">
-          <StepperFlyon current={step} items={['Data Pribadi', 'Pemberkasan', 'Validasi Data']} />
+          <Stepper current={step} items={['Data Pribadi', 'Pemberkasan', 'Validasi Data']} />
         </div>
 
         <form onSubmit={submit} className="rounded-xl border border-neutral-200 bg-surface p-6">
@@ -276,17 +318,17 @@ const ScholarshipRegister = () => {
                 <div key={d.key} className="space-y-2">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-semibold text-base-content">{d.title}</p>
+                      <p className="text-sm font-semibold text-neutral-900">{d.title}</p>
                       {d.desc && <p className="text-xs text-neutral-500">{d.desc}</p>}
                     </div>
-                    {form.files[d.key] && <span className="rounded-md bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">Terkirim</span>}
+                    {form.files[d.key] && <span className="rounded-md bg-primary-50 px-2.5 py-0.5 text-xs font-medium text-primary-600">Dipilih</span>}
                   </div>
 
                   {d.key === 'videoUrl' ? (
                     <TextInput placeholder="Tempel URL reels IG di sini" value={form.files.videoUrl || ''} onChange={(e) => setForm((old) => ({ ...old, files: { ...old.files, videoUrl: e.target.value } }))} />
                   ) : (
                     <label className="block cursor-pointer">
-                      <div className="rounded-lg border-2 border-dashed border-neutral/40 bg-base-200 p-5 text-center hover:border-neutral/60">
+                      <div className="rounded-lg border-2 border-dashed border-neutral/40 bg-neutral-50 p-5 text-center hover:border-neutral/60">
                         <p className="text-sm text-neutral-600">Unggah file (PDF/JPG/PNG)</p>
                       </div>
                       <input
@@ -295,9 +337,27 @@ const ScholarshipRegister = () => {
                         className="sr-only"
                         onChange={(e) => {
                           const value = e.target.files?.[0] || null;
-                          setForm((old) => ({ ...old, files: { ...old.files, [d.key]: value } }));
+                          setDocFile(d.key, value);
+                          e.currentTarget.value = '';
                         }}
                       />
+
+                      {form.files?.[d.key] instanceof File && (
+                        <div className="mt-3 flex items-center gap-3 rounded-lg border border-neutral-200 bg-white p-3">
+                          {form.files[d.key].type?.startsWith('image/') && filePreviews[d.key] ? (
+                            <img src={filePreviews[d.key]} alt={form.files[d.key].name} className="h-12 w-12 rounded-md object-cover border border-neutral-200" />
+                          ) : (
+                            <div className="h-12 w-12 rounded-md border border-neutral-200 bg-neutral-50 flex items-center justify-center text-xs text-neutral-500">PDF</div>
+                          )}
+                          <div className="min-w-0 flex-1">
+                            <p className="truncate text-sm font-medium text-neutral-800">{form.files[d.key].name}</p>
+                            <p className="text-xs text-neutral-500">{Math.round(form.files[d.key].size / 1024)} KB</p>
+                          </div>
+                          <button type="button" onClick={() => setDocFile(d.key, null)} className="rounded-md border border-neutral-200 px-3 py-1.5 text-xs font-medium text-neutral-700 hover:bg-neutral-50">
+                            Hapus
+                          </button>
+                        </div>
+                      )}
                     </label>
                   )}
                 </div>

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
-import StepperFlyonVertical from '../../components/ui/StepperFlyonVertical';
+import StepperVertical from '../../components/ui/StepperVertical';
 import { getMe } from '../../utils/auth.js';
 import { scholarshipGetMyApplication } from '../../utils/api.js';
 
@@ -141,7 +141,7 @@ const ScholarshipSelectionAnnouncement = () => {
         {/* Left: Vertical stepper */}
         <div className="rounded-xl border border-neutral-200 bg-surface p-6">
           <h3 className="mb-6 text-xl font-semibold text-body">Tahap Seleksi</h3>
-          <StepperFlyonVertical current={stepCurrent} items={['Seleksi Administrasi', 'Seleksi Wawancara', 'Pengumuman']} />
+          <StepperVertical current={stepCurrent} items={['Seleksi Administrasi', 'Seleksi Wawancara', 'Pengumuman']} />
         </div>
 
         {/* Right */}

@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 
-const StepperFlyon = ({ current = 0, items = [], className }) => {
+const Stepper = ({ current = 0, items = [], className }) => {
   return (
     <ul className={clsx('relative flex w-full gap-x-2', className)}>
       {items.map((label, i) => {
@@ -41,4 +41,4 @@ const StepperFlyon = ({ current = 0, items = [], className }) => {
   );
 };
 
-export default StepperFlyon;
+export default Stepper;

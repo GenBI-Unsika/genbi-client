@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import StepperFlyonVertical from '../../components/ui/StepperFlyonVertical';
+import StepperVertical from '../../components/ui/StepperVertical';
 import { getMe } from '../../utils/auth.js';
 
 const Card = ({ title, badge, children }) => (
@@ -33,7 +33,7 @@ const ScholarshipSelectionInterview = () => {
         {/* Left: Vertical stepper */}
         <div className="rounded-xl border border-neutral-200 bg-surface p-6">
           <h3 className="mb-6 text-xl font-semibold text-body">Tahap Seleksi</h3>
-          <StepperFlyonVertical current={1} items={['Seleksi Administrasi', 'Seleksi Wawancara', 'Pengumuman']} />
+          <StepperVertical current={1} items={['Seleksi Administrasi', 'Seleksi Wawancara', 'Pengumuman']} />
         </div>
 
         {/* Right: Content */}

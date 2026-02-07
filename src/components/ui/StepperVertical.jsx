@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 
-const StepperFlyonVertical = ({ items = [], current = 0, className, heightClass = 'h-96' }) => {
+const StepperVertical = ({ items = [], current = 0, className, heightClass = 'h-96' }) => {
   return (
     <ul className={clsx('relative flex flex-col gap-y-2', heightClass, className)}>
       {items.map((label, i) => {
@@ -36,4 +36,4 @@ const StepperFlyonVertical = ({ items = [], current = 0, className, heightClass 
   );
 };
 
-export default StepperFlyonVertical;
+export default StepperVertical;
