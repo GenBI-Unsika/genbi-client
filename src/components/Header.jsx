@@ -4,7 +4,7 @@ import toast from 'react-hot-toast';
 import { getMe } from '../utils/auth.js';
 import { useConfirm } from '../contexts/ConfirmContext.jsx';
 
-/* Hover intent hook */
+
 function useHoverIntent(delay = 160) {
   const [open, setOpen] = useState(false);
   const timerRef = useRef(null);
@@ -24,7 +24,7 @@ function useHoverIntent(delay = 160) {
   return { open, setOpen, onEnter, onLeave };
 }
 
-/* Dropdown component (desktop) */
+
 function Dropdown({ label, items = [], onSelect }) {
   const { open, setOpen, onEnter, onLeave } = useHoverIntent(160);
   const wrapRef = useRef(null);
@@ -83,7 +83,7 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
 
   const profileDropdownRef = useRef(null);
 
-  // Close profile dropdown when clicking outside
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target)) {
@@ -94,7 +94,7 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Navigation handlers
+
   const handleNavigation = (page) => {
     if (onNavigate) onNavigate(page);
   };
@@ -152,7 +152,7 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
     }
   };
 
-  // Get user data
+
   const user = getMe();
   const userName = user?.profile?.name || user?.email?.split('@')[0] || 'Pengguna';
   const userEmail = user?.email || '';
@@ -161,14 +161,14 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
   return (
     <header className="sticky top-0 z-50 bg-primary-50 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Top bar */}
+
         <div className="flex justify-between items-center py-2 md:py-3 gap-3">
-          {/* Logo */}
+
           <button onClick={() => handleNavigation('home')} className="flex items-center gap-3 sm:gap-4 whitespace-nowrap cursor-pointer" aria-label="GenBI Unsika - Beranda">
             <img src="./genbi-unsika.webp" alt="Logo GenBI Unsika" className="h-6 md:h-8 lg:h-12 w-auto flex-shrink-0" loading="eager" decoding="async" />
           </button>
 
-          {/* Navigation (desktop) */}
+
           <nav className="hidden md:flex items-center gap-3 lg:gap-6 flex-nowrap">
             <button onClick={() => handleNavigation('home')} className="px-3.5 py-2.5 rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary-50 font-medium cursor-pointer whitespace-nowrap">
               Beranda
@@ -201,9 +201,9 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
             </button>
           </nav>
 
-          {/* Right side */}
+
           <div className="flex items-center gap-3 md:gap-4">
-            {/* Search (desktop) */}
+
             <label className="relative hidden md:block">
               <span className="sr-only">Cari</span>
               <input
@@ -214,7 +214,7 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
               <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary-500" aria-hidden="true" />
             </label>
 
-            {/* Notifications */}
+
             {isLoggedIn && (
               <button className="relative p-2.5 rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary-50 cursor-pointer" aria-label="Notifikasi" title="Notifikasi">
                 <Bell className="h-6 w-6" />
@@ -222,14 +222,14 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
               </button>
             )}
 
-            {/* Auth actions */}
+
             {isLoggedIn ? (
               <div className="relative" ref={profileDropdownRef}>
                 <button onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)} className="flex items-center space-x-2 p-1 rounded-full hover:bg-gray-50 transition-colors" aria-label="Profile menu">
                   <img src={userAvatar} alt="Profile" className="w-8 h-8 rounded-full object-cover" referrerPolicy="no-referrer" />
                 </button>
 
-                {/* Profile Dropdown */}
+
                 {isProfileDropdownOpen && (
                   <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
                     <div className="px-4 py-3 border-b border-gray-100">
@@ -271,14 +271,14 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
               </div>
             )}
 
-            {/* Mobile menu button */}
+
             <button onClick={() => setIsMenuOpen((v) => !v)} className="md:hidden p-2.5 rounded-md text-primary-700 hover:text-primary-900 hover:bg-primary-50 cursor-pointer" aria-label="Buka menu" aria-expanded={isMenuOpen}>
               {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
           </div>
         </div>
 
-        {/* Mobile menu */}
+
         {isMenuOpen && (
           <div className="md:hidden py-4 border-t border-primary-200">
             <div className="flex flex-col">
@@ -292,7 +292,7 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
                 Beranda
               </button>
 
-              {/* Tentang Kami (accordion) */}
+
               <button
                 className="flex items-center justify-between w-full px-2 py-3 text-left rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary-50 cursor-pointer"
                 onClick={() => setMAboutOpen((v) => !v)}
@@ -335,7 +335,7 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
                 Beasiswa
               </button>
 
-              {/* Aktivitas (accordion) */}
+
               <button
                 className="flex items-center justify-between w-full px-2 py-3 text-left rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary-50 cursor-pointer"
                 onClick={() => setMActivityOpen((v) => !v)}
@@ -378,7 +378,7 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
                 Artikel
               </button>
 
-              {/* Auth actions (mobile) */}
+
               {!isLoggedIn ? (
                 <div className="mt-3 grid grid-cols-2 gap-2">
                   <button

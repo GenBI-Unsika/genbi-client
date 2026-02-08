@@ -2,12 +2,18 @@ import PropTypes from 'prop-types';
 import { Calendar } from 'lucide-react';
 import { formatDateID, limitWords } from '../../utils/formatters';
 import { Link } from 'react-router-dom';
+import MediaPlaceholder from '../shared/MediaPlaceholder';
 
 const ImageWithFallback = ({ src, alt, className, fallback }) => {
   const onError = (e) => {
-    e.currentTarget.src = fallback || 'https://placehold.co/800x450';
+    if (fallback) e.currentTarget.src = fallback;
+    else e.currentTarget.remove();
   };
-  return <img src={src || fallback || 'https://placehold.co/800x450'} alt={alt} className={className} loading="lazy" decoding="async" onError={onError} />;
+
+  const resolvedSrc = src || fallback;
+  if (!resolvedSrc) return null;
+
+  return <img src={resolvedSrc} alt={alt} className={className} loading="lazy" decoding="async" onError={onError} />;
 };
 
 const MediaCard = ({ title, subtitle, image, category, date, href, to, gradientClass = 'from-[var(--primary-500)] to-[var(--primary-400)]', subtitleWordsLimit = 10, badge, className = '' }) => {
@@ -19,6 +25,9 @@ const MediaCard = ({ title, subtitle, image, category, date, href, to, gradientC
       className={`group bg-white rounded-xl overflow-hidden border border-[#F3F5F9] shadow-sm h-full flex flex-col transform-gpu transition-transform duration-200 ease-out cursor-pointer hover:scale-[1.02] hover:shadow-xl-primary-500/30 ${className}`}
     >
       <div className="relative w-full aspect-[16/9] bg-gray-100 overflow-hidden">
+        <div className="absolute inset-0">
+          <MediaPlaceholder ratio="16/9" label="Tidak ada gambar" className="h-full w-full rounded-none border-0 hover:scale-100 hover:shadow-none transition-none" />
+        </div>
         <ImageWithFallback src={image} alt={title} className="absolute inset-0 w-full h-full object-cover transform-gpu transition-transform duration-300 ease-out group-hover:scale-[1.03] motion-reduce:transform-none" />
         {badge && <span className="absolute top-3 right-3 bg-black/70 text-white text-xs px-2 py-1 rounded">{badge}</span>}
       </div>

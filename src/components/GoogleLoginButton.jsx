@@ -6,14 +6,27 @@ export default function GoogleLoginButton({ onIdToken, onError }) {
   const [isGoogleReady, setIsGoogleReady] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
 
+  const reportError = (userMessage, error) => {
+    if (import.meta.env.DEV) {
+      // Helpful context for local dev (avoid showing technical details to end users)
+      console.error('[Google Sign-In]', userMessage, {
+        origin: window.location.origin,
+        clientId,
+        error,
+      });
+      console.info('[Google Sign-In] If you see “origin not allowed”, add this origin to Google Cloud Console → OAuth Client → Authorized JavaScript origins:', window.location.origin);
+    }
+    onError?.(userMessage);
+  };
+
   useEffect(() => {
     if (!clientId || isInitialized) return;
 
-    // Check if script already exists
+    // Cek jika script sudah ada
     const existingScript = document.querySelector('script[src="https://accounts.google.com/gsi/client"]');
 
     if (existingScript) {
-      // Script already loaded
+      // Script sudah dimuat
       if (window.google?.accounts?.id) {
         initializeGoogle();
         setIsInitialized(true);
@@ -26,7 +39,7 @@ export default function GoogleLoginButton({ onIdToken, onError }) {
       return;
     }
 
-    // Load Google Identity Services script
+    // Muat script Google Identity Services
     const script = document.createElement('script');
     script.src = 'https://accounts.google.com/gsi/client';
     script.async = true;
@@ -38,34 +51,34 @@ export default function GoogleLoginButton({ onIdToken, onError }) {
     };
 
     script.onerror = () => {
-      onError?.('Gagal memuat Google Sign-In. Periksa koneksi internet Anda.');
+      reportError('Login Google belum tersedia. Coba lagi beberapa saat.', 'Failed to load https://accounts.google.com/gsi/client');
     };
 
     document.body.appendChild(script);
 
     function initializeGoogle() {
       if (!window.google?.accounts?.id) {
-        onError?.('Google Sign-In tidak tersedia');
+        reportError('Login Google belum tersedia. Coba lagi beberapa saat.', 'window.google.accounts.id missing');
         return;
       }
 
       try {
-        // Initialize Google Sign-In
+        // Inisialisasi Google Sign-In
         window.google.accounts.id.initialize({
           client_id: clientId,
           callback: (response) => {
-            // response.credential contains the ID token (JWT)
+            // response.credential berisi ID token (JWT)
             if (response.credential) {
               onIdToken?.(response.credential);
             } else {
-              onError?.('ID Token tidak ditemukan');
+              reportError('Login Google gagal. Silakan coba lagi.', 'Missing credential');
             }
           },
           auto_select: false,
           cancel_on_tap_outside: false,
         });
 
-        // Render hidden Google button for triggering
+        // Render tombol Google tersembunyi untuk pemicu
         if (hiddenButtonRef.current) {
           window.google.accounts.id.renderButton(hiddenButtonRef.current, {
             type: 'standard',
@@ -76,27 +89,27 @@ export default function GoogleLoginButton({ onIdToken, onError }) {
 
         setIsGoogleReady(true);
       } catch (error) {
-        onError?.('Gagal menginisialisasi Google Sign-In: ' + error.message);
+        reportError('Login Google belum tersedia. Coba lagi beberapa saat.', error);
       }
     }
   }, [clientId, onIdToken, onError, isInitialized]);
 
   const handleClick = () => {
     if (!isGoogleReady || !hiddenButtonRef.current) {
-      onError?.('Google Sign-In belum siap. Tunggu sebentar dan coba lagi.');
+      reportError('Login Google belum siap. Tunggu sebentar dan coba lagi.', 'Not ready');
       return;
     }
 
     try {
-      // Click the hidden Google button
+      // Klik tombol Google tersembunyi
       const googleButton = hiddenButtonRef.current.querySelector('div[role="button"]');
       if (googleButton) {
         googleButton.click();
       } else {
-        onError?.('Tombol Google Sign-In tidak ditemukan');
+        reportError('Login Google belum tersedia. Coba lagi beberapa saat.', 'Rendered button not found');
       }
     } catch (error) {
-      onError?.('Gagal membuka Google Sign-In: ' + error.message);
+      reportError('Login Google gagal. Silakan coba lagi.', error);
     }
   };
 
@@ -115,10 +128,10 @@ export default function GoogleLoginButton({ onIdToken, onError }) {
 
   return (
     <>
-      {/* Hidden Google button for triggering */}
+      {/* Tombol Google tersembunyi untuk pemicu */}
       <div ref={hiddenButtonRef} className="hidden" />
 
-      {/* Custom button with our styling */}
+      {/* Tombol kustom dengan styling kita */}
       <button
         type="button"
         onClick={handleClick}

@@ -32,7 +32,7 @@ const ScholarshipSection = () => {
                     loading="lazy"
                     decoding="async"
                     onError={(e) => {
-                      e.currentTarget.src = 'https://placehold.co/1200x800';
+                      e.currentTarget.remove();
                     }}
                   />
                 </div>

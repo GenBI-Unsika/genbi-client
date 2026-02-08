@@ -1,10 +1,15 @@
 import PropTypes from 'prop-types';
 import { Calendar, Clock, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import MediaPlaceholder from '../shared/MediaPlaceholder';
+import { normalizeFileUrl } from '../../utils/api';
 
-const ArticleCard = ({ title, excerpt, image, date, readTime, badge, href, to, placeholder = 'https://placehold.co/800x500', className = '' }) => {
+const ArticleCard = ({ title, excerpt, image, coverImage, date, readTime, badge, href, to, placeholder = null, className = '' }) => {
   const Wrapper = to ? Link : href ? 'a' : 'div';
   const wrapperProps = to ? { to } : href ? { href } : {};
+
+  // Support both image and coverImage props, normalize URLs
+  const imageUrl = normalizeFileUrl(image || coverImage);
 
   return (
     <article
@@ -12,16 +17,21 @@ const ArticleCard = ({ title, excerpt, image, date, readTime, badge, href, to, p
     >
       <div className="relative">
         <div className="w-full aspect-[16/10] bg-gray-100 overflow-hidden">
-          <img
-            src={image || placeholder}
-            alt={title}
-            className="absolute inset-0 w-full h-full object-cover transform-gpu transition-transform duration-300 ease-out group-hover:scale-[1.03]"
-            loading="lazy"
-            decoding="async"
-            onError={(e) => {
-              e.currentTarget.src = placeholder;
-            }}
-          />
+          <div className="absolute inset-0">
+            <MediaPlaceholder ratio="16/10" label="Tidak ada cover" className="h-full w-full rounded-none border-0 hover:scale-100 hover:shadow-none transition-none" />
+          </div>
+          {imageUrl ? (
+            <img
+              src={imageUrl}
+              alt={title}
+              className="absolute inset-0 w-full h-full object-cover transform-gpu transition-transform duration-300 ease-out group-hover:scale-[1.03]"
+              loading="lazy"
+              decoding="async"
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+              }}
+            />
+          ) : null}
         </div>
         {badge && <span className="absolute top-3 right-3 bg-[#E3EEFC] text-[#01319F] text-xs font-medium px-2 py-1 rounded-md leading-none">{badge}</span>}
       </div>
@@ -60,10 +70,12 @@ ArticleCard.propTypes = {
   title: PropTypes.string.isRequired,
   excerpt: PropTypes.string,
   image: PropTypes.string,
+  coverImage: PropTypes.string,
   date: PropTypes.string,
   readTime: PropTypes.string,
   badge: PropTypes.string,
   href: PropTypes.string,
+  to: PropTypes.string,
   placeholder: PropTypes.string,
   className: PropTypes.string,
 };

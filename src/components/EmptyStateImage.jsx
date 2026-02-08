@@ -13,7 +13,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import ScrollReveal from './ScrollReveal';
 
-export default function EmptyStateImage({ image, imageAlt = 'Empty state illustration', title, description, action, variant = 'primary', imageSize = 'lg' }) {
+export default function EmptyStateImage({ image, imageAlt = 'Ilustrasi data kosong', title, description, action, variant = 'primary', imageSize = 'lg' }) {
   const variantStyles = {
     default: {
       container: 'bg-neutral-50 border border-neutral-200',
@@ -76,19 +76,19 @@ export default function EmptyStateImage({ image, imageAlt = 'Empty state illustr
   }, [initialSrc]);
 
   const handleImgError = () => {
-    // If remote illustration is blocked (CSP/403/offline), hide it (no local SVG fallback).
+    // Jika ilustrasi remote diblokir (CSP/403/offline), sembunyikan (tidak ada fallback SVG lokal).
     if (isRemoteImage) {
       setSrc('');
       return;
     }
 
-    // For local/public paths, fall back to bundled WEBP.
+    // Untuk path lokal/public, fallback ke WEBP yang dibundel.
     if (src && src !== fallbackSrc) {
       setSrc(fallbackSrc);
       return;
     }
 
-    // If even the fallback fails, hide the image entirely.
+    // Jika fallback juga gagal, sembunyikan gambar sepenuhnya.
     setSrc('');
   };
 

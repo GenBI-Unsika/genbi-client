@@ -1,99 +1,102 @@
 // src/components/Footer.jsx
 import { Icon } from '@iconify/react';
-import toast from 'react-hot-toast';
 
 const Footer = () => {
   const year = new Date().getFullYear();
 
-  const handleSubscribe = (e) => {
-    e.preventDefault();
-    const email = new FormData(e.currentTarget).get('email');
-    toast.success(`Subscribed: ${email}`);
-    e.currentTarget.reset();
-  };
-
   return (
-    <div className="w-full">
-      {/* MAIN */}
-      <footer className="footer bg-primary-50 py-12 pt-32 px-22 text-neutral-800 space-x-12">
-        {/* Brand + deskripsi + newsletter */}
-        <form className="gap-6" onSubmit={handleSubscribe}>
-          <div className="flex items-center gap-2 text-2xl font-semibold text-primary-500">
-            <img src="./genbi-unsika.webp" alt="Logo GenBI Unsika" className="h-6 md:h-8 lg:h-12 w-auto flex-shrink-0" loading="eager" decoding="async" />
+    <div className="w-full bg-blue-50">
+      {/* MAIN FOOTER - dengan padding top untuk CTA overlap */}
+      <footer className="max-w-7xl mx-auto px-6 pt-40 md:pt-48 pb-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8">
+        {/* Brand + Description - Takes 5 columns on large screens */}
+        <div className="lg:col-span-5 space-y-4">
+          <div className="flex items-center gap-2 text-xl font-semibold text-primary-600">
+            <img src="./genbi-unsika.webp" alt="Logo GenBI Unsika" className="h-8 w-auto flex-shrink-0" loading="eager" decoding="async" />
             <span>GenBI Unsika</span>
           </div>
 
-          <p className="text-sm leading-relaxed">Komunitas penerima beasiswa Bank Indonesia Komisariat Universitas Singaperbangsa Karawang.</p>
+          <p className="text-sm text-gray-700 leading-relaxed">Komunitas penerima beasiswa Bank Indonesia Komisariat Universitas Singaperbangsa Karawang</p>
 
-          <p className="text-sm leading-relaxed">Universitas Singaperbangsa Karawang Jl. HS. Ronggo Waluyo, Telukjambe Timur, Karawang, Jawa Barat, Indonesia - 41361</p>
-        </form>
+          <p className="text-sm text-gray-600 leading-relaxed">Universitas Singaperbangsa Karawang Jl. HS. Ronggo Waluyo, Telukjambe Timur, Karawang, Jawa Barat, Indonesia - 41361</p>
+        </div>
 
-        {/* Tentang Kami */}
-        <nav>
-          <h6 className="footer-title text-gray-900">Tentang Kami</h6>
-          <a href="#" className="link link-hover text-gray-600 hover:text-primary-600">
+        {/* Column 2 - Takes 2 columns */}
+        <nav className="lg:col-span-2 space-y-3">
+          <h6 className="font-semibold text-gray-900 text-sm mb-4">Tentang Kami</h6>
+          <a href="#" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
             Tentang Kami
           </a>
-          <a href="#" className="link link-hover text-gray-600 hover:text-primary-600">
+          <a href="#" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
             Beasiswa
           </a>
-          <a href="#" className="link link-hover text-gray-600 hover:text-primary-600">
+          <a href="#" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
             Kegiatan
           </a>
-          <a href="#" className="link link-hover text-gray-600 hover:text-primary-600">
+          <a href="#" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
             Artikel
           </a>
         </nav>
 
-        {/* Layanan */}
-        <nav>
-          <h6 className="footer-title text-gray-900">Layanan</h6>
-          <a href="#" className="link link-hover text-gray-600 hover:text-primary-600">
+        {/* Column 3 - Takes 2 columns */}
+        <nav className="lg:col-span-2 space-y-3">
+          <h6 className="font-semibold text-gray-900 text-sm mb-4">Layanan</h6>
+          <a href="#" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
             Event
           </a>
-          <a href="#" className="link link-hover text-gray-600 hover:text-primary-600">
+          <a href="#" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
             Proker
           </a>
-          <a href="#" className="link link-hover text-gray-600 hover:text-primary-600">
+          <a href="#" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
             Pengalaman Alumni
           </a>
-          <a href="#" className="link link-hover text-gray-600 hover:text-primary-600">
+          <a href="#" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
             Pertanyaan Umum
           </a>
-          <a href="#" className="link link-hover text-gray-600 hover:text-primary-600">
+          <a href="#" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
             Visi Misi
           </a>
         </nav>
 
-        {/* Kontak */}
-        <nav>
-          <h6 className="footer-title text-gray-900">Kontak</h6>
-          <a href="https://maps.google.com/?q=Universitas%20Singaperbangsa%20Karawang" className="link link-hover inline-flex items-center gap-2 text-gray-600 hover:text-primary-600" target="_blank" rel="noreferrer">
-            <Icon icon="tabler:map-pin" className="size-4" />
-            <span>Universitas Singaperbangsa Karawang</span>
+        {/* Column 4 - Social Media Links - Takes 3 columns */}
+        <nav className="lg:col-span-3 space-y-3">
+          <h6 className="font-semibold text-gray-900 text-sm mb-4">Kontak</h6>
+          <a href="mailto:genbiunsika.org@gmail.com" className="flex items-center gap-3 text-sm text-gray-600 hover:text-primary-600 transition-colors group">
+            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary-600 text-white group-hover:bg-primary-700 transition-colors flex-shrink-0">
+              <Icon icon="tabler:mail" className="w-4 h-4" />
+            </div>
+            <span>genbiunsika.org@gmail.com</span>
           </a>
-          <a href="mailto:genbi@unsika.ac.id" className="link link-hover inline-flex items-center gap-2 text-gray-600 hover:text-primary-600">
-            <Icon icon="tabler:mail" className="size-4" />
-            <span>genbi@unsika.ac.id</span>
+          <a href="https://instagram.com/genbi.unsika" target="_blank" rel="noreferrer" className="flex items-center gap-3 text-sm text-gray-600 hover:text-primary-600 transition-colors group">
+            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary-600 text-white group-hover:bg-primary-700 transition-colors flex-shrink-0">
+              <Icon icon="tabler:brand-instagram" className="w-4 h-4" />
+            </div>
+            <span>genbi.unsika</span>
           </a>
-          <a href="tel:+62123456789" className="link link-hover inline-flex items-center gap-2 text-gray-600 hover:text-primary-600">
-            <Icon icon="tabler:phone" className="size-4" />
-            <span>+62 123 456 789</span>
+          <a href="https://tiktok.com/@genbi.unsika" target="_blank" rel="noreferrer" className="flex items-center gap-3 text-sm text-gray-600 hover:text-primary-600 transition-colors group">
+            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary-600 text-white group-hover:bg-primary-700 transition-colors flex-shrink-0">
+              <Icon icon="tabler:brand-tiktok" className="w-4 h-4" />
+            </div>
+            <span>genbi.unsika</span>
+          </a>
+          <a href="https://youtube.com/@GenBIUnsika" target="_blank" rel="noreferrer" className="flex items-center gap-3 text-sm text-gray-600 hover:text-primary-600 transition-colors group">
+            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary-600 text-white group-hover:bg-primary-700 transition-colors flex-shrink-0">
+              <Icon icon="tabler:brand-youtube" className="w-4 h-4" />
+            </div>
+            <span>GenBI Unsika</span>
+          </a>
+          <a href="#" className="flex items-center gap-3 text-sm text-gray-600 hover:text-primary-600 transition-colors group">
+            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary-600 text-white group-hover:bg-primary-700 transition-colors flex-shrink-0">
+              <Icon icon="tabler:speakerphone" className="w-4 h-4" />
+            </div>
+            <span>Podcast GenBI Unsika</span>
           </a>
         </nav>
       </footer>
 
       {/* BOTTOM BAR */}
-      <footer className="footer bg-primary-50 border-t border-gray-200 px-6 py-4">
-        <div className="flex w-full items-center justify-center">
-          <aside className="grid-flow-col items-center">
-            <p className="text-gray-600">
-              &copy;{year}{' '}
-              <a className="link link-hover font-medium text-primary-700 hover:text-primary-600" href="#">
-                GenBI Unsika
-              </a>
-            </p>
-          </aside>
+      <footer className="border-t border-gray-200 bg-blue-50">
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <p className="text-center text-sm text-gray-600">GenBI Unsika. All Rights Reserved {year}</p>
         </div>
       </footer>
     </div>

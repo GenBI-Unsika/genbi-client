@@ -30,16 +30,36 @@ const CTASection = () => {
   }, []);
 
   return (
-    <ScrollReveal as="div" once className="relative z-10 -mb-15">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-6">
-        <div className="bg-primary-500 rounded-2xl p-8 shadow-2xl">
-          <div className="flex justify-center items-center px-2 gap-6">
-            <h3 className="text-md font-semibold text-white">{content.text}</h3>
-            <button className="bg-white text-primary-500 px-4 py-3 rounded-lg hover:bg-gray-100 transition-colors font-medium">{content.buttonText}</button>
+    <div className="relative z-20 pb-16 md:pb-0 md:-mb-24">
+      <ScrollReveal as="div" once className="relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* CTA Card */}
+          <div className="bg-[#01319F] rounded-2xl overflow-hidden">
+            <div className="px-6 py-8 sm:px-10 sm:py-10 lg:px-12 lg:py-10">
+              <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+                {/* Text Content */}
+                <div className="flex-1 text-center md:text-left">
+                  <h3 className="text-base sm:text-lg lg:text-xl font-semibold text-white leading-relaxed">{content.text}</h3>
+                </div>
+
+                {/* CTA Button */}
+                <div className="flex-shrink-0">
+                  <button
+                    className="cursor-pointer bg-white text-[#01319F] px-6 py-2.5 rounded-lg hover:bg-gray-50 transition-all duration-300 transform hover:scale-105 hover:shadow-lg active:scale-95 font-medium text-sm whitespace-nowrap"
+                    onClick={() => {
+                      // Add your navigation logic here
+                      window.location.href = '/scholarship/register';
+                    }}
+                  >
+                    {content.buttonText}
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </ScrollReveal>
+      </ScrollReveal>
+    </div>
   );
 };
 
