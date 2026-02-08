@@ -14,8 +14,14 @@ export default defineConfig({
     clearMocks: true,
   },
   server: {
+    // Needed for Google Identity Services (GSI) popup/iframe communication in dev.
+    // Without this, browsers may block window.postMessage and break Google Sign-In.
+    headers: {
+      'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
+      'Cross-Origin-Embedder-Policy': 'unsafe-none',
+    },
     port: 5173,
-    strictPort: true,
+    strictPort: false, // Allow fallback to another port
     proxy: {
       '/api': {
         // Use IPv4 loopback explicitly to avoid occasional IPv6/localhost resolution issues on Windows.

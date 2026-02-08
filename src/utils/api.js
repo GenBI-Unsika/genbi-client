@@ -1,27 +1,86 @@
 const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api/v1';
 
+// Environment check - only show technical errors in development
+const isDev = import.meta.env.DEV || import.meta.env.MODE === 'development';
+
+/**
+ * Normalize error messages for user display
+ * Technical errors are hidden from users in production
+ */
 function normalizeErrorMessage(message, status) {
-  if (!message) return message;
+  if (!message) return 'Terjadi kesalahan. Silakan coba lagi.';
   const raw = String(message);
   const lower = raw.toLowerCase();
 
-  const looksLikeDbUnreachable =
+  // === INTERNAL/TECHNICAL ERRORS - Never show to users ===
+  const isInternalError =
+    // Database errors
     lower.includes("can't reach database server") ||
     lower.includes('p1001') ||
     lower.includes('localhost:3306') ||
     lower.includes('127.0.0.1:3306') ||
     lower.includes('econnrefused') ||
-    (lower.includes('invalid prisma') && lower.includes("can't reach"));
+    lower.includes('prisma') ||
+    lower.includes('mysql') ||
+    lower.includes('mariadb') ||
+    // Server errors
+    lower.includes('internal server error') ||
+    lower.includes('syntax error') ||
+    lower.includes('undefined') ||
+    lower.includes('null pointer') ||
+    lower.includes('stack trace') ||
+    lower.includes('at line') ||
+    // Network errors
+    lower.includes('fetch failed') ||
+    lower.includes('network error');
 
-  if (looksLikeDbUnreachable) {
-    return 'Database server tidak bisa diakses. Pastikan MySQL/MariaDB berjalan di localhost:3306.';
+  if (isInternalError) {
+    // Log for debugging (only visible in dev tools)
+    if (isDev) console.error('[API Error - Hidden from UI]:', raw);
+    return 'Terjadi gangguan pada sistem. Tim kami sedang menangani masalah ini.';
   }
 
-  if (status === 503) {
-    return 'Layanan sedang tidak tersedia. Coba lagi beberapa saat.';
+  // === HTTP STATUS BASED MESSAGES ===
+  if (status === 500) {
+    if (isDev) console.error('[500 Error]:', raw);
+    return 'Terjadi kesalahan pada server. Silakan coba lagi nanti.';
   }
 
-  return raw;
+  if (status === 502 || status === 503 || status === 504) {
+    return 'Layanan sedang tidak tersedia. Silakan coba lagi beberapa saat.';
+  }
+
+  if (status === 404) {
+    return 'Data yang Anda cari tidak ditemukan.';
+  }
+
+  if (status === 403) {
+    return 'Anda tidak memiliki izin untuk mengakses halaman ini.';
+  }
+
+  if (status === 401) {
+    return 'Sesi Anda telah berakhir. Silakan login kembali.';
+  }
+
+  if (status === 400) {
+    // Bad request might have user-relevant validation messages
+    // But filter out technical ones
+    if (lower.includes('validation') || lower.includes('wajib') || lower.includes('harus') || lower.includes('tidak valid')) {
+      return raw;
+    }
+    return 'Data yang dikirim tidak valid. Periksa kembali form Anda.';
+  }
+
+  // === SAFE USER-FACING MESSAGES ===
+  // Only return raw message if it looks safe/user-friendly
+  const looksUserFriendly = !lower.includes('error') && !lower.includes('exception') && !lower.includes('failed') && raw.length < 200;
+
+  if (looksUserFriendly) {
+    return raw;
+  }
+
+  // Default fallback
+  return 'Terjadi kesalahan. Silakan coba lagi.';
 }
 
 export class ApiError extends Error {
@@ -110,6 +169,30 @@ export async function apiFetch(path, options = {}) {
 
   return json;
 }
+
+// FUNGSI HELPER CRUD
+
+/** Request POST */
+export async function apiPost(path, body, options = {}) {
+  return apiFetch(path, { ...options, method: 'POST', body });
+}
+
+/** Request PATCH */
+export async function apiPatch(path, body, options = {}) {
+  return apiFetch(path, { ...options, method: 'PATCH', body });
+}
+
+/** Request PUT */
+export async function apiPut(path, body, options = {}) {
+  return apiFetch(path, { ...options, method: 'PUT', body });
+}
+
+/** Request DELETE */
+export async function apiDelete(path, options = {}) {
+  return apiFetch(path, { ...options, method: 'DELETE' });
+}
+
+// FUNGSI AUTH
 
 export async function authLogin(email, password) {
   const json = await apiFetch('/auth/login', {
@@ -202,4 +285,111 @@ export async function uploadFile(file) {
     body: form,
   });
   return json?.data;
+}
+
+/**
+ * Dapatkan URL API untuk path tertentu
+ */
+export function apiUrl(path) {
+  return `${API_BASE}${path.startsWith('/') ? '' : '/'}${path}`;
+}
+
+/**
+ * Upload file ke staging/temporary storage untuk preview
+ * File akan expired setelah 30 menit jika tidak di-finalize
+ * @param {File} file - File object dari input
+ * @returns {Promise<Object>} - { tempId, name, mimeType, size, previewUrl, expiresAt, isStaged }
+ */
+export async function uploadFileStaging(file) {
+  const form = new FormData();
+  form.append('file', file);
+  const json = await apiFetch('/files/staging', {
+    method: 'POST',
+    body: form,
+  });
+  return json?.data;
+}
+
+/**
+ * Finalisasi file staged - upload ke Google Drive
+ * @param {string} tempId - ID file temp dari upload staging
+ * @param {string} [folder] - Nama folder opsional
+ * @returns {Promise<Object>} - Object file final dengan URL
+ */
+export async function finalizeUpload(tempId, folder) {
+  const json = await apiFetch('/files/finalize', {
+    method: 'POST',
+    body: { tempId, folder },
+  });
+  return json?.data;
+}
+
+/**
+ * Finalisasi banyak file staged sekaligus
+ * @param {Array<{tempId: string, folder?: string}>} files
+ * @returns {Promise<Object>} - { uploaded: [], errors: [], totalSuccess, totalErrors }
+ */
+export async function finalizeBulkUpload(files) {
+  const json = await apiFetch('/files/finalize-bulk', {
+    method: 'POST',
+    body: { files },
+  });
+  return json?.data;
+}
+
+/**
+ * Hapus file staged
+ * @param {string} tempId
+ */
+export async function deleteStagingFile(tempId) {
+  const json = await apiFetch(`/files/temp/${tempId}`, {
+    method: 'DELETE',
+  });
+  return json?.data;
+}
+
+/**
+ * Dapatkan URL preview file temp
+ * @param {string} tempId
+ * @returns {string}
+ */
+export function getTempPreviewUrl(tempId) {
+  return apiUrl(`/files/temp/${tempId}`);
+}
+
+/**
+ * Get the public proxy URL for a permanent file
+ * This URL does not expire and works for public viewing
+ * @param {number|string} fileId - The FileObject ID
+ * @returns {string} The public proxy URL
+ */
+export function getPublicFileUrl(fileId) {
+  if (!fileId) return '';
+  return apiUrl(`/files/${fileId}/public`);
+}
+
+/**
+ * Check if a URL is a public file proxy URL
+ * @param {string} url - The URL to check
+ * @returns {boolean}
+ */
+export function isPublicFileUrl(url) {
+  if (!url || typeof url !== 'string') return false;
+  return /\/api\/v1\/files\/\d+\/public/.test(url);
+}
+
+/**
+ * Convert various file URL formats to the best displayable URL
+ * Prioritizes public proxy URLs over direct Drive URLs
+ * @param {string} url - The original URL
+ * @returns {string} The best URL for display
+ */
+export function normalizeFileUrl(url) {
+  if (!url) return '';
+  // If already a public proxy URL, return as-is
+  if (isPublicFileUrl(url)) return url;
+  // If it's a temp preview URL, return as-is (for staged files)
+  if (url.includes('/files/temp/')) return url;
+  // Return other URLs as-is (legacy support)
+  return url;
 }
