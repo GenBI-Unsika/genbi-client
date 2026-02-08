@@ -16,7 +16,7 @@ const ScholarshipRegister = () => {
   const previewUrlsRef = useRef({});
   const [filePreviews, setFilePreviews] = useState({});
 
-  // Get user data
+
   const user = getMe();
 
   const [form, setForm] = useState({
@@ -38,7 +38,7 @@ const ScholarshipRegister = () => {
     files: {},
   });
 
-  // Populate form with user data on mount
+
   useEffect(() => {
     if (user) {
       setForm((prev) => ({
@@ -56,7 +56,7 @@ const ScholarshipRegister = () => {
 
   useEffect(() => {
     return () => {
-      // Cleanup blob URLs on unmount
+
       for (const url of Object.values(previewUrlsRef.current)) {
         try {
           URL.revokeObjectURL(url);
@@ -139,7 +139,7 @@ const ScholarshipRegister = () => {
     try {
       setSubmitting(true);
 
-      // Upload files first (excluding videoUrl)
+
       const filesPayload = {};
       for (const d of docs) {
         if (d.key === 'videoUrl') {

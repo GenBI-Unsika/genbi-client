@@ -1,7 +1,60 @@
-import { ChevronRight, MapPin, Calendar, Clock } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { ChevronRight, Loader2 } from 'lucide-react';
 import MediaPlaceholder from '../components/shared/MediaPlaceholder';
+import { apiFetch } from '../utils/api';
 
-const ArticleDetailPage = ({ onNavigate }) => {
+const ArticleDetailPage = ({ onNavigate, slug }) => {
+  const [article, setArticle] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (!slug) {
+      setError('Slug artikel tidak ditemukan');
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+    apiFetch(`/articles/slug/${slug}`)
+      .then((res) => {
+        setArticle(res.data);
+        setError(null);
+      })
+      .catch((err) => {
+        console.error('Failed to load article:', err);
+        setError(err.message || 'Gagal memuat artikel');
+      })
+      .finally(() => setLoading(false));
+  }, [slug]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary-600" />
+      </div>
+    );
+  }
+
+  if (error || !article) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600 mb-4">{error || 'Artikel tidak ditemukan'}</p>
+          <button onClick={() => onNavigate('home')} className="text-primary-600 hover:underline">
+            Kembali ke Beranda
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Parse attachments if stored as JSON string
+  const attachments = typeof article.attachments === 'string' ? JSON.parse(article.attachments) : article.attachments || {};
+  const photos = attachments.photos || [];
+
+  const publishedDate = article.publishedAt ? new Date(article.publishedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Belum dipublikasikan';
+
   return (
     <div className="min-h-screen bg-white">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -15,11 +68,7 @@ const ArticleDetailPage = ({ onNavigate }) => {
             Aktivitas
           </button>
           <ChevronRight className="w-4 h-4" />
-          <button onClick={() => onNavigate('proker')} className="hover:text-primary-600 transition-colors">
-            Proker
-          </button>
-          <ChevronRight className="w-4 h-4" />
-          <span className="text-gray-900">Genbi Peduli Pesisir Pantai</span>
+          <span className="text-gray-900 truncate max-w-xs">{article.title}</span>
         </nav>
 
         {/* GenBI News Badge */}
@@ -36,56 +85,37 @@ const ArticleDetailPage = ({ onNavigate }) => {
 
         {/* Article Header */}
         <header className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Genbi Peduli Pesisir Pantai</h1>
-          <p className="text-lg text-gray-600 mb-4">"Save The Coast: Greening The Coast, Sustaining The Life"</p>
-          <div className="text-sm text-gray-500">Dipublikasikan pada 29 Februari 2024</div>
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{article.title}</h1>
+          {article.excerpt && <p className="text-lg text-gray-600 mb-4">{article.excerpt}</p>}
+          <div className="text-sm text-gray-500">Dipublikasikan pada {publishedDate}</div>
+          {article.author?.profile?.name && <div className="text-sm text-gray-500 mt-1">Oleh: {article.author.profile.name}</div>}
         </header>
 
-        {/* Article Content */}
-        <article className="mb-12">
+        {/* Cover Image */}
+        {article.coverImage ? (
           <div className="mb-8">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">GenBI: Energi Untuk Negeri</h2>
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2">
-                <p className="text-gray-700 leading-relaxed mb-6">
-                  Melihat bencana alam yang kian sering terjadi di beberapa daerah, membuat GenBI Unsika tergerak untuk peduli terhadap kondisi lingkungan, khususnya di daerah Karawang. Dengan mengangkat tema "Save The Coast: Greening The
-                  Coast, Sustaining The Life", GenBI Unsika mengadakan program kerja GenBI Peduli Pesisir Pantai di Wisata Mangrove Karawang, Desa Cilebar yang bertujuan untuk memelihara garis pantai agar tetap stabil dan menahan arus air
-                  laut yang dapat mengikis daratan pantai. Membantu perekonomian masyarakat sekitar pantai, kawasan mangrove yang nantinya akan dimanfaatkan masyarakat untuk
-                </p>
-              </div>
-
-              <div className="lg:col-span-1">
-                <MediaPlaceholder ratio="16/9" label="Poster Event" icon="camera" className="rounded-lg" />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
-              <div className="lg:col-span-1">
-                <MediaPlaceholder ratio="16/9" label="Poster Event" icon="camera" className="rounded-lg" />
-              </div>
-
-              <div className="lg:col-span-2">
-                <p className="text-gray-700 leading-relaxed">
-                  wilayah tambak, penelitian, maupun dijadikan tempat pariwisata. Selain itu, juga bisa membantu memelihara ekosistem pantai dan sebagai tempat berlindung berbagai macam satwa air, serta menumbuhkan kesadaran masyarakat
-                  untuk tetap menjaga kelestarian hutan mangrove. Seluruh anggota GenBI Unsika bersama dengan kelompok sadar wisata Sukamulya dan beberapa warga desa Cilebar melakukan penanaman 200 tunas mangrove secara bersama-sama.
-                  Setelah itu, anggota GenBI Unsika juga melakukan kegiatan GenBI Clean Up, yaitu dengan membersihkan sampah di lingkungan di sektor pesisir pantai.
-                </p>
-              </div>
-            </div>
+            <img src={article.coverImage} alt={article.title} className="w-full h-auto rounded-lg object-cover max-h-96" />
           </div>
+        ) : null}
+
+        {/* Article Content */}
+        <article className="mb-12 prose prose-lg max-w-none">
+          <div className="text-gray-700 leading-relaxed" dangerouslySetInnerHTML={{ __html: article.content || '' }} />
         </article>
 
         {/* Documentation Section */}
-        <section>
-          <h2 className="text-2xl font-bold text-gray-900 mb-8">Dokumentasi Kegiatan</h2>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <MediaPlaceholder key={i} ratio="4/3" label={`Dokumentasi ${i + 1}`} className="cursor-pointer hover:scale-110" />
-            ))}
-          </div>
-        </section>
+        {photos.length > 0 && (
+          <section>
+            <h2 className="text-2xl font-bold text-gray-900 mb-8">Dokumentasi</h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {photos.map((photo, i) => (
+                <div key={i} className="relative aspect-square overflow-hidden rounded-lg">
+                  <img src={photo.url} alt={photo.name || `Dokumentasi ${i + 1}`} className="w-full h-full object-cover cursor-pointer hover:scale-110 transition-transform" />
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
       </div>
     </div>
   );

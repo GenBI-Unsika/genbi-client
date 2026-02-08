@@ -12,13 +12,13 @@ const EventDetailRoute = () => {
       case 'events':
         return navigate('/events');
       case 'event-registration':
-        return navigate(`/events/${eventId}/register`); // tombol "Daftar Event"
+        return navigate(`/events/${eventId}/register`);
       default:
         return;
     }
   };
 
-  return <EventDetailPage onNavigate={onNavigate} />;
+  return <EventDetailPage onNavigate={onNavigate} eventId={eventId} />;
 };
 
 export default EventDetailRoute;

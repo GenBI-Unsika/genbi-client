@@ -26,7 +26,7 @@ const Field = ({ label, children }) => (
   </div>
 );
 
-/* ---------- Modal Detail Pengumuman ---------- */
+
 const AnnouncementDetailModal = ({ open, onClose, userData }) => {
   if (!open) return null;
 
@@ -87,7 +87,7 @@ const AnnouncementDetailModal = ({ open, onClose, userData }) => {
     </div>
   );
 };
-/* -------------------------------------------- */
+
 
 const ScholarshipSelectionAnnouncement = () => {
   const [open, setOpen] = useState(false);

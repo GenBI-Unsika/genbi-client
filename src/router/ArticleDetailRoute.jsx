@@ -1,8 +1,10 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import ArticleDetailPage from '../pages/ArticleDetailPage.jsx';
 
 const ArticleDetailRoute = () => {
   const navigate = useNavigate();
+  const { slug } = useParams();
+
   const onNavigate = (key) => {
     switch (key) {
       case 'home':
@@ -13,7 +15,7 @@ const ArticleDetailRoute = () => {
         return;
     }
   };
-  return <ArticleDetailPage onNavigate={onNavigate} />;
+  return <ArticleDetailPage onNavigate={onNavigate} slug={slug} />;
 };
 
 export default ArticleDetailRoute;

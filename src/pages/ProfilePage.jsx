@@ -26,7 +26,7 @@ const ProfilePage = () => {
   const [faculties, setFaculties] = useState([]);
   const [availablePrograms, setAvailablePrograms] = useState([]);
 
-  // Load faculties on mount
+
   useEffect(() => {
     let alive = true;
 
@@ -44,7 +44,7 @@ const ProfilePage = () => {
     };
   }, []);
 
-  // Load user profile
+
   useEffect(() => {
     let alive = true;
 
@@ -62,7 +62,7 @@ const ProfilePage = () => {
         const facultyId = me?.profile?.facultyId || '';
         const studyProgramId = me?.profile?.studyProgramId || '';
 
-        // Set available programs if faculty is selected
+
         if (facultyId && faculties.length > 0) {
           const selectedFaculty = faculties.find((f) => f.id === facultyId);
           if (selectedFaculty) {
@@ -93,20 +93,20 @@ const ProfilePage = () => {
     };
   }, [faculties]);
 
-  // Validation functions
+
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
 
   const validateNPM = (npm) => {
-    if (!npm) return true; // NPM is optional
-    const npmRegex = /^\d{13}$/; // 13 digits
+
+
     return npmRegex.test(npm);
   };
 
   const validateSemester = (semester) => {
-    if (!semester) return true; // Semester is optional
+
     const semesterNum = parseInt(semester, 10);
     return semesterNum >= 1 && semesterNum <= 14;
   };
@@ -156,7 +156,7 @@ const ProfilePage = () => {
       [name]: value,
     });
 
-    // Clear error when user starts typing
+
     if (errors[name]) {
       setErrors({
         ...errors,
@@ -170,7 +170,7 @@ const ProfilePage = () => {
     setFormData({
       ...formData,
       facultyId,
-      studyProgramId: '', // Reset study program when faculty changes
+      studyProgramId: '',
     });
 
     if (facultyId) {
@@ -180,7 +180,7 @@ const ProfilePage = () => {
       setAvailablePrograms([]);
     }
 
-    // Clear errors
+
     if (errors.facultyId) {
       setErrors({ ...errors, facultyId: undefined, studyProgramId: undefined });
     }
@@ -244,7 +244,7 @@ const ProfilePage = () => {
     <div className="bg-white rounded-lg p-6 sm:p-8">
       <h2 className="text-2xl font-bold text-gray-900 mb-6 sm:mb-8">Profil Saya</h2>
 
-      {/* Profile Photo Section */}
+
       <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 mb-6 sm:mb-8 pb-6 sm:pb-8 border-b border-gray-200">
         <div className="relative">
           <img src={userAvatar} alt={formData.fullName || 'Profile'} className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-4 border-primary-100" referrerPolicy="no-referrer" />
@@ -257,7 +257,7 @@ const ProfilePage = () => {
         </div>
       </div>
 
-      {/* Profile Form */}
+
       <form onSubmit={handleSubmit} className="space-y-5">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -355,9 +355,8 @@ const ProfilePage = () => {
             value={formData.studyProgramId}
             onChange={handleInputChange}
             disabled={!formData.facultyId}
-            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${
-              errors.studyProgramId ? 'border-red-500' : 'border-gray-300'
-            } ${!formData.facultyId ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${errors.studyProgramId ? 'border-red-500' : 'border-gray-300'
+              } ${!formData.facultyId ? 'bg-gray-100 cursor-not-allowed' : ''}`}
           >
             <option value="">{formData.facultyId ? 'Pilih program studi' : 'Pilih fakultas terlebih dahulu'}</option>
             {availablePrograms.map((program) => (
