@@ -51,7 +51,7 @@ const ScholarshipSelectionInterview = React.lazy(() => import('./pages/scholarsh
 const ScholarshipSelectionAnnouncement = React.lazy(() => import('./pages/scholarship/ScholarshipSelectionAnnouncement'));
 const ScholarshipRegisterSuccess = React.lazy(() => import('./pages/scholarship/ScholarshipRegisterSuccess'));
 
-/* ---------- Helper: map key dari Header ke path router ---------- */
+
 const pathForKey = (key) => {
   switch (key) {
     case 'home':
@@ -69,7 +69,7 @@ const pathForKey = (key) => {
     case 'articles':
       return '/articles';
 
-    // auth
+    // otentikasi
     case 'signin':
       return '/signin';
     case 'signup':
@@ -81,7 +81,7 @@ const pathForKey = (key) => {
     case 'verify-email':
       return '/verify-email';
 
-    // profile (sidebar)
+    // profil (sidebar)
     case 'profile':
       return '/profile';
     case 'activity-history':
@@ -96,7 +96,7 @@ const pathForKey = (key) => {
   }
 };
 
-/* ---------- Home (landing) gabungan section seperti sebelumnya ---------- */
+
 const HomePage = ({ isLoggedIn }) => (
   <>
     <HeroSection />
@@ -112,7 +112,7 @@ const HomePage = ({ isLoggedIn }) => (
   </>
 );
 
-/* ---------- Layout untuk halaman profile (nested routes) ---------- */
+
 const ProfileRoutesLayout = ({ onNavigate, onLogout }) => {
   const location = useLocation();
   // tentukan currentKey buat highlight di sidebar ProfileLayout
@@ -131,7 +131,7 @@ const ProfileRoutesLayout = ({ onNavigate, onLogout }) => {
   );
 };
 
-/* ---------- Proteksi route profile saat belum login ---------- */
+
 const RequireAuth = ({ children }) => {
   const [checking, setChecking] = useState(true);
   const [ok, setOk] = useState(false);
@@ -172,11 +172,11 @@ function App() {
     (async () => {
       if (isAuthed()) {
         if (alive) setIsLoggedIn(true);
-        // Sync profile data (including avatar) on app load
+        // Sinkronisasi data profil (termasuk avatar) saat aplikasi dimuat
         try {
           await syncMe();
         } catch (e) {
-          // Silently fail - user can still use the app with cached data
+          // Gagal diam-diam - user masih bisa menggunakan aplikasi dengan data cache
           console.debug('Failed to sync user profile:', e?.message);
         }
         return;
@@ -185,7 +185,7 @@ function App() {
         const ok = await ensureAuthed();
         if (alive) setIsLoggedIn(ok);
       } catch (e) {
-        // Silently fail - user is just not logged in
+        // Gagal diam-diam - user hanya belum login
         console.debug('Auth refresh failed:', e?.message);
         if (alive) setIsLoggedIn(false);
       }
@@ -195,16 +195,16 @@ function App() {
     };
   }, []);
 
-  // Track page views (public website analytics)
+  // Lacak tampilan halaman (analitik website publik)
   useEffect(() => {
     const key = `${location.pathname}`;
     const now = Date.now();
-    // React 18 StrictMode runs effects twice in dev; dedupe within a short window.
+    // React 18 StrictMode menjalankan effect dua kali di dev; dedupe dalam jendela waktu singkat.
     if (lastTrackedRef.current.key === key && now - lastTrackedRef.current.at < 1500) return;
     lastTrackedRef.current = { key, at: now };
 
     trackPageView({ path: location.pathname, referrer: document.referrer }).catch(() => {
-      // ignore tracking errors
+      // abaikan error tracking
     });
   }, [location.pathname]);
 
@@ -236,7 +236,7 @@ function App() {
   const handleLoginSuccess = () => {
     setIsLoggedIn(true);
 
-    // Check profile completion after login
+    // Cek kelengkapan profil setelah login
     setTimeout(() => {
       checkProfileCompletion();
     }, 1000);
@@ -248,7 +248,7 @@ function App() {
       if (user && user.profile) {
         const { npm, facultyId, studyProgramId, birthDate, gender } = user.profile;
 
-        // Check if essential profile fields are missing
+        // Cek jika field profil penting belum diisi
         if (!npm || !facultyId || !studyProgramId || !birthDate || !gender) {
           toast(
             (t) => (
@@ -305,10 +305,10 @@ function App() {
 
       <React.Suspense fallback={<div className="py-16 text-center text-gray-500">Memuat...</div>}>
         <Routes>
-          {/* Home */}
+          {/* Beranda */}
           <Route path="/" element={<HomePage isLoggedIn={isLoggedIn} />} />
 
-          {/* Public pages */}
+          {/* Halaman publik */}
           <Route
             path="/history"
             element={
@@ -415,14 +415,14 @@ function App() {
           <Route path="/articles/:slug" element={<ArticleContentRoute />} />
           <Route path="/proker/:slug" element={<ArticleDetailRoute />} />
 
-          {/* Auth */}
+          {/* Otentikasi */}
           <Route path="/signin" element={<SignInPage onNavigate={onNavigate} onLogin={handleLoginSuccess} />} />
           <Route path="/signup" element={<SignUpPage onNavigate={onNavigate} onLogin={handleLoginSuccess} />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage onNavigate={onNavigate} />} />
           <Route path="/two-factor" element={<TwoFactorAuthPage onNavigate={onNavigate} />} />
           <Route path="/verify-email" element={<VerifyEmailPage onNavigate={onNavigate} />} />
 
-          {/* Profile (protected) */}
+          {/* Profil (terlindungi) */}
           <Route
             path="/profile"
             element={
