@@ -2,7 +2,7 @@ import EventCard from '../components/cards/EventCard';
 import ProkerCard from '../components/cards/ProkerCard';
 import { useEffect, useState } from 'react';
 import { apiFetch } from '../services/api.js';
-import EmptyStateImage from './EmptyStateImage';
+import EmptyState from './EmptyState';
 import ScrollReveal from './ScrollReveal';
 
 const ActivitiesSection = () => {
@@ -55,7 +55,12 @@ const ActivitiesSection = () => {
             {loading ? <div className="text-gray-500">Memuat...</div> : null}
             {!loading && activities.length === 0 ? (
               <div className="col-span-full">
-                <EmptyStateImage image="https://illustrations.popsy.co/amber/remote-work.svg" imageAlt="No events illustration" title="Belum ada event" description="Event terbaru akan muncul di sini" variant="primary" imageSize="lg" />
+                <EmptyState
+                  icon="calendar"
+                  title="Belum ada event"
+                  description="Event terbaru akan muncul di sini"
+                  variant="primary"
+                />
               </div>
             ) : null}
             {activities.map((a, idx) => (
@@ -79,13 +84,11 @@ const ActivitiesSection = () => {
             {loading ? <div className="text-gray-500">Memuat...</div> : null}
             {!loading && projects.length === 0 ? (
               <div className="col-span-full">
-                <EmptyStateImage
-                  image="https://illustrations.popsy.co/amber/work-from-home.svg"
-                  imageAlt="No programs illustration"
+                <EmptyState
+                  icon="clipboard"
                   title="Belum ada proker"
                   description="Program kerja akan muncul di sini"
                   variant="primary"
-                  imageSize="lg"
                 />
               </div>
             ) : null}

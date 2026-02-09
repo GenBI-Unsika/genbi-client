@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { apiFetch } from '../services/api.js';
-import EmptyStateImage from '../components/EmptyStateImage';
+import EmptyState from '../components/EmptyState';
 
 const ActivitiesPage = () => {
   const [activeTab, setActiveTab] = useState('beasiswa');
@@ -64,13 +64,11 @@ const ActivitiesPage = () => {
           <>
             {loading ? <div className="text-gray-500">Memuat...</div> : null}
             {!loading && !error && scholarshipData.length === 0 ? (
-              <EmptyStateImage
-                image="https://illustrations.popsy.co/amber/education.svg"
-                imageAlt="No scholarship history"
+              <EmptyState
+                icon="files"
                 title="Belum ada riwayat beasiswa"
                 description="Riwayat beasiswa Anda akan muncul di sini"
                 variant="primary"
-                imageSize="lg"
               />
             ) : null}
             {scholarshipData.map((item) => (
@@ -94,7 +92,12 @@ const ActivitiesPage = () => {
           <>
             {loading ? <div className="text-gray-500">Memuat...</div> : null}
             {!loading && !error && eventData.length === 0 ? (
-              <EmptyStateImage image="https://illustrations.popsy.co/amber/remote-work.svg" imageAlt="No event history" title="Belum ada riwayat event" description="Riwayat event Anda akan muncul di sini" variant="primary" imageSize="lg" />
+              <EmptyState
+                icon="calendar"
+                title="Belum ada riwayat event"
+                description="Riwayat event Anda akan muncul di sini"
+                variant="primary"
+              />
             ) : null}
             {eventData.map((item) => (
               <div key={item.id} className="flex items-center gap-6 p-6 border border-gray-200 rounded-lg">

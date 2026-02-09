@@ -2,8 +2,8 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import EventCard from '../components/cards/EventCard';
+import EmptyState from '../components/EmptyState';
 import { apiFetch } from '../services/api.js';
-import EmptyStateImage from '../components/EmptyStateImage';
 
 const EventsPage = () => {
   const [events, setEvents] = useState([]);
@@ -41,15 +41,20 @@ const EventsPage = () => {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Event Di GenBI Unsika</h1>
-          <p className="text-gray-600 text-lg">Temukan hal baru dan menarik dari seluruh kegiatan kami</p>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">Event Kami</h1>
+          <p className="text-gray-600 text-lg">Ikuti berbagai kegiatan seru dan bermanfaat</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
           {loading ? <div className="text-gray-500">Memuat...</div> : null}
           {!loading && !error && events.length === 0 ? (
             <div className="col-span-full">
-              <EmptyStateImage image="https://illustrations.popsy.co/amber/remote-work.svg" imageAlt="No events illustration" title="Belum ada event" description="Event dan kegiatan akan muncul di sini" variant="primary" imageSize="lg" />
+              <EmptyState
+                icon="calendar"
+                title="Belum ada event"
+                description="Event dan kegiatan akan muncul di sini"
+                variant="default"
+              />
             </div>
           ) : null}
           {events.map((e) => (
