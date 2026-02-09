@@ -60,6 +60,7 @@ function MissionItem({ item }) {
 const VisionMissionSection = () => {
   const [visionText, setVisionText] = useState('Bersinergi mewujudkan komunitas GenBI UNSIKA yang dapat membawa perubahan positif, berkarakter, berintegritas, dan menjadi inspirasi bagi sekitar.');
   const [missions, setMissions] = useState(defaultMissions);
+  const [image, setImage] = useState('./team-work.webp');
 
   useEffect(() => {
     let alive = true;
@@ -71,6 +72,7 @@ const VisionMissionSection = () => {
         if (json?.data?.missions && Array.isArray(json.data.missions)) {
           setMissions(json.data.missions);
         }
+        if (json?.data?.image) setImage(json.data.image);
       } catch {
         // Use defaults
       }
@@ -91,7 +93,18 @@ const VisionMissionSection = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           <figure className="flex items-center justify-center">
-            <img src="./team-work.webp" alt="Ilustrasi kolaborasi tim" className="w-[500px] h-auto object-fit" loading="lazy" decoding="async" width={800} height={600} />
+            <img
+              src={image}
+              alt="Ilustrasi kolaborasi tim"
+              className="w-[500px] h-auto object-fit"
+              loading="lazy"
+              decoding="async"
+              width={800}
+              height={600}
+              onError={(e) => {
+                e.currentTarget.src = './team-work.webp';
+              }}
+            />
           </figure>
 
           <div className="space-y-8">
