@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import ArticleCard from '../components/cards/ArticleCard';
 import { apiFetch } from '../services/api.js';
-import EmptyStateImage from '../components/EmptyStateImage';
+import EmptyState from '../components/EmptyState';
 
 const ArticlesPage = () => {
   const [articles, setArticles] = useState([]);
@@ -54,13 +54,11 @@ const ArticlesPage = () => {
           {loading ? <div className="text-gray-500">Memuat...</div> : null}
           {!loading && !error && articles.length === 0 ? (
             <div className="col-span-full">
-              <EmptyStateImage
-                image="https://illustrations.popsy.co/amber/work-from-home.svg"
-                imageAlt="No articles illustration"
+              <EmptyState
+                icon="files"
                 title="Belum ada artikel"
                 description="Artikel akan muncul di sini setelah dipublikasikan"
                 variant="primary"
-                imageSize="lg"
               />
             </div>
           ) : null}

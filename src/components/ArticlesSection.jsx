@@ -1,7 +1,7 @@
 import ArticleCard from './cards/ArticleCard';
 import { useEffect, useState } from 'react';
 import { apiFetch } from '../services/api.js';
-import EmptyStateImage from './EmptyStateImage';
+import EmptyState from './EmptyState';
 import ScrollReveal from './ScrollReveal';
 
 const ArticlesSection = () => {
@@ -47,13 +47,11 @@ const ArticlesSection = () => {
             {loading ? <div className="text-gray-500">Memuat...</div> : null}
             {!loading && articles.length === 0 ? (
               <div className="col-span-full">
-                <EmptyStateImage
-                  image="https://illustrations.popsy.co/amber/work-from-home.svg"
-                  imageAlt="No articles illustration"
+                <EmptyState
+                  icon="files"
                   title="Belum ada artikel"
                   description="Artikel terbaru akan muncul di sini"
                   variant="primary"
-                  imageSize="lg"
                 />
               </div>
             ) : null}
