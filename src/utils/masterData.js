@@ -28,3 +28,18 @@ export async function fetchStudyProgramsByFaculty(facultyId) {
     return [];
   }
 }
+
+let divisionsCache = null;
+
+export async function fetchDivisions() {
+  if (divisionsCache) return divisionsCache;
+
+  try {
+    const response = await apiFetch('/divisions');
+    divisionsCache = response.data || [];
+    return divisionsCache;
+  } catch (error) {
+    console.error('Failed to fetch divisions:', error);
+    return [];
+  }
+}
