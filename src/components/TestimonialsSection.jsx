@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { apiFetch } from '../services/api.js';
-import EmptyStateImage from './EmptyStateImage';
+import EmptyState from './EmptyState';
 import ScrollReveal from './ScrollReveal';
 
 export default function TestimonialsSection() {
@@ -110,13 +110,11 @@ export default function TestimonialsSection() {
                 <div className="text-gray-500 py-8">Memuat testimoni...</div>
               ) : testimonials.length === 0 ? (
                 <div className="py-8">
-                  <EmptyStateImage
-                    image="https://illustrations.popsy.co/amber/remote-work.svg"
-                    imageAlt="No testimonials illustration"
+                  <EmptyState
+                    icon="users"
                     title="Belum ada testimoni"
                     description="Testimoni dari anggota akan muncul di sini"
                     variant="primary"
-                    imageSize="lg"
                   />
                 </div>
               ) : (

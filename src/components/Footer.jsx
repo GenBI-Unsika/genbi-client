@@ -1,8 +1,40 @@
 // src/components/Footer.jsx
+import { useState, useEffect } from 'react';
 import { Icon } from '@iconify/react';
+import { apiFetch } from '../services/api.js';
+
+const defaultFooterContent = {
+  description: 'Komunitas penerima beasiswa Bank Indonesia Komisariat Universitas Singaperbangsa Karawang',
+  address: 'Universitas Singaperbangsa Karawang Jl. HS. Ronggo Waluyo, Telukjambe Timur, Karawang, Jawa Barat, Indonesia - 41361',
+  socialLinks: [
+    { type: 'email', label: 'genbiunsika.org@gmail.com', url: 'mailto:genbiunsika.org@gmail.com', icon: 'tabler:mail' },
+    { type: 'instagram', label: 'genbi.unsika', url: 'https://instagram.com/genbi.unsika', icon: 'tabler:brand-instagram' },
+    { type: 'tiktok', label: 'genbi.unsika', url: 'https://tiktok.com/@genbi.unsika', icon: 'tabler:brand-tiktok' },
+    { type: 'youtube', label: 'GenBI Unsika', url: 'https://youtube.com/@GenBIUnsika', icon: 'tabler:brand-youtube' },
+  ],
+};
 
 const Footer = () => {
   const year = new Date().getFullYear();
+  const [content, setContent] = useState(defaultFooterContent);
+
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      try {
+        const json = await apiFetch('/site-settings/cms_footer', { method: 'GET', skipAuth: true });
+        const value = json?.data?.value;
+        if (alive && value) {
+          setContent({ ...defaultFooterContent, ...value });
+        }
+      } catch {
+        // Use defaults on error
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   return (
     <div className="w-full bg-blue-50">
@@ -15,24 +47,24 @@ const Footer = () => {
             <span>GenBI Unsika</span>
           </div>
 
-          <p className="text-sm text-gray-700 leading-relaxed">Komunitas penerima beasiswa Bank Indonesia Komisariat Universitas Singaperbangsa Karawang</p>
+          <p className="text-sm text-gray-700 leading-relaxed">{content.description}</p>
 
-          <p className="text-sm text-gray-600 leading-relaxed">Universitas Singaperbangsa Karawang Jl. HS. Ronggo Waluyo, Telukjambe Timur, Karawang, Jawa Barat, Indonesia - 41361</p>
+          <p className="text-sm text-gray-600 leading-relaxed">{content.address}</p>
         </div>
 
         {/* Column 2 - Takes 2 columns */}
         <nav className="lg:col-span-2 space-y-3">
           <h6 className="font-semibold text-gray-900 text-sm mb-4">Tentang Kami</h6>
-          <a href="#" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
+          <a href="/about" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
             Tentang Kami
           </a>
-          <a href="#" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
+          <a href="/scholarship" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
             Beasiswa
           </a>
-          <a href="#" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
+          <a href="/activities" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
             Kegiatan
           </a>
-          <a href="#" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
+          <a href="/articles" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
             Artikel
           </a>
         </nav>
@@ -40,19 +72,19 @@ const Footer = () => {
         {/* Column 3 - Takes 2 columns */}
         <nav className="lg:col-span-2 space-y-3">
           <h6 className="font-semibold text-gray-900 text-sm mb-4">Layanan</h6>
-          <a href="#" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
+          <a href="/events" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
             Event
           </a>
-          <a href="#" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
+          <a href="/proker" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
             Proker
           </a>
-          <a href="#" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
+          <a href="#testimonials" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
             Pengalaman Alumni
           </a>
-          <a href="#" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
+          <a href="#faq" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
             Pertanyaan Umum
           </a>
-          <a href="#" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
+          <a href="#vision-mission" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
             Visi Misi
           </a>
         </nav>
@@ -60,36 +92,20 @@ const Footer = () => {
         {/* Column 4 - Social Media Links - Takes 3 columns */}
         <nav className="lg:col-span-3 space-y-3">
           <h6 className="font-semibold text-gray-900 text-sm mb-4">Kontak</h6>
-          <a href="mailto:genbiunsika.org@gmail.com" className="flex items-center gap-3 text-sm text-gray-600 hover:text-primary-600 transition-colors group">
-            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary-600 text-white group-hover:bg-primary-700 transition-colors flex-shrink-0">
-              <Icon icon="tabler:mail" className="w-4 h-4" />
-            </div>
-            <span>genbiunsika.org@gmail.com</span>
-          </a>
-          <a href="https://instagram.com/genbi.unsika" target="_blank" rel="noreferrer" className="flex items-center gap-3 text-sm text-gray-600 hover:text-primary-600 transition-colors group">
-            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary-600 text-white group-hover:bg-primary-700 transition-colors flex-shrink-0">
-              <Icon icon="tabler:brand-instagram" className="w-4 h-4" />
-            </div>
-            <span>genbi.unsika</span>
-          </a>
-          <a href="https://tiktok.com/@genbi.unsika" target="_blank" rel="noreferrer" className="flex items-center gap-3 text-sm text-gray-600 hover:text-primary-600 transition-colors group">
-            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary-600 text-white group-hover:bg-primary-700 transition-colors flex-shrink-0">
-              <Icon icon="tabler:brand-tiktok" className="w-4 h-4" />
-            </div>
-            <span>genbi.unsika</span>
-          </a>
-          <a href="https://youtube.com/@GenBIUnsika" target="_blank" rel="noreferrer" className="flex items-center gap-3 text-sm text-gray-600 hover:text-primary-600 transition-colors group">
-            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary-600 text-white group-hover:bg-primary-700 transition-colors flex-shrink-0">
-              <Icon icon="tabler:brand-youtube" className="w-4 h-4" />
-            </div>
-            <span>GenBI Unsika</span>
-          </a>
-          <a href="#" className="flex items-center gap-3 text-sm text-gray-600 hover:text-primary-600 transition-colors group">
-            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary-600 text-white group-hover:bg-primary-700 transition-colors flex-shrink-0">
-              <Icon icon="tabler:speakerphone" className="w-4 h-4" />
-            </div>
-            <span>Podcast GenBI Unsika</span>
-          </a>
+          {content.socialLinks.map((link, index) => (
+            <a
+              key={index}
+              href={link.url}
+              target={link.type !== 'email' ? '_blank' : undefined}
+              rel={link.type !== 'email' ? 'noreferrer' : undefined}
+              className="flex items-center gap-3 text-sm text-gray-600 hover:text-primary-600 transition-colors group"
+            >
+              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary-600 text-white group-hover:bg-primary-700 transition-colors flex-shrink-0">
+                <Icon icon={link.icon || 'tabler:link'} className="w-4 h-4" />
+              </div>
+              <span>{link.label}</span>
+            </a>
+          ))}
         </nav>
       </footer>
 

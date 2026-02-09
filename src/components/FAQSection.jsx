@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { apiFetch } from '../services/api.js';
-import EmptyStateImage from './EmptyStateImage';
+import EmptyState from './EmptyState';
 import ScrollReveal from './ScrollReveal';
 
 const FAQSection = () => {
@@ -43,13 +43,11 @@ const FAQSection = () => {
           <div className="text-center text-gray-500 py-8">Memuat FAQ...</div>
         ) : faqs.length === 0 ? (
           <div className="py-8">
-            <EmptyStateImage
-              image="https://illustrations.popsy.co/amber/remote-work.svg"
-              imageAlt="No FAQs illustration"
+            <EmptyState
+              icon="files"
               title="Belum ada FAQ"
               description="Pertanyaan yang sering diajukan akan muncul di sini"
               variant="primary"
-              imageSize="lg"
             />
           </div>
         ) : (
