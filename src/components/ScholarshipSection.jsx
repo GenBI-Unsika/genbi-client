@@ -1,6 +1,43 @@
+import { useState, useEffect } from 'react';
 import ScrollReveal from './ScrollReveal';
+import { apiFetch } from '../services/api.js';
+
+const defaultScholarshipContent = {
+  title: 'Beasiswa Bank Indonesia',
+  description:
+    'Beasiswa Bank Indonesia merupakan beasiswa yang diberikan oleh Bank Indonesia bagi para mahasiswa S1 di berbagai Perguruan Tinggi Negeri (PTN). Para penerima beasiswa juga akan tergabung dalam organisasi bernama Generasi Baru Indonesia (GenBI) dan mendapatkan berbagai pelatihan untuk meningkatkan kompetensi, mengembangkan karakter dan jiwa kepemimpinan mereka. Ini merupakan komitmen Bank Indonesia (BI) untuk memajukan dunia pendidikan dan salah satu bentuk tanggung jawab sosial perusahaan. Adapaun tahap seleksi beasiswa Bank Indonesia terdiri dari 3 tahap.',
+  buttonText: 'Daftar Sekarang',
+  buttonUrl: '/scholarship/register',
+  image: '',
+};
 
 const ScholarshipSection = () => {
+  const [content, setContent] = useState(defaultScholarshipContent);
+
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      try {
+        const json = await apiFetch('/site-settings/cms_scholarship', { method: 'GET', skipAuth: true });
+        const value = json?.data?.value;
+        if (alive && value) {
+          setContent({ ...defaultScholarshipContent, ...value });
+        }
+      } catch {
+        // Use defaults on error
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  const handleButtonClick = () => {
+    if (content.buttonUrl) {
+      window.location.href = content.buttonUrl;
+    }
+  };
+
   return (
     <ScrollReveal as="section" className="bg-white">
       {/* Responsive radius (no big curve on small screens) */}
@@ -9,14 +46,12 @@ const ScholarshipSection = () => {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             {/* Left content */}
             <div className="order-2 lg:order-1 lg:col-span-6 space-y-4 sm:space-y-6 max-w-2xl">
-              <h2 className="text-3xl sm:text-4xl font-semibold text-primary-600">Beasiswa Bank Indonesia</h2>
-              <p className="text-gray-600 leading-relaxed text-base sm:text-lg">
-                Beasiswa Bank Indonesia merupakan beasiswa yang diberikan oleh Bank Indonesia bagi para mahasiswa S1 di berbagai Perguruan Tinggi Negeri (PTN). Para penerima beasiswa juga akan tergabung dalam organisasi bernama Generasi
-                Baru Indonesia (GenBI) dan mendapatkan berbagai pelatihan untuk meningkatkan kompetensi, mengembangkan karakter dan jiwa kepemimpinan mereka. Ini merupakan komitmen Bank Indonesia (BI) untuk memajukan dunia pendidikan dan
-                salah satu bentuk tanggung jawab sosial perusahaan. Adapaun tahap seleksi beasiswa Bank Indonesia terdiri dari 3 tahap.
-              </p>
+              <h2 className="text-3xl sm:text-4xl font-semibold text-primary-600">{content.title}</h2>
+              <p className="text-gray-600 leading-relaxed text-base sm:text-lg">{content.description}</p>
               <div className="flex flex-col sm:flex-row gap-3">
-                <button className="w-full sm:w-auto bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition-colors">Daftar Sekarang</button>
+                <button onClick={handleButtonClick} className="w-full sm:w-auto bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition-colors">
+                  {content.buttonText}
+                </button>
               </div>
             </div>
 
@@ -26,13 +61,13 @@ const ScholarshipSection = () => {
                 {/* Aspect ratios per breakpoint to avoid layout shift */}
                 <div className="aspect-[4/3] sm:aspect-[16/10] lg:aspect-[3/2]">
                   <img
-                    src="./read-book.webp"
+                    src={content.image || './read-book.webp'}
                     alt="Mahasiswa penerima beasiswa Bank Indonesia"
                     className="absolute inset-0 w-full h-full object-cover"
                     loading="lazy"
                     decoding="async"
                     onError={(e) => {
-                      e.currentTarget.remove();
+                      e.currentTarget.src = './read-book.webp';
                     }}
                   />
                 </div>
