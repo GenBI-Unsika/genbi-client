@@ -16,6 +16,7 @@ const ProfilePage = () => {
     email: '',
     birthDate: '',
     gender: '',
+    phone: '',
     npm: '',
     facultyId: '',
     studyProgramId: '',
@@ -26,16 +27,17 @@ const ProfilePage = () => {
   const [faculties, setFaculties] = useState([]);
   const [availablePrograms, setAvailablePrograms] = useState([]);
 
-
   useEffect(() => {
     let alive = true;
 
     (async () => {
       try {
-        const data = await fetchFaculties();
-        if (alive) setFaculties(data);
+        const facultiesData = await fetchFaculties();
+        if (alive) {
+          setFaculties(facultiesData);
+        }
       } catch (error) {
-        console.error('Failed to load faculties:', error);
+        console.error('Failed to load master data:', error);
       }
     })();
 
@@ -43,7 +45,6 @@ const ProfilePage = () => {
       alive = false;
     };
   }, []);
-
 
   useEffect(() => {
     let alive = true;
@@ -62,7 +63,6 @@ const ProfilePage = () => {
         const facultyId = me?.profile?.facultyId || '';
         const studyProgramId = me?.profile?.studyProgramId || '';
 
-
         if (facultyId && faculties.length > 0) {
           const selectedFaculty = faculties.find((f) => f.id === facultyId);
           if (selectedFaculty) {
@@ -75,6 +75,7 @@ const ProfilePage = () => {
           email: me?.email || '',
           birthDate: me?.profile?.birthDate ? new Date(me.profile.birthDate).toISOString().split('T')[0] : '',
           gender: me?.profile?.gender || '',
+          phone: me?.profile?.phone || '',
           npm: me?.profile?.npm || '',
           facultyId,
           studyProgramId,
@@ -93,20 +94,17 @@ const ProfilePage = () => {
     };
   }, [faculties]);
 
-
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
 
   const validateNPM = (npm) => {
-
-
+    const npmRegex = /^\d{13}$/;
     return npmRegex.test(npm);
   };
 
   const validateSemester = (semester) => {
-
     const semesterNum = parseInt(semester, 10);
     return semesterNum >= 1 && semesterNum <= 14;
   };
@@ -156,7 +154,6 @@ const ProfilePage = () => {
       [name]: value,
     });
 
-
     if (errors[name]) {
       setErrors({
         ...errors,
@@ -179,7 +176,6 @@ const ProfilePage = () => {
     } else {
       setAvailablePrograms([]);
     }
-
 
     if (errors.facultyId) {
       setErrors({ ...errors, facultyId: undefined, studyProgramId: undefined });
@@ -212,6 +208,7 @@ const ProfilePage = () => {
           name: formData.fullName.trim(),
           birthDate: formData.birthDate ? new Date(formData.birthDate).toISOString() : null,
           gender: formData.gender || null,
+          phone: formData.phone || null,
           npm: formData.npm || null,
           facultyId: formData.facultyId || null,
           studyProgramId: formData.studyProgramId || null,
@@ -244,7 +241,6 @@ const ProfilePage = () => {
     <div className="bg-white rounded-lg p-6 sm:p-8">
       <h2 className="text-2xl font-bold text-gray-900 mb-6 sm:mb-8">Profil Saya</h2>
 
-
       <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 mb-6 sm:mb-8 pb-6 sm:pb-8 border-b border-gray-200">
         <div className="relative">
           <img src={userAvatar} alt={formData.fullName || 'Profile'} className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-4 border-primary-100" referrerPolicy="no-referrer" />
@@ -257,11 +253,10 @@ const ProfilePage = () => {
         </div>
       </div>
 
-
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={handleSubmit} className="space-y-6">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Nama Lengkap <span className="text-red-500">*</span>
+            Nama Lengkap
           </label>
           <input
             type="text"
@@ -276,7 +271,7 @@ const ProfilePage = () => {
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Email <span className="text-red-500">*</span>
+            Email
           </label>
           <input
             type="email"
@@ -285,6 +280,7 @@ const ProfilePage = () => {
             onChange={handleInputChange}
             className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
             placeholder="nama@email.com"
+            readOnly
           />
           {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
         </div>
@@ -304,13 +300,12 @@ const ProfilePage = () => {
             />
             {errors.birthDate && <p className="mt-1 text-sm text-red-600">{errors.birthDate}</p>}
           </div>
-
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Jenis Kelamin</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Gender</label>
             <select name="gender" value={formData.gender} onChange={handleInputChange} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent">
-              <option value="">Pilih jenis kelamin</option>
-              <option value="Laki-laki">Laki-laki</option>
-              <option value="Perempuan">Perempuan</option>
+              <option value="">Pilih Gender</option>
+              <option value="L">Laki-laki</option>
+              <option value="P">Perempuan</option>
             </select>
           </div>
         </div>
@@ -327,7 +322,6 @@ const ProfilePage = () => {
             placeholder="Contoh: 2111010001234"
           />
           {errors.npm && <p className="mt-1 text-sm text-red-600">{errors.npm}</p>}
-          <p className="mt-1 text-xs text-gray-500">13 digit angka</p>
         </div>
 
         <div>
@@ -338,7 +332,7 @@ const ProfilePage = () => {
             onChange={handleFacultyChange}
             className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${errors.facultyId ? 'border-red-500' : 'border-gray-300'}`}
           >
-            <option value="">Pilih fakultas</option>
+            <option value="">Pilih Fakultas</option>
             {faculties.map((faculty) => (
               <option key={faculty.id} value={faculty.id}>
                 {faculty.name}
@@ -358,7 +352,7 @@ const ProfilePage = () => {
             className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${errors.studyProgramId ? 'border-red-500' : 'border-gray-300'
               } ${!formData.facultyId ? 'bg-gray-100 cursor-not-allowed' : ''}`}
           >
-            <option value="">{formData.facultyId ? 'Pilih program studi' : 'Pilih fakultas terlebih dahulu'}</option>
+            <option value="">{formData.facultyId ? 'Pilih Program Studi' : 'Pilih Fakultas terlebih dahulu'}</option>
             {availablePrograms.map((program) => (
               <option key={program.id} value={program.id}>
                 {program.name} ({program.degree})
@@ -376,7 +370,7 @@ const ProfilePage = () => {
             onChange={handleInputChange}
             className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${errors.currentSemester ? 'border-red-500' : 'border-gray-300'}`}
           >
-            <option value="">Pilih semester</option>
+            <option value="">Pilih Semester</option>
             {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map((sem) => (
               <option key={sem} value={sem}>
                 Semester {sem}
@@ -386,7 +380,7 @@ const ProfilePage = () => {
           {errors.currentSemester && <p className="mt-1 text-sm text-red-600">{errors.currentSemester}</p>}
         </div>
 
-        <div className="flex justify-end pt-4">
+        <div className="flex justify-end pt-6">
           <button type="submit" disabled={saving} className="bg-secondary-500 text-white px-8 py-3 rounded-lg hover:bg-secondary-600 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed">
             {saving ? 'Menyimpan...' : 'Simpan Perubahan'}
           </button>
