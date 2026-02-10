@@ -448,6 +448,12 @@
     @apply text-lg  md:text-xl  leading-snug;
   }
 
+  html,
+  body {
+    overflow-x: hidden;
+    width: 100%;
+  }
+
   p {
     @apply text-neutral-800;
   }

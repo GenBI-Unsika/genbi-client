@@ -63,7 +63,7 @@ const MemberCard = ({ member = {}, onClick, showStudyInfo = true }) => {
           {showStudyInfo && (major || faculty) && (
             <div className="mt-2 pt-2 border-t border-gray-100">
               {major && <p className="text-xs text-primary-600 font-medium line-clamp-1">{major}</p>}
-              {faculty && <p className="text-[10px] text-gray-500 line-clamp-1 uppercase tracking-wider">{faculty}</p>}
+              {faculty && <p className="text-[11px] text-gray-500 line-clamp-1 uppercase tracking-wider">{faculty}</p>}
             </div>
           )}
         </div>

@@ -64,16 +64,16 @@ const ArticleDetailPage = () => {
     <div className="min-h-screen bg-white">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Breadcrumb */}
-        <nav className="flex items-center space-x-2 text-sm text-gray-500 mb-8">
-          <button onClick={() => navigate('/')} className="hover:text-primary-600 transition-colors">
+        <nav className="flex items-center space-x-1 sm:space-x-2 text-sm text-gray-500 mb-8 overflow-hidden">
+          <button onClick={() => navigate('/')} className="hover:text-primary-600 transition-colors flex-shrink-0">
             Beranda
           </button>
-          <ChevronRight className="w-4 h-4" />
-          <button onClick={() => navigate('/articles')} className="hover:text-primary-600 transition-colors">
+          <ChevronRight className="w-4 h-4 flex-shrink-0" />
+          <button onClick={() => navigate('/articles')} className="hover:text-primary-600 transition-colors flex-shrink-0">
             Artikel
           </button>
-          <ChevronRight className="w-4 h-4" />
-          <span className="text-gray-900 truncate max-w-xs">{article.title}</span>
+          <ChevronRight className="w-4 h-4 flex-shrink-0" />
+          <span className="text-gray-900 truncate min-w-0 max-w-[40vw]">{article.title}</span>
         </nav>
 
         {/* Article Header */}

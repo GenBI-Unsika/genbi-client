@@ -98,7 +98,7 @@ const AboutSection = ({ imageSrc: propImageSrc, videoUrl: propVideoUrl }) => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Left content */}
             <div className="space-y-6">
-              <h2 id="about-heading" className="text-4xl font-semibold text-primary-500">
+              <h2 id="about-heading" className="text-2xl sm:text-3xl md:text-4xl font-semibold text-primary-500">
                 {content.title}
               </h2>
               <p className="text-gray-600 leading-relaxed">{content.description}</p>

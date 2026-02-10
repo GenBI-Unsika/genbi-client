@@ -42,7 +42,7 @@ const ActivitiesSection = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Activities */}
         <div className="mb-16">
-          <h2 className="text-4xl font-semibold text-primary-500 mb-6">Aktivitas</h2>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-primary-500 mb-6">Aktivitas</h2>
 
           <div className="flex items-center justify-between gap-3 flex-wrap sm:flex-nowrap mb-8">
             <h3 className="text-xl font-semibold text-neutral-800">Yuk, Ikuti Event Kami</h3>
@@ -55,12 +55,7 @@ const ActivitiesSection = () => {
             {loading ? <div className="text-gray-500">Memuat...</div> : null}
             {!loading && activities.length === 0 ? (
               <div className="col-span-full">
-                <EmptyState
-                  icon="calendar"
-                  title="Belum ada event"
-                  description="Event terbaru akan muncul di sini"
-                  variant="primary"
-                />
+                <EmptyState icon="calendar" title="Belum ada event" description="Event terbaru akan muncul di sini" variant="primary" />
               </div>
             ) : null}
             {activities.map((a, idx) => (
@@ -84,12 +79,7 @@ const ActivitiesSection = () => {
             {loading ? <div className="text-gray-500">Memuat...</div> : null}
             {!loading && projects.length === 0 ? (
               <div className="col-span-full">
-                <EmptyState
-                  icon="clipboard"
-                  title="Belum ada proker"
-                  description="Program kerja akan muncul di sini"
-                  variant="primary"
-                />
+                <EmptyState icon="clipboard" title="Belum ada proker" description="Program kerja akan muncul di sini" variant="primary" />
               </div>
             ) : null}
             {projects.map((p, idx) => (

@@ -114,9 +114,9 @@ export default function TestimonialsSection() {
                   onClick={scrollPrev}
                   disabled={!canPrev}
                   className="
-                    absolute left-0 top-1/2 -translate-y-1/2 -translate-x-6 z-20
+                    absolute left-0 top-1/2 -translate-y-1/2 translate-x-0 md:-translate-x-6 z-20
                     flex items-center justify-center
-                    w-12 h-12 rounded-full
+                    w-10 h-10 md:w-12 md:h-12 rounded-full
                     bg-[#1E40AF] text-white
                     hover:bg-[#1E3A8A]
                     disabled:bg-gray-400 disabled:cursor-not-allowed
@@ -133,9 +133,9 @@ export default function TestimonialsSection() {
                   onClick={scrollNext}
                   disabled={!canNext}
                   className="
-                    absolute right-0 top-1/2 -translate-y-1/2 translate-x-6 z-20
+                    absolute right-0 top-1/2 -translate-y-1/2 translate-x-0 md:translate-x-6 z-20
                     flex items-center justify-center
-                    w-12 h-12 rounded-full
+                    w-10 h-10 md:w-12 md:h-12 rounded-full
                     bg-[#1E40AF] text-white
                     hover:bg-[#1E3A8A]
                     disabled:bg-gray-400 disabled:cursor-not-allowed

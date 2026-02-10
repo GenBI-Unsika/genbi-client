@@ -232,7 +232,7 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
               </label>
 
               {showResults && (
-                <div className="absolute right-0 mt-2 w-[400px] bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-[60] overflow-hidden">
+                <div className="absolute right-0 mt-2 w-[min(400px,calc(100vw-2rem))] bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-[60] overflow-hidden">
                   <div className="px-4 py-2 border-b border-gray-50 flex justify-between items-center">
                     <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Hasil Pencarian</span>
                     {isSearching && <div className="w-4 h-4 border-2 border-primary-500 border-t-transparent rounded-full animate-spin"></div>}
@@ -327,8 +327,22 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
         </div>
 
         {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-primary-200">
+          <div className="md:hidden py-4 border-t border-primary-200 max-h-[calc(100dvh-60px)] overflow-y-auto">
             <div className="flex flex-col">
+              {/* Mobile Search */}
+              <div className="px-2 pb-3 mb-2 border-b border-primary-100">
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Telusuri..."
+                    className="w-full pl-9 pr-3 h-10 bg-white border border-primary-200 rounded-lg text-sm placeholder:text-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  />
+                  <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary-500" aria-hidden="true" />
+                </div>
+              </div>
+
               <button
                 onClick={() => {
                   handleNavigation('home');

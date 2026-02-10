@@ -4,7 +4,6 @@ import { apiFetch } from '../services/api.js';
 import EmptyState from '../components/EmptyState';
 import { formatDateID } from '../utils/formatters';
 
-
 const TransactionsPage = () => {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -40,28 +39,21 @@ const TransactionsPage = () => {
   }, []);
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-8">
-      <h2 className="text-2xl font-bold text-gray-900 mb-8">Transaksi</h2>
+    <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6 lg:p-8">
+      <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-6 sm:mb-8">Transaksi</h2>
 
       <div className="space-y-4">
         {loading ? <div className="text-gray-500">Memuat...</div> : null}
-        {!loading && !error && transactions.length === 0 ? (
-          <EmptyState
-            icon="files"
-            title="Belum ada transaksi"
-            description="Transaksi Anda akan muncul di sini"
-            variant="primary"
-          />
-        ) : null}
+        {!loading && !error && transactions.length === 0 ? <EmptyState icon="files" title="Belum ada transaksi" description="Transaksi Anda akan muncul di sini" variant="primary" /> : null}
         {transactions.map((transaction) => (
-          <div key={transaction.id} className="flex items-center justify-between p-6 border border-gray-200 rounded-lg">
-            <div>
+          <div key={transaction.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 sm:p-6 border border-gray-200 rounded-lg">
+            <div className="min-w-0">
               <h3 className="font-semibold text-gray-900 mb-1">{transaction.type}</h3>
               <p className="text-gray-600 text-sm">{formatDateID(transaction.date)}</p>
             </div>
-            <div className="text-right">
+            <div className="sm:text-right">
               <p className="font-semibold text-gray-900 mb-1">{transaction.amount}</p>
-              <span className={`inline - block px - 3 py - 1 rounded - full text - sm font - medium ${transaction.statusColor || 'bg-gray-100 text-gray-800'} `}>{transaction.status}</span>
+              <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${transaction.statusColor || 'bg-gray-100 text-gray-800'}`}>{transaction.status}</span>
             </div>
           </div>
         ))}

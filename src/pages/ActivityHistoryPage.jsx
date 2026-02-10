@@ -4,7 +4,6 @@ import { apiFetch } from '../services/api.js';
 import EmptyState from '../components/EmptyState';
 import { formatDateID } from '../utils/formatters';
 
-
 const ActivitiesPage = () => {
   const [activeTab, setActiveTab] = useState('beasiswa');
   const [scholarshipData, setScholarshipData] = useState([]);
@@ -47,11 +46,11 @@ const ActivitiesPage = () => {
   }, []);
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-8">
-      <h2 className="text-2xl font-bold text-gray-900 mb-8">Riwayat Aktivitas</h2>
+    <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6 lg:p-8">
+      <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-6 sm:mb-8">Riwayat Aktivitas</h2>
 
       {/* Tab */}
-      <div className="flex gap-8 mb-8 border-b border-gray-200">
+      <div className="flex gap-4 sm:gap-8 mb-6 sm:mb-8 border-b border-gray-200">
         <button onClick={() => setActiveTab('beasiswa')} className={`pb-4 px-2 font-medium transition-colors ${activeTab === 'beasiswa' ? 'text-primary-500 border-b-2 border-primary-500' : 'text-gray-500 hover:text-gray-700'}`}>
           Beasiswa
         </button>
@@ -65,24 +64,17 @@ const ActivitiesPage = () => {
         {activeTab === 'beasiswa' && (
           <>
             {loading ? <div className="text-gray-500">Memuat...</div> : null}
-            {!loading && !error && scholarshipData.length === 0 ? (
-              <EmptyState
-                icon="files"
-                title="Belum ada riwayat beasiswa"
-                description="Riwayat beasiswa Anda akan muncul di sini"
-                variant="primary"
-              />
-            ) : null}
+            {!loading && !error && scholarshipData.length === 0 ? <EmptyState icon="files" title="Belum ada riwayat beasiswa" description="Riwayat beasiswa Anda akan muncul di sini" variant="primary" /> : null}
             {scholarshipData.map((item) => (
-              <div key={item.id} className="flex items-center gap-6 p-6 border border-gray-200 rounded-lg">
-                <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center">
-                  <img src={item.logo || fallbackImage} alt="Logo" className="w-12 h-12 object-contain" />
+              <div key={item.id} className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 p-4 sm:p-6 border border-gray-200 rounded-lg">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <img src={item.logo || fallbackImage} alt="Logo" className="w-10 h-10 sm:w-12 sm:h-12 object-contain" />
                 </div>
-                <div className="flex-1">
-                  <h3 className="font-semibold text-gray-900 mb-1">{item.title}</h3>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-gray-900 mb-1 truncate">{item.title}</h3>
                   <p className="text-gray-600 text-sm">{item.period}</p>
                 </div>
-                <div className="text-right">
+                <div className="sm:text-right">
                   <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${item.statusColor || 'bg-gray-100 text-gray-800'}`}>{item.status}</span>
                 </div>
               </div>
@@ -93,26 +85,19 @@ const ActivitiesPage = () => {
         {activeTab === 'event' && (
           <>
             {loading ? <div className="text-gray-500">Memuat...</div> : null}
-            {!loading && !error && eventData.length === 0 ? (
-              <EmptyState
-                icon="calendar"
-                title="Belum ada riwayat event"
-                description="Riwayat event Anda akan muncul di sini"
-                variant="primary"
-              />
-            ) : null}
+            {!loading && !error && eventData.length === 0 ? <EmptyState icon="calendar" title="Belum ada riwayat event" description="Riwayat event Anda akan muncul di sini" variant="primary" /> : null}
             {eventData.map((item) => (
-              <div key={item.id} className="flex items-center gap-6 p-6 border border-gray-200 rounded-lg">
-                <div className="w-20 h-16 bg-gray-100 rounded-lg overflow-hidden">
+              <div key={item.id} className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 p-4 sm:p-6 border border-gray-200 rounded-lg">
+                <div className="w-full sm:w-20 h-32 sm:h-16 bg-gray-100 rounded-lg overflow-hidden">
                   <img src={item.image || fallbackImage} alt="Event" className="w-full h-full object-cover" />
                 </div>
-                <div className="flex-1">
-                  <h3 className="font-semibold text-gray-900 mb-1">{item.title}</h3>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-gray-900 mb-1 truncate">{item.title}</h3>
                   <p className="text-gray-600 text-sm">
                     {item.location} | {formatDateID(item.date)}
                   </p>
                 </div>
-                <div className="text-right">
+                <div className="sm:text-right">
                   <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${item.statusColor || 'bg-gray-100 text-gray-800'}`}>{item.status}</span>
                 </div>
               </div>

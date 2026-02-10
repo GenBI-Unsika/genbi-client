@@ -78,33 +78,33 @@ const ProfileLayout = ({ children, currentPage, onNavigate, onLogout }) => {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Header */}
-        <div className="mb-8 flex items-center gap-4">
-          <img src={userAvatar} alt={userName} className="w-16 h-16 rounded-full object-cover" referrerPolicy="no-referrer" />
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Halo, {userName}</h1>
-            <p className="text-gray-600">Berikut informasi mengenai profil dan aktivitas kamu</p>
+        <div className="mb-8 flex flex-col sm:flex-row items-center sm:items-center gap-4">
+          <img src={userAvatar} alt={userName} className="w-16 h-16 rounded-full object-cover flex-shrink-0" referrerPolicy="no-referrer" />
+          <div className="text-center sm:text-left">
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-1">Halo, {userName}</h1>
+            <p className="text-sm sm:text-base text-gray-600">Berikut informasi mengenai profil dan aktivitas kamu</p>
           </div>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sidebar */}
-          <div className="lg:w-80">
+        <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
+          {/* Sidebar - horizontal scroll on mobile, vertical on desktop */}
+          <div className="lg:w-80 flex-shrink-0">
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-              <nav className="space-y-1">
+              <nav className="flex lg:flex-col overflow-x-auto lg:overflow-x-visible gap-0">
                 {menuItems.map((item) => (
                   <button
                     key={item.id}
                     onClick={() => handleNavigation(item.id)}
-                    className={`w-full flex items-center px-6 py-4 text-left transition-colors ${activeTab === item.id ? 'bg-primary-500 text-white' : 'text-gray-700 hover:bg-gray-50'}`}
+                    className={`flex items-center px-4 py-3 lg:px-6 lg:py-4 text-left transition-colors whitespace-nowrap flex-shrink-0 lg:flex-shrink lg:w-full ${activeTab === item.id ? 'bg-primary-500 text-white' : 'text-gray-700 hover:bg-gray-50'}`}
                   >
-                    <span className="mr-3">{item.icon}</span>
-                    <span className="font-medium">{item.label}</span>
+                    <span className="mr-2 lg:mr-3">{item.icon}</span>
+                    <span className="font-medium text-sm lg:text-base">{item.label}</span>
                   </button>
                 ))}
 
                 {/* Logout Button */}
-                <button onClick={handleLogout} className="w-full flex items-center px-6 py-4 text-left text-gray-700 hover:bg-gray-50 transition-colors">
-                  <span className="mr-3">
+                <button onClick={handleLogout} className="flex items-center px-4 py-3 lg:px-6 lg:py-4 text-left text-gray-700 hover:bg-gray-50 transition-colors whitespace-nowrap flex-shrink-0 lg:flex-shrink lg:w-full">
+                  <span className="mr-2 lg:mr-3">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                     </svg>

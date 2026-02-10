@@ -67,8 +67,8 @@ const FAQSection = () => {
                   </button>
 
                   <div id={collapseId} className={`overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`} aria-labelledby={itemId} role="region">
-                    <div className="pb-5 pr-10">
-                      <p className="text-gray-600 text-base leading-relaxed">{faq.answer}</p>
+                    <div className="pb-5 pr-4 sm:pr-10">
+                      <p className="text-gray-600 text-sm sm:text-base leading-relaxed">{faq.answer}</p>
                     </div>
                   </div>
                 </div>

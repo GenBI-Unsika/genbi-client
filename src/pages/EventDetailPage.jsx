@@ -76,8 +76,8 @@ const EventDetailPage = ({ onNavigate, eventId }) => {
         </div>
 
         {/* Event Content */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-8 transform hover:shadow-lg transition-shadow duration-300">
-          <h1 className="text-3xl font-bold text-gray-900 mb-6">{event.title}</h1>
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6 lg:p-8 mb-8 transform hover:shadow-lg transition-shadow duration-300">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">{event.title}</h1>
 
           <p className="text-gray-700 leading-relaxed mb-8">{event.description || 'Deskripsi event akan ditampilkan di sini.'}</p>
 

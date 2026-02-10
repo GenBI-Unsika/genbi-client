@@ -86,17 +86,17 @@ const VisionMissionSection = () => {
     <ScrollReveal as="section" aria-labelledby="vision-mission-heading" className="py-8 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <header className="mb-8">
-          <h2 id="vision-mission-heading" className="font-heading text-4xl font-semibold text-primary-500">
+          <h2 id="vision-mission-heading" className="font-heading text-2xl sm:text-3xl md:text-4xl font-semibold text-primary-500">
             Visi Misi GenBI Unsika
           </h2>
         </header>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
           <figure className="flex items-center justify-center">
             <img
               src={image}
               alt="Ilustrasi kolaborasi tim"
-              className="w-[500px] h-auto object-fit"
+              className="w-full max-w-[500px] h-auto object-cover"
               loading="lazy"
               decoding="async"
               width={800}
@@ -109,11 +109,11 @@ const VisionMissionSection = () => {
 
           <div className="space-y-8">
             <div className="flex flex-col items-start space-y-4 mb-6">
-              <h3 className="text-3xl font-semibold text-primary-900">Visi</h3>
+              <h3 className="text-2xl sm:text-3xl font-semibold text-primary-900">Visi</h3>
               <p className="text-gray-600 leading-relaxed">{visionText}</p>
             </div>
 
-            <h3 className="text-3xl font-semibold text-primary-900 mb-6">Misi</h3>
+            <h3 className="text-2xl sm:text-3xl font-semibold text-primary-900 mb-6">Misi</h3>
             <ul className="space-y-6">
               {missions.map((item, idx) => (
                 <MissionItem key={item.id || item.subtitle || idx} item={item} />
