@@ -4,6 +4,25 @@ let refreshInFlight = null;
 let lastRefreshFailureAt = 0;
 const REFRESH_RETRY_COOLDOWN_MS = 30_000;
 
+const HAS_SESSION_KEY = 'hasAuthSession';
+
+function getHasSessionFlag() {
+  try {
+    return localStorage.getItem(HAS_SESSION_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+
+function setHasSessionFlag(next) {
+  try {
+    if (next) localStorage.setItem(HAS_SESSION_KEY, '1');
+    else localStorage.removeItem(HAS_SESSION_KEY);
+  } catch {
+    // ignore
+  }
+}
+
 export function isAuthed() {
   return Boolean(getAccessToken());
 }
@@ -24,6 +43,7 @@ export async function login(email, password) {
   const data = await authLogin(email, password);
   setAccessToken(data?.accessToken);
   setMe(data?.user);
+  setHasSessionFlag(true);
   return true;
 }
 
@@ -31,6 +51,7 @@ export async function loginWithGoogle(idToken) {
   const data = await authGoogle(idToken);
   setAccessToken(data?.accessToken);
   setMe(data?.user);
+  setHasSessionFlag(true);
   return true;
 }
 
@@ -52,11 +73,16 @@ export async function logout() {
   } finally {
     setAccessToken(null);
     localStorage.removeItem('me');
+    setHasSessionFlag(false);
   }
 }
 
 export async function ensureAuthed() {
   if (getAccessToken()) return true;
+
+  // If the user never had a session in this browser, don't call refresh.
+  // This prevents a noisy 401 on first-time visitors.
+  if (!getHasSessionFlag()) return false;
 
   // Avoid spamming refresh when the user is clearly logged out.
   // Still allows session restore when a refresh cookie exists.
@@ -69,11 +95,13 @@ export async function ensureAuthed() {
       const data = await authRefresh();
       setAccessToken(data?.accessToken);
       setMe(data?.user);
+      setHasSessionFlag(Boolean(data?.accessToken));
       return Boolean(data?.accessToken);
     } catch {
       lastRefreshFailureAt = Date.now();
       setAccessToken(null);
       localStorage.removeItem('me');
+      setHasSessionFlag(false);
       return false;
     } finally {
       refreshInFlight = null;
