@@ -1,5 +1,9 @@
 import { authGoogle, authLogin, authLogout, authRefresh, authRegister, authResendVerification, authVerifyEmail, fetchMe, getAccessToken, setAccessToken } from './api.js';
 
+let refreshInFlight = null;
+let lastRefreshFailureAt = 0;
+const REFRESH_RETRY_COOLDOWN_MS = 30_000;
+
 export function isAuthed() {
   return Boolean(getAccessToken());
 }
@@ -54,16 +58,29 @@ export async function logout() {
 export async function ensureAuthed() {
   if (getAccessToken()) return true;
 
-  try {
-    const data = await authRefresh();
-    setAccessToken(data?.accessToken);
-    setMe(data?.user);
-    return Boolean(data?.accessToken);
-  } catch {
-    setAccessToken(null);
-    localStorage.removeItem('me');
-    return false;
-  }
+  // Avoid spamming refresh when the user is clearly logged out.
+  // Still allows session restore when a refresh cookie exists.
+  if (Date.now() - lastRefreshFailureAt < REFRESH_RETRY_COOLDOWN_MS) return false;
+
+  if (refreshInFlight) return refreshInFlight;
+
+  refreshInFlight = (async () => {
+    try {
+      const data = await authRefresh();
+      setAccessToken(data?.accessToken);
+      setMe(data?.user);
+      return Boolean(data?.accessToken);
+    } catch {
+      lastRefreshFailureAt = Date.now();
+      setAccessToken(null);
+      localStorage.removeItem('me');
+      return false;
+    } finally {
+      refreshInFlight = null;
+    }
+  })();
+
+  return refreshInFlight;
 }
 
 export async function syncMe() {
