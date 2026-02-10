@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Menu, X, ChevronDown, Search as SearchIcon, Bell } from 'lucide-react';
+import { Menu, X, ChevronDown, Search as SearchIcon } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getMe } from '../utils/auth.js';
+import { apiFetch } from '../utils/api.js';
 import { useConfirm } from '../contexts/ConfirmContext.jsx';
-
+import { useNavigate } from 'react-router-dom';
 
 function useHoverIntent(delay = 160) {
   const [open, setOpen] = useState(false);
@@ -23,7 +24,6 @@ function useHoverIntent(delay = 160) {
 
   return { open, setOpen, onEnter, onLeave };
 }
-
 
 function Dropdown({ label, items = [], onSelect }) {
   const { open, setOpen, onEnter, onLeave } = useHoverIntent(160);
@@ -74,84 +74,102 @@ function Dropdown({ label, items = [], onSelect }) {
 }
 
 const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
+  const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [mAboutOpen, setMAboutOpen] = useState(false);
   const [mActivityOpen, setMActivityOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [showResults, setShowResults] = useState(false);
 
   const { confirm } = useConfirm();
 
   const profileDropdownRef = useRef(null);
-
+  const searchRef = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target)) {
         setIsProfileDropdownOpen(false);
       }
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setShowResults(false);
+      }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    const fetchResults = async () => {
+      if (searchQuery.length < 2) {
+        setSearchResults([]);
+        setShowResults(false);
+        return;
+      }
+
+      setIsSearching(true);
+      setShowResults(true);
+
+      try {
+        const json = await apiFetch(`/public/search?q=${encodeURIComponent(searchQuery)}`, {
+          method: 'GET',
+          skipAuth: true,
+        });
+        setSearchResults(json?.data || []);
+      } catch (err) {
+        console.error('Search failed:', err);
+        setSearchResults([]);
+      } finally {
+        setIsSearching(false);
+      }
+    };
+
+    const debounce = setTimeout(fetchResults, 300);
+    return () => clearTimeout(debounce);
+  }, [searchQuery]);
 
   const handleNavigation = (page) => {
     if (onNavigate) onNavigate(page);
-  };
-
-  const handleProfileNavigation = (path) => {
-    setIsProfileDropdownOpen(false);
-    if (onNavigate) {
-      const routeMap = {
-        '/profile': 'profile',
-        '/riwayat-aktivitas': 'activity-history',
-        '/transaksi': 'transactions',
-        '/pengaturan': 'settings',
-      };
-      if (routeMap[path]) {
-        onNavigate(routeMap[path]);
-      }
-    }
+    setShowResults(false);
+    setSearchQuery('');
   };
 
   const handleLogout = async () => {
-    setIsProfileDropdownOpen(false);
-
-    const ok = await confirm({
-      title: 'Logout?',
-      description: 'Anda akan keluar dari akun ini.',
-      confirmText: 'Ya, logout',
-      cancelText: 'Batal',
-      tone: 'danger',
+    const confirmed = await confirm({
+      title: 'Keluar?',
+      message: 'Anda akan keluar dari sesi ini.',
+      confirmLabel: 'Keluar',
+      type: 'danger',
     });
-
-    if (!ok) return;
-
-    if (onLogout) {
-      await onLogout();
-    } else if (onLoginToggle) {
-      onLoginToggle();
+    if (confirmed && onLogout) {
+      onLogout();
+      setIsProfileDropdownOpen(false);
     }
-
-    toast.success('Berhasil keluar!');
   };
 
   const handleSignInClick = () => {
-    if (onNavigate) {
-      onNavigate('signin');
-    } else if (onLoginToggle) {
-      onLoginToggle();
-    }
+    if (onLoginToggle) onLoginToggle();
   };
 
   const handleRegister = () => {
-    if (onNavigate) {
-      onNavigate('signup');
-    } else if (onLoginToggle) {
-      onLoginToggle();
-    }
+    navigate('/scholarship/register');
   };
 
+  const handleProfileNavigation = (path) => {
+    navigate(path);
+    setIsProfileDropdownOpen(false);
+  };
+
+  const handleSearchResultClick = (result) => {
+    if (result.href) {
+      navigate(result.href);
+    }
+    setShowResults(false);
+    setSearchQuery('');
+  };
 
   const user = getMe();
   const userName = user?.profile?.name || user?.email?.split('@')[0] || 'Pengguna';
@@ -161,13 +179,10 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
   return (
     <header className="sticky top-0 z-50 bg-primary-50 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
         <div className="flex justify-between items-center py-2 md:py-3 gap-3">
-
           <button onClick={() => handleNavigation('home')} className="flex items-center gap-3 sm:gap-4 whitespace-nowrap cursor-pointer" aria-label="GenBI Unsika - Beranda">
             <img src="./genbi-unsika.webp" alt="Logo GenBI Unsika" className="h-6 md:h-8 lg:h-12 w-auto flex-shrink-0" loading="eager" decoding="async" />
           </button>
-
 
           <nav className="hidden md:flex items-center gap-3 lg:gap-6 flex-nowrap">
             <button onClick={() => handleNavigation('home')} className="px-3.5 py-2.5 rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary-50 font-medium cursor-pointer whitespace-nowrap">
@@ -201,34 +216,68 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
             </button>
           </nav>
 
-
           <div className="flex items-center gap-3 md:gap-4">
+            <div className="relative hidden md:block" ref={searchRef}>
+              <label>
+                <span className="sr-only">Cari</span>
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onFocus={() => searchQuery.length >= 2 && setShowResults(true)}
+                  placeholder="Telusuri..."
+                  className="pl-9 pr-3 h-9 w-60 lg:w-64 py-2 bg-white border border-primary-200 rounded-lg text-sm placeholder:text-[var(--primary-500)] placeholder:opacity-80 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                />
+                <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary-500" aria-hidden="true" />
+              </label>
 
-            <label className="relative hidden md:block">
-              <span className="sr-only">Cari</span>
-              <input
-                type="text"
-                placeholder="Telusuri..."
-                className="pl-9 pr-3 h-9 w-60 lg:w-64 py-2 bg-white border border-primary-200 rounded-lg text-sm placeholder:text-[var(--primary-500)] placeholder:opacity-80 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-              />
-              <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary-500" aria-hidden="true" />
-            </label>
-
-
-            {isLoggedIn && (
-              <button className="relative p-2.5 rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary-50 cursor-pointer" aria-label="Notifikasi" title="Notifikasi">
-                <Bell className="h-6 w-6" />
-                <span className="absolute top-1.5 right-1.5 block h-2 w-2 rounded-full bg-secondary-500" />
-              </button>
-            )}
-
+              {showResults && (
+                <div className="absolute right-0 mt-2 w-[400px] bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-[60] overflow-hidden">
+                  <div className="px-4 py-2 border-b border-gray-50 flex justify-between items-center">
+                    <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Hasil Pencarian</span>
+                    {isSearching && <div className="w-4 h-4 border-2 border-primary-500 border-t-transparent rounded-full animate-spin"></div>}
+                  </div>
+                  <div className="max-h-[min(70vh,480px)] overflow-y-auto custom-scrollbar">
+                    {searchResults.length > 0 ? (
+                      searchResults.map((result) => (
+                        <button
+                          key={`${result.type}-${result.id}`}
+                          onClick={() => handleSearchResultClick(result)}
+                          className="w-full flex items-center gap-3 px-4 py-3 hover:bg-primary-50 transition-colors text-left group border-b border-gray-50 last:border-0"
+                        >
+                          <div className="w-12 h-12 rounded-lg bg-gray-100 flex-shrink-0 overflow-hidden border border-gray-100">
+                            {result.image ? (
+                              <img src={result.image} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-primary-200">
+                                <SearchIcon className="w-5 h-5" />
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h4 className="text-sm font-medium text-gray-900 truncate group-hover:text-primary-600 transition-colors uppercase">{result.title}</h4>
+                            <p className="text-xs text-gray-500 font-medium mt-0.5">{result.type}</p>
+                          </div>
+                        </button>
+                      ))
+                    ) : !isSearching ? (
+                      <div className="px-4 py-8 text-center">
+                        <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-3">
+                          <SearchIcon className="w-6 h-6 text-gray-300" />
+                        </div>
+                        <p className="text-sm text-gray-500">Tidak ada hasil ditemukan untuk "{searchQuery}"</p>
+                      </div>
+                    ) : null}
+                  </div>
+                </div>
+              )}
+            </div>
 
             {isLoggedIn ? (
               <div className="relative" ref={profileDropdownRef}>
                 <button onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)} className="flex items-center space-x-2 p-1 rounded-full hover:bg-gray-50 transition-colors" aria-label="Profile menu">
                   <img src={userAvatar} alt="Profile" className="w-8 h-8 rounded-full object-cover" referrerPolicy="no-referrer" />
                 </button>
-
 
                 {isProfileDropdownOpen && (
                   <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
@@ -271,13 +320,11 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
               </div>
             )}
 
-
             <button onClick={() => setIsMenuOpen((v) => !v)} className="md:hidden p-2.5 rounded-md text-primary-700 hover:text-primary-900 hover:bg-primary-50 cursor-pointer" aria-label="Buka menu" aria-expanded={isMenuOpen}>
               {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
           </div>
         </div>
-
 
         {isMenuOpen && (
           <div className="md:hidden py-4 border-t border-primary-200">
@@ -291,7 +338,6 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
               >
                 Beranda
               </button>
-
 
               <button
                 className="flex items-center justify-between w-full px-2 py-3 text-left rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary-50 cursor-pointer"
@@ -335,7 +381,6 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
                 Beasiswa
               </button>
 
-
               <button
                 className="flex items-center justify-between w-full px-2 py-3 text-left rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary-50 cursor-pointer"
                 onClick={() => setMActivityOpen((v) => !v)}
@@ -377,7 +422,6 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
               >
                 Artikel
               </button>
-
 
               {!isLoggedIn ? (
                 <div className="mt-3 grid grid-cols-2 gap-2">

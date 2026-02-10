@@ -1,15 +1,25 @@
 import { useCallback, useEffect, useState } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
-import { apiFetch } from '../services/api.js';
-import EmptyState from './EmptyState';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { apiFetch, normalizeFileUrl } from '../services/api.js';
 import ScrollReveal from './ScrollReveal';
 
 export default function TestimonialsSection() {
   const [testimonials, setTestimonials] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const [emblaRef, emblaApi] = useEmblaCarousel({ align: 'start', loop: false });
+  const isAvatarPlaceholder = (url) => {
+    if (!url || typeof url !== 'string') return true;
+    // The project previously used ui-avatars as placeholders; prefer neutral icon placeholders instead.
+    if (url.includes('ui-avatars.com/api/')) return true;
+    return false;
+  };
+
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    align: 'start',
+    loop: false,
+    skipSnaps: false,
+  });
   const [canPrev, setCanPrev] = useState(false);
   const [canNext, setCanNext] = useState(false);
 
@@ -55,34 +65,66 @@ export default function TestimonialsSection() {
   const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
 
   return (
-    <ScrollReveal as="section" className="py-16 bg-white">
-      <div className="py-8 sm:py-16 lg:py-24">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="relative flex w-full gap-12 max-lg:flex-col md:gap-16 lg:items-center lg:gap-24">
-            <div>
-              <div className="space-y-4">
-                <p className="inline-block text-primary-500 text-sm font-medium bg-primary-50 p-2 rounded-xl">Pengalaman Alumni</p>
-                <h2 className="text-neutral-800 text-2xl font-semibold md:text-3xl lg:text-4xl">Bagaimana Pendapat Alumni GenBI Unsika</h2>
-                <p className="text-neutral-500 text-xl">Yuk, cari tahu bagaimana pengalaman alumni selama menjadi anggota GenBI Unsika.</p>
-              </div>
+    <ScrollReveal as="section" className="py-16 lg:py-24 bg-white">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        {/* Title Row - Terpisah */}
+        <div className="mb-12 lg:mb-16">
+          <h2 className="text-[#003D7A] text-3xl lg:text-4xl font-bold">Pengalaman Alumni</h2>
+        </div>
 
-              {/* Tombol navigasi tetap berfungsi & tidak overlay heading */}
-              <div className="mt-10 flex gap-4">
+        {/* Content Row - Split Left & Right */}
+        <div className="flex flex-col lg:flex-row lg:items-center gap-12 lg:gap-16">
+          {/* Left Content */}
+          <div className="lg:w-[40%] flex-shrink-0">
+            <div className="space-y-4">
+              <h3 className="text-gray-900 text-xl lg:text-2xl font-bold">Bagaimana Pendapat Alumni GenBI Unsika</h3>
+              <p className="text-gray-700 text-base leading-relaxed">Yukk, cari tahu bagaimana pengalaman alumni selama menjadi anggota GenBI Unsika</p>
+            </div>
+          </div>
+
+          {/* Right Carousel */}
+          <div className="lg:w-[60%] relative">
+            {loading ? (
+              <div className="text-gray-500 py-24 text-center">Memuat testimoni...</div>
+            ) : testimonials.length === 0 ? (
+              <div className="py-16">
+                {(() => {
+                  const placeholders = Array.from({ length: 3 });
+                  return (
+                    <div className="flex items-center justify-center">
+                      <div className="flex items-center -space-x-3 rtl:space-x-reverse isolate">
+                        {placeholders.map((_, i) => (
+                          <div key={i} className="h-10 w-10 rounded-full bg-gray-200 ring-2 ring-white flex items-center justify-center shrink-0">
+                            <svg className="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                            </svg>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })()}
+              </div>
+            ) : (
+              <>
+                {/* Navigation Buttons */}
                 <button
                   type="button"
                   aria-label="Sebelumnya"
                   onClick={scrollPrev}
                   disabled={!canPrev}
                   className="
+                    absolute left-0 top-1/2 -translate-y-1/2 -translate-x-6 z-20
                     flex items-center justify-center
-                    w-9 h-9 rounded-md
-                    bg-primary-300 text-white
-                    hover:bg-primary-500
-                    disabled:opacity-50 disabled:cursor-not-allowed
+                    w-12 h-12 rounded-full
+                    bg-[#1E40AF] text-white
+                    hover:bg-[#1E3A8A]
+                    disabled:bg-gray-400 disabled:cursor-not-allowed
                     transition-colors duration-200
+                    shadow-lg
                   "
                 >
-                  <ArrowLeft className="w-5 h-5" />
+                  <ChevronLeft className="w-5 h-5" strokeWidth={3} />
                 </button>
 
                 <button
@@ -91,67 +133,78 @@ export default function TestimonialsSection() {
                   onClick={scrollNext}
                   disabled={!canNext}
                   className="
+                    absolute right-0 top-1/2 -translate-y-1/2 translate-x-6 z-20
                     flex items-center justify-center
-                    w-9 h-9 rounded-md
-                    bg-primary-400 text-white
-                    hover:bg-primary-600
-                    disabled:opacity-50 disabled:cursor-not-allowed
+                    w-12 h-12 rounded-full
+                    bg-[#1E40AF] text-white
+                    hover:bg-[#1E3A8A]
+                    disabled:bg-gray-400 disabled:cursor-not-allowed
                     transition-colors duration-200
+                    shadow-lg
                   "
                 >
-                  <ArrowRight className="w-5 h-5" />
+                  <ChevronRight className="w-5 h-5" strokeWidth={3} />
                 </button>
-              </div>
-            </div>
 
-            {/* Carousel */}
-            <div className="rounded-2xl p-8 overflow-hidden border border-neutral-200 bg-white">
-              {loading ? (
-                <div className="text-gray-500 py-8">Memuat testimoni...</div>
-              ) : testimonials.length === 0 ? (
-                <div className="py-8">
-                  <EmptyState
-                    icon="users"
-                    title="Belum ada testimoni"
-                    description="Testimoni dari anggota akan muncul di sini"
-                    variant="primary"
-                  />
-                </div>
-              ) : (
+                {/* Carousel */}
                 <div ref={emblaRef} className="overflow-hidden">
-                  <div className="flex gap-6">
+                  <div className="flex">
                     {testimonials.map((item, idx) => (
-                      <div className="flex-[0_0_100%] md:flex-[0_0_50%] min-w-0" key={idx}>
-                        <div
-                          className="
-                            relative h-full rounded-3xl border border-neutral-200 bg-white
-                            transition-transform duration-300 ease-out
-                            hover:-translate-y-1 hover:scale-[1.01]
-                            focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-300
-                            shadow-sm-primary-500/30 hover:shadow-lg-primary-500/30
-                          "
-                          tabIndex={0}
-                        >
-                          <div className="p-6 md:p-7 flex flex-col justify-between gap-6 min-h-[18rem]">
-                            <div className="flex flex-col justify-center items-center gap-3">
-                              <div className="size-14 rounded-full overflow-hidden bg-neutral-100">
-                                <img src={item.photo_profile} alt={item.name} loading="lazy" className="w-full h-full object-cover" />
-                              </div>
-                              <h4 className="text-neutral-800 font-medium text-center">{item.name}</h4>
-                              <p className="text-neutral-600 text-sm text-center">{item.role}</p>
-                            </div>
-                            <p className="text-neutral-700 text-sm overflow-hidden text-center">{item.quote}</p>
+                      <div className="flex-[0_0_100%] min-w-0 pl-3" key={idx}>
+                        <div className="relative bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-2xl px-5 py-8 shadow-lg max-w-sm mx-auto">
+                          {/* Quote Icon Top Left */}
+                          <div className="absolute top-4 left-4">
+                            <svg width="28" height="28" viewBox="0 0 40 40" fill="none">
+                              <text x="0" y="30" fontSize="32" fontWeight="bold" fill="#1E40AF" fontFamily="Georgia, serif">
+                                "
+                              </text>
+                            </svg>
                           </div>
 
-                          <div className="absolute inset-x-0 bottom-0 h-1 bg-primary-500" />
+                          {/* Content */}
+                          <div className="flex flex-col items-center gap-4 pt-2">
+                            {/* Profile Photo */}
+                            <div className="w-20 h-20 rounded-full overflow-hidden bg-pink-300 ring-2 ring-white shadow-md">
+                              {(() => {
+                                const photoUrl = normalizeFileUrl(item.photo_profile);
+                                if (photoUrl && !isAvatarPlaceholder(photoUrl)) {
+                                  return <img src={photoUrl} alt={item.name} loading="lazy" className="w-full h-full object-cover" />;
+                                }
+
+                                return (
+                                  <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                                    <svg className="w-8 h-8 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                      <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                                    </svg>
+                                  </div>
+                                );
+                              })()}
+                            </div>
+
+                            {/* Name */}
+                            <h4 className="text-gray-900 font-bold text-lg">{item.name}</h4>
+
+                            {/* Role */}
+                            <p className="text-gray-600 text-sm -mt-3">{item.role}</p>
+
+                            {/* Quote */}
+                            <p className="text-gray-800 text-center text-sm leading-relaxed max-w-sm px-2">"{item.quote}"</p>
+                          </div>
+
+                          {/* Quote Icon Bottom Right */}
+                          <div className="absolute bottom-4 right-4">
+                            <svg width="28" height="28" viewBox="0 0 40 40" fill="none">
+                              <rect x="4" y="4" width="12" height="12" rx="2" stroke="#EF4444" strokeWidth="2" fill="none" />
+                              <rect x="20" y="20" width="12" height="12" rx="2" stroke="#EF4444" strokeWidth="2" fill="none" />
+                            </svg>
+                          </div>
                         </div>
                       </div>
                     ))}
                   </div>
                 </div>
-              )}
-            </div>
-            {/* End Carousel */}
+              </>
+            )}
           </div>
         </div>
       </div>

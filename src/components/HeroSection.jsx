@@ -15,6 +15,14 @@ function AvatarStack({ size = 'md' }) {
   const sizeMap = { sm: 'h-8 w-8', md: 'h-10 w-10', lg: 'h-12 w-12' };
   const imgCls = `${sizeMap[size]} aspect-square shrink-0 rounded-full overflow-hidden object-cover ring-2 ring-white hover:motion-scale-out-110 motion-ease-spring-smooth hover:z-30`;
 
+  const isServerPlaceholderAvatar = (url) => {
+    if (!url || typeof url !== 'string') return false;
+    // The backend fallback for hero avatars uses ui-avatars with names like "User 1", "User 2", ...
+    // Example: https://ui-avatars.com/api/?name=User+1&background=random
+    if (!url.includes('ui-avatars.com/api/')) return false;
+    return /[?&]name=User(?:\+|%20)\d+\b/i.test(url);
+  };
+
   useEffect(() => {
     let alive = true;
     (async () => {
@@ -22,7 +30,10 @@ function AvatarStack({ size = 'md' }) {
         const json = await apiFetch('/public/hero-avatars', { method: 'GET', skipAuth: true });
         const items = json?.data?.avatars || json?.data || [];
         if (alive && Array.isArray(items) && items.length > 0) {
-          setAvatars(items);
+          const normalized = items.map((src) => (typeof src === 'string' ? src : src?.url || src?.image)).filter(Boolean);
+          const realAvatars = normalized.filter((src) => !isServerPlaceholderAvatar(src));
+
+          setAvatars(realAvatars.length > 0 ? realAvatars : []);
         } else {
           setAvatars([]);
         }
@@ -35,12 +46,25 @@ function AvatarStack({ size = 'md' }) {
     };
   }, []);
 
-  if (avatars.length === 0) return null;
+  if (avatars.length === 0) {
+    const placeholders = Array.from({ length: 3 });
+    return (
+      <div className="flex items-center -space-x-3 rtl:space-x-reverse isolate">
+        {placeholders.map((_, i) => (
+          <div key={i} className={`${sizeMap[size]} rounded-full bg-gray-200 ring-2 ring-white flex items-center justify-center shrink-0`}>
+            <svg className="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+            </svg>
+          </div>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className="flex items-center -space-x-3 rtl:space-x-reverse isolate ">
       {avatars.map((src, i) => (
-        <img key={i} src={typeof src === 'string' ? src : src.url || src.image} alt={`Anggota ${i + 1}`} className={imgCls} loading="lazy" decoding="async" />
+        <img key={i} src={src} alt={`Anggota ${i + 1}`} className={imgCls} loading="lazy" decoding="async" />
       ))}
     </div>
   );

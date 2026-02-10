@@ -57,8 +57,7 @@ const ProfilePage = () => {
 
         if (!alive) return;
 
-        const defaultAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(me?.profile?.name || me?.email || 'User')}&background=4F46E5&color=fff&size=256`;
-        setUserAvatar(me?.profile?.avatar || defaultAvatar);
+        setUserAvatar(me?.profile?.avatar || '');
 
         const facultyId = me?.profile?.facultyId || '';
         const studyProgramId = me?.profile?.studyProgramId || '';
@@ -112,10 +111,6 @@ const ProfilePage = () => {
   const validateForm = () => {
     const newErrors = {};
 
-    if (!formData.fullName.trim()) {
-      newErrors.fullName = 'Nama lengkap wajib diisi';
-    }
-
     if (!formData.email.trim()) {
       newErrors.email = 'Email wajib diisi';
     } else if (!validateEmail(formData.email)) {
@@ -138,20 +133,24 @@ const ProfilePage = () => {
       }
     }
 
-    if (formData.facultyId && !formData.studyProgramId) {
-      newErrors.studyProgramId = 'Pilih program studi';
-    }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
+  };
+
+  const toOptionalPositiveInt = (value) => {
+    if (value === '' || value === null || value === undefined) return '';
+    const n = Number(value);
+    return Number.isFinite(n) && n > 0 ? n : '';
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
 
+    const nextValue = name === 'studyProgramId' ? toOptionalPositiveInt(value) : value;
+
     setFormData({
       ...formData,
-      [name]: value,
+      [name]: nextValue,
     });
 
     if (errors[name]) {
@@ -163,7 +162,7 @@ const ProfilePage = () => {
   };
 
   const handleFacultyChange = (e) => {
-    const facultyId = e.target.value;
+    const facultyId = e.target.value ? Number(e.target.value) : '';
     setFormData({
       ...formData,
       facultyId,
@@ -202,18 +201,22 @@ const ProfilePage = () => {
     setSaving(true);
 
     try {
+      const payload = {
+        birthDate: formData.birthDate ? new Date(formData.birthDate).toISOString() : null,
+        gender: formData.gender || null,
+        phone: formData.phone || null,
+        npm: formData.npm || null,
+        facultyId: formData.facultyId ? Number(formData.facultyId) : null,
+        studyProgramId: formData.studyProgramId ? Number(formData.studyProgramId) : null,
+        semester: formData.currentSemester ? parseInt(formData.currentSemester, 10) : null,
+      };
+
+      const trimmedName = formData.fullName.trim();
+      if (trimmedName) payload.name = trimmedName;
+
       await apiFetch('/me/profile', {
         method: 'PATCH',
-        body: {
-          name: formData.fullName.trim(),
-          birthDate: formData.birthDate ? new Date(formData.birthDate).toISOString() : null,
-          gender: formData.gender || null,
-          phone: formData.phone || null,
-          npm: formData.npm || null,
-          facultyId: formData.facultyId || null,
-          studyProgramId: formData.studyProgramId || null,
-          semester: formData.currentSemester ? parseInt(formData.currentSemester, 10) : null,
-        },
+        body: payload,
       });
 
       await syncMe();
@@ -243,7 +246,15 @@ const ProfilePage = () => {
 
       <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 mb-6 sm:mb-8 pb-6 sm:pb-8 border-b border-gray-200">
         <div className="relative">
-          <img src={userAvatar} alt={formData.fullName || 'Profile'} className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-4 border-primary-100" referrerPolicy="no-referrer" />
+          {userAvatar ? (
+            <img src={userAvatar} alt={formData.fullName || 'Profile'} className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-4 border-primary-100" referrerPolicy="no-referrer" />
+          ) : (
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gray-200 border-4 border-primary-100 flex items-center justify-center">
+              <svg className="w-10 h-10 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+              </svg>
+            </div>
+          )}
         </div>
         <div className="text-center sm:text-left">
           <h3 className="text-lg font-semibold text-gray-900 mb-1">{formData.fullName || 'Nama belum diisi'}</h3>
@@ -255,9 +266,7 @@ const ProfilePage = () => {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Nama Lengkap
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap</label>
           <input
             type="text"
             name="fullName"
@@ -270,9 +279,7 @@ const ProfilePage = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Email
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
           <input
             type="email"
             name="email"
@@ -349,8 +356,9 @@ const ProfilePage = () => {
             value={formData.studyProgramId}
             onChange={handleInputChange}
             disabled={!formData.facultyId}
-            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${errors.studyProgramId ? 'border-red-500' : 'border-gray-300'
-              } ${!formData.facultyId ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${
+              errors.studyProgramId ? 'border-red-500' : 'border-gray-300'
+            } ${!formData.facultyId ? 'bg-gray-100 cursor-not-allowed' : ''}`}
           >
             <option value="">{formData.facultyId ? 'Pilih Program Studi' : 'Pilih Fakultas terlebih dahulu'}</option>
             {availablePrograms.map((program) => (
