@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { Calendar } from 'lucide-react';
-import { formatDateID, limitWords } from '../../utils/formatters';
+import { formatDateID, limitWords, stripHtml } from '../../utils/formatters';
 import { Link } from 'react-router-dom';
 import MediaPlaceholder from '../shared/MediaPlaceholder';
 
@@ -41,8 +41,8 @@ const MediaCard = ({ title, subtitle, image, category, date, href, to, gradientC
           {category && <span className="inline-flex w-fit items-center bg-white/15 text-white text-[11px] leading-none px-2 py-0.5 rounded-full mb-2 border border-white/25">{category}</span>}
           <h4 className="font-semibold text-white mb-1 leading-snug">{title}</h4>
           {subtitle && (
-            <p className="text-sm text-white/85" title={subtitle}>
-              {limitWords(subtitle, subtitleWordsLimit)}
+            <p className="text-sm text-white/85" title={stripHtml(subtitle)}>
+              {limitWords(stripHtml(subtitle), subtitleWordsLimit)}
             </p>
           )}
         </div>

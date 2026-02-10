@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Play, X } from 'lucide-react';
 import EmptyState from './EmptyState';
 import ScrollReveal from './ScrollReveal';
-import { apiFetch } from '../services/api.js';
+import { apiFetch, normalizeFileUrl } from '../services/api.js';
 
 // Default CMS content (fallback if API fails or returns null)
 // Initial state is empty to enforce CMS dependence
@@ -58,7 +58,7 @@ const AboutSection = ({ imageSrc: propImageSrc, videoUrl: propVideoUrl }) => {
   }, []);
 
   // Props override CMS values if provided
-  const imageSrc = propImageSrc || content.coverImage;
+  const imageSrc = normalizeFileUrl(propImageSrc || content.coverImage);
   const videoUrl = propVideoUrl || content.videoUrl;
 
   const hasVideo = Boolean(videoUrl);

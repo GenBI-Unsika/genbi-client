@@ -6,7 +6,7 @@ import ScrollReveal from './ScrollReveal';
 const FAQSection = () => {
   const [faqs, setFaqs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [openIndex, setOpenIndex] = useState(0);
+  const [openIndex, setOpenIndex] = useState(-1);
 
   useEffect(() => {
     let alive = true;
@@ -30,12 +30,11 @@ const FAQSection = () => {
   }, []);
 
   return (
-    <ScrollReveal as="section" className="bg-base-100 py-8 sm:py-16 lg:py-24">
+    <ScrollReveal as="section" className="bg-white py-8 sm:py-12 lg:py-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-12 space-y-4 text-center sm:mb-16 lg:mb-24">
-          <h2 className="text-base-content text-2xl font-semibold md:text-3xl lg:text-4xl">Pertanyaan Umum</h2>
-          <p className="text-base-content/80 text-xl">Jelajahi pertanyaan yang sering diajukan dan temukan informasi yang Anda butuhkan.</p>
+        <div className="mb-8 sm:mb-10 lg:mb-12">
+          <h2 className="text-[#003D7A] text-2xl font-bold md:text-3xl">Pertanyaan Umum</h2>
         </div>
 
         {/* Accordion */}
@@ -43,37 +42,33 @@ const FAQSection = () => {
           <div className="text-center text-gray-500 py-8">Memuat FAQ...</div>
         ) : faqs.length === 0 ? (
           <div className="py-8">
-            <EmptyState
-              icon="files"
-              title="Belum ada FAQ"
-              description="Pertanyaan yang sering diajukan akan muncul di sini"
-              variant="primary"
-            />
+            <EmptyState icon="files" title="Belum ada FAQ" description="Pertanyaan yang sering diajukan akan muncul di sini" variant="primary" />
           </div>
         ) : (
-          <div className="w-full divide-y divide-neutral-200 rounded-2xl border border-neutral-200 bg-white">
+          <div className="w-full divide-y divide-gray-200">
             {faqs.map((faq, index) => {
               const itemId = `faq-item-${index}`;
               const collapseId = `faq-collapse-${index}`;
               const isOpen = openIndex === index;
 
               return (
-                <div key={index} id={itemId}>
+                <div key={index} id={itemId} className="group">
                   <button
                     type="button"
-                    className="w-full px-5 py-4 inline-flex items-center justify-between text-start font-medium text-neutral-900 hover:bg-neutral-50 transition-colors"
+                    className="w-full py-5 inline-flex items-center justify-between gap-4 text-start text-gray-800 hover:text-gray-900 transition-colors"
                     aria-controls={collapseId}
                     aria-expanded={isOpen ? 'true' : 'false'}
                     onClick={() => setOpenIndex((prev) => (prev === index ? -1 : index))}
                   >
-                    <span>{faq.question}</span>
-                    <span className={`icon-[tabler--plus] text-neutral-700 size-4.5 shrink-0 ${isOpen ? 'hidden' : 'block'}`}></span>
-                    <span className={`icon-[tabler--minus] text-neutral-700 size-4.5 shrink-0 ${isOpen ? 'block' : 'hidden'}`}></span>
+                    <span className="text-base font-medium leading-relaxed pr-4">{faq.question}</span>
+                    <span className={`flex-shrink-0 w-6 h-6 rounded-full bg-[#0066CC] flex items-center justify-center transition-transform ${isOpen ? 'rotate-45' : ''}`}>
+                      <span className="icon-[tabler--plus] text-white size-4"></span>
+                    </span>
                   </button>
 
-                  <div id={collapseId} className={`${isOpen ? 'block' : 'hidden'}`} aria-labelledby={itemId} role="region">
-                    <div className="px-5 pb-4">
-                      <p className="text-neutral-600">{faq.answer}</p>
+                  <div id={collapseId} className={`overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`} aria-labelledby={itemId} role="region">
+                    <div className="pb-5 pr-10">
+                      <p className="text-gray-600 text-base leading-relaxed">{faq.answer}</p>
                     </div>
                   </div>
                 </div>

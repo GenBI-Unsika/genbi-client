@@ -3,15 +3,18 @@ import { Calendar, Clock, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import MediaPlaceholder from '../shared/MediaPlaceholder';
 import { normalizeFileUrl } from '../../utils/api';
+import { formatDateID, stripHtml } from '../../utils/formatters';
 
-const ArticleCard = ({ title, excerpt, image, coverImage, date, readTime, badge, href, to, placeholder = null, className = '' }) => {
+const ArticleCard = ({ title, excerpt, image, coverImage, date, readTime, badge, badgeColor, href, to, placeholder = null, className = '' }) => {
   const Wrapper = to ? Link : href ? 'a' : 'div';
   const wrapperProps = to ? { to } : href ? { href } : {};
+
+  const badgeLabel = typeof badge === 'string' ? badge : badge && typeof badge === 'object' ? badge.name || badge.title || badge.label || '' : '';
 
   // Support both image and coverImage props, normalize URLs
   const imageUrl = normalizeFileUrl(image || coverImage);
 
-  return (
+  const Card = (
     <article
       className={`group bg-white rounded-xl overflow-hidden border border-[#F3F5F9] shadow-sm h-full flex flex-col transform-gpu transition-transform duration-200 ease-out cursor-pointer hover:scale-[1.02] hover:shadow-xl-primary-500/30 ${className}`}
     >
@@ -33,18 +36,29 @@ const ArticleCard = ({ title, excerpt, image, coverImage, date, readTime, badge,
             />
           ) : null}
         </div>
-        {badge && <span className="absolute top-3 right-3 bg-[#E3EEFC] text-[#01319F] text-xs font-medium px-2 py-1 rounded-md leading-none">{badge}</span>}
+        {badgeLabel && (
+          <span
+            className="absolute top-3 right-3 text-xs font-semibold px-2 py-1 rounded-md leading-none shadow-sm"
+            style={{
+              backgroundColor: badgeColor ? `${badgeColor}25` : '#E3EEFC',
+              color: badgeColor || '#01319F',
+              border: badgeColor ? `1px solid ${badgeColor}40` : 'none',
+            }}
+          >
+            {badgeLabel}
+          </span>
+        )}
       </div>
 
-      <Wrapper {...wrapperProps} aria-label={title} className="p-4 flex-1 flex flex-col focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300 focus-visible:ring-offset-2">
+      <div className="p-4 flex-1 flex flex-col focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300 focus-visible:ring-offset-2">
         <h4 className="font-semibold text-neutral-800 mb-1 leading-snug line-clamp-2">{title}</h4>
-        {excerpt && <p className="text-sm text-gray-600 mb-3 line-clamp-2">{excerpt}</p>}
+        {excerpt && <p className="text-sm text-gray-600 mb-3 line-clamp-2">{stripHtml(excerpt)}</p>}
 
         <div className="mt-0.5 flex items-center gap-3 text-sm text-gray-500">
           {date && (
             <span className="inline-flex items-center gap-1">
               <Calendar className="w-3.5 h-3.5" />
-              {date}
+              {formatDateID(date)}
             </span>
           )}
           {readTime && (
@@ -61,9 +75,27 @@ const ArticleCard = ({ title, excerpt, image, coverImage, date, readTime, badge,
             <ArrowRight className="w-4 h-4 ml-1" />
           </span>
         </div>
-      </Wrapper>
+      </div>
     </article>
   );
+
+  if (to) {
+    return (
+      <Link to={to} className="block focus:outline-none focus:ring-2 focus:ring-primary-300">
+        {Card}
+      </Link>
+    );
+  }
+
+  if (href) {
+    return (
+      <a href={href} className="block focus:outline-none focus:ring-2 focus:ring-primary-300">
+        {Card}
+      </a>
+    );
+  }
+
+  return Card;
 };
 
 ArticleCard.propTypes = {
@@ -74,6 +106,7 @@ ArticleCard.propTypes = {
   date: PropTypes.string,
   readTime: PropTypes.string,
   badge: PropTypes.string,
+  badgeColor: PropTypes.string,
   href: PropTypes.string,
   to: PropTypes.string,
   placeholder: PropTypes.string,
