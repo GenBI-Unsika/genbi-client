@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { apiFetch } from '../services/api.js';
 import EmptyState from '../components/EmptyState';
+import { formatDateID } from '../utils/formatters';
+
 
 const TransactionsPage = () => {
   const [transactions, setTransactions] = useState([]);
@@ -55,11 +57,11 @@ const TransactionsPage = () => {
           <div key={transaction.id} className="flex items-center justify-between p-6 border border-gray-200 rounded-lg">
             <div>
               <h3 className="font-semibold text-gray-900 mb-1">{transaction.type}</h3>
-              <p className="text-gray-600 text-sm">{transaction.date}</p>
+              <p className="text-gray-600 text-sm">{formatDateID(transaction.date)}</p>
             </div>
             <div className="text-right">
               <p className="font-semibold text-gray-900 mb-1">{transaction.amount}</p>
-              <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${transaction.statusColor || 'bg-gray-100 text-gray-800'}`}>{transaction.status}</span>
+              <span className={`inline - block px - 3 py - 1 rounded - full text - sm font - medium ${transaction.statusColor || 'bg-gray-100 text-gray-800'} `}>{transaction.status}</span>
             </div>
           </div>
         ))}

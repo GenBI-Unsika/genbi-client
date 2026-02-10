@@ -52,9 +52,10 @@ const TeamsPage = () => {
   const grouped = useMemo(() => {
     const map = new Map();
     for (const m of members) {
-      const key = m.division || 'Lainnya';
-      if (!map.has(key)) map.set(key, []);
-      map.get(key).push(m);
+      const divisionLabel = m.divisionTitle || (typeof m.division === 'string' ? m.division : m.division && typeof m.division === 'object' ? m.division.name : '') || 'Lainnya';
+
+      if (!map.has(divisionLabel)) map.set(divisionLabel, []);
+      map.get(divisionLabel).push(m);
     }
     return Array.from(map, ([title, list]) => ({ title, members: list }));
   }, [members]);
@@ -75,12 +76,7 @@ const TeamsPage = () => {
         {!loading && !error ? (
           grouped.length === 0 ? (
             <div className="py-10">
-              <EmptyState
-                icon="users"
-                title="Belum ada anggota"
-                description="Data anggota GenBI Unsika akan tampil di sini ketika sudah tersedia."
-                variant="default"
-              />
+              <EmptyState icon="users" title="Belum ada anggota" description="Data anggota GenBI Unsika akan tampil di sini ketika sudah tersedia." variant="default" />
             </div>
           ) : (
             grouped.map(({ title, members: list }) => (

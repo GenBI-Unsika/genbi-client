@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { apiFetch } from '../services/api.js';
 import EmptyState from '../components/EmptyState';
+import { formatDateID } from '../utils/formatters';
+
 
 const ActivitiesPage = () => {
   const [activeTab, setActiveTab] = useState('beasiswa');
@@ -107,7 +109,7 @@ const ActivitiesPage = () => {
                 <div className="flex-1">
                   <h3 className="font-semibold text-gray-900 mb-1">{item.title}</h3>
                   <p className="text-gray-600 text-sm">
-                    {item.location} | {item.date}
+                    {item.location} | {formatDateID(item.date)}
                   </p>
                 </div>
                 <div className="text-right">

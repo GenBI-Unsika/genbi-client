@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MapPin, Calendar, Clock, Loader2, CheckCircle } from 'lucide-react';
 import MediaPlaceholder from '../components/shared/MediaPlaceholder';
-import { apiFetch, apiPost } from '../utils/api';
+import { apiFetch, apiPost, normalizeFileUrl } from '../utils/api';
+import { formatDateLong, formatDateTime } from '../utils/formatters';
 
 const RegistrationPage = ({ eventId }) => {
   const navigate = useNavigate();
@@ -106,16 +107,13 @@ const RegistrationPage = ({ eventId }) => {
     );
   }
 
-
-  const startDate = event?.startDate ? new Date(event.startDate) : null;
-  const dateStr = startDate ? startDate.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-';
-  const timeStr = startDate ? startDate.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB' : '-';
+  const dateStr = event?.startDate ? formatDateLong(event.startDate) : '-';
+  const timeStr = event?.startDate ? formatDateTime(event.startDate).split(', ')[1] : '-';
 
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
           <div className="lg:col-span-2">
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 transform hover:shadow-lg transition-shadow duration-300">
               <h1 className="text-3xl font-bold text-gray-900 mb-4">Detail Pendaftaran</h1>
@@ -124,7 +122,6 @@ const RegistrationPage = ({ eventId }) => {
               </p>
 
               <form onSubmit={handleSubmit} className="space-y-6">
-
                 <div>
                   <label className="block text-sm font-medium text-gray-900 mb-2">
                     Nama Lengkap <span className="text-red-500">*</span>
@@ -139,7 +136,6 @@ const RegistrationPage = ({ eventId }) => {
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 hover:border-gray-400"
                   />
                 </div>
-
 
                 <div>
                   <label className="block text-sm font-medium text-gray-900 mb-2">
@@ -156,7 +152,6 @@ const RegistrationPage = ({ eventId }) => {
                   />
                 </div>
 
-
                 <div>
                   <label className="block text-sm font-medium text-gray-900 mb-2">No. Telepon/WhatsApp</label>
                   <input
@@ -168,7 +163,6 @@ const RegistrationPage = ({ eventId }) => {
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 hover:border-gray-400"
                   />
                 </div>
-
 
                 <div>
                   <label className="block text-sm font-medium text-gray-900 mb-2">Asal Instansi</label>
@@ -182,7 +176,6 @@ const RegistrationPage = ({ eventId }) => {
                   />
                 </div>
 
-
                 <div>
                   <label className="block text-sm font-medium text-gray-900 mb-2">Catatan Tambahan</label>
                   <textarea
@@ -194,7 +187,6 @@ const RegistrationPage = ({ eventId }) => {
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 hover:border-gray-400"
                   />
                 </div>
-
 
                 <button
                   type="submit"
@@ -208,17 +200,14 @@ const RegistrationPage = ({ eventId }) => {
             </div>
           </div>
 
-
           <div className="lg:col-span-1">
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 transform hover:shadow-lg transition-shadow duration-300 sticky top-8">
               <h2 className="text-xl font-bold text-gray-900 mb-6">Detail Event</h2>
 
-
               <div className="mb-6">
-                {event?.coverImage ? <img src={event.coverImage} alt={event.title} className="w-full h-auto rounded-lg object-cover aspect-video" /> : <MediaPlaceholder ratio="16/9" label="Poster Event" icon="camera" />}
+                {event?.coverImage ? <img src={normalizeFileUrl(event.coverImage)} alt={event.title} className="w-full h-auto rounded-lg object-cover aspect-video" /> : <MediaPlaceholder ratio="16/9" label="Poster Event" icon="camera" />}
                 <p className="text-gray-900 font-medium mt-3">{event?.title || 'Nama Event'}</p>
               </div>
-
 
               <div className="space-y-4 mb-6">
                 <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
@@ -237,10 +226,9 @@ const RegistrationPage = ({ eventId }) => {
                 </div>
               </div>
 
-
               {event?.division && (
                 <div className="text-sm text-gray-600">
-                  <span className="font-medium">Divisi:</span> {event.division}
+                  <span className="font-medium">Divisi:</span> {typeof event.division === 'string' ? event.division : event.division && typeof event.division === 'object' ? event.division.name : ''}
                 </div>
               )}
             </div>

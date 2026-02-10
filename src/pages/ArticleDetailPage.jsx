@@ -1,9 +1,14 @@
 import { useState, useEffect } from 'react';
-import { ChevronRight, Loader2 } from 'lucide-react';
-import MediaPlaceholder from '../components/shared/MediaPlaceholder';
-import { apiFetch } from '../utils/api';
+import { useParams, useNavigate } from 'react-router-dom';
+import { Calendar, User, ChevronLeft, Loader2, ChevronRight } from 'lucide-react';
+import ScrollReveal from '../components/ScrollReveal';
+import { apiFetch, normalizeFileUrl } from '../services/api.js';
+import EmptyState from '../components/EmptyState';
+import { formatDateLong } from '../utils/formatters';
 
-const ArticleDetailPage = ({ onNavigate, slug }) => {
+const ArticleDetailPage = () => {
+  const { slug } = useParams();
+  const navigate = useNavigate();
   const [article, setArticle] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -41,7 +46,7 @@ const ArticleDetailPage = ({ onNavigate, slug }) => {
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
           <p className="text-gray-600 mb-4">{error || 'Artikel tidak ditemukan'}</p>
-          <button onClick={() => onNavigate('home')} className="text-primary-600 hover:underline">
+          <button onClick={() => navigate('/')} className="text-primary-600 hover:underline">
             Kembali ke Beranda
           </button>
         </div>
@@ -53,35 +58,23 @@ const ArticleDetailPage = ({ onNavigate, slug }) => {
   const attachments = typeof article.attachments === 'string' ? JSON.parse(article.attachments) : article.attachments || {};
   const photos = attachments.photos || [];
 
-  const publishedDate = article.publishedAt ? new Date(article.publishedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Belum dipublikasikan';
+  const publishedDate = article.publishedAt ? formatDateLong(article.publishedAt) : 'Belum dipublikasikan';
 
   return (
     <div className="min-h-screen bg-white">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Breadcrumb */}
         <nav className="flex items-center space-x-2 text-sm text-gray-500 mb-8">
-          <button onClick={() => onNavigate('home')} className="hover:text-primary-600 transition-colors">
+          <button onClick={() => navigate('/')} className="hover:text-primary-600 transition-colors">
             Beranda
           </button>
           <ChevronRight className="w-4 h-4" />
-          <button onClick={() => onNavigate('proker')} className="hover:text-primary-600 transition-colors">
-            Aktivitas
+          <button onClick={() => navigate('/articles')} className="hover:text-primary-600 transition-colors">
+            Artikel
           </button>
           <ChevronRight className="w-4 h-4" />
           <span className="text-gray-900 truncate max-w-xs">{article.title}</span>
         </nav>
-
-        {/* GenBI News Badge */}
-        <div className="flex justify-end mb-6">
-          <div className="bg-gray-100 border border-gray-300 rounded-lg px-4 py-2 flex items-center gap-2">
-            <div className="w-6 h-6 bg-gray-400 rounded flex items-center justify-center">
-              <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-              </svg>
-            </div>
-            <span className="text-gray-700 font-medium text-sm">GenBI News</span>
-          </div>
-        </div>
 
         {/* Article Header */}
         <header className="mb-8">
@@ -94,7 +87,7 @@ const ArticleDetailPage = ({ onNavigate, slug }) => {
         {/* Cover Image */}
         {article.coverImage ? (
           <div className="mb-8">
-            <img src={article.coverImage} alt={article.title} className="w-full h-auto rounded-lg object-cover max-h-96" />
+            <img src={normalizeFileUrl(article.coverImage)} alt={article.title} className="w-full h-auto rounded-lg object-cover max-h-96" />
           </div>
         ) : null}
 
@@ -110,7 +103,7 @@ const ArticleDetailPage = ({ onNavigate, slug }) => {
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {photos.map((photo, i) => (
                 <div key={i} className="relative aspect-square overflow-hidden rounded-lg">
-                  <img src={photo.url} alt={photo.name || `Dokumentasi ${i + 1}`} className="w-full h-full object-cover cursor-pointer hover:scale-110 transition-transform" />
+                  <img src={normalizeFileUrl(photo.url)} alt={photo.name || `Dokumentasi ${i + 1}`} className="w-full h-full object-cover cursor-pointer hover:scale-110 transition-transform" />
                 </div>
               ))}
             </div>

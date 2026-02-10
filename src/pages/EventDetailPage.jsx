@@ -1,7 +1,11 @@
 import { useState, useEffect } from 'react';
-import { MapPin, Calendar, Clock, Loader2 } from 'lucide-react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { Calendar, Clock, MapPin, Users, ChevronLeft } from 'lucide-react';
 import MediaPlaceholder from '../components/shared/MediaPlaceholder';
-import { apiFetch } from '../utils/api';
+import ScrollReveal from '../components/ScrollReveal';
+import { apiFetch } from '../services/api.js';
+import { formatDateWithWeekday, formatDateTime } from '../utils/formatters';
+import { normalizeFileUrl } from '../utils/api';
 
 const EventDetailPage = ({ onNavigate, eventId }) => {
   const [event, setEvent] = useState(null);
@@ -51,19 +55,24 @@ const EventDetailPage = ({ onNavigate, eventId }) => {
   }
 
   // Format date and time
-  const startDate = event.startDate ? new Date(event.startDate) : null;
-  const dateStr = startDate ? startDate.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) : '-';
-  const timeStr = startDate ? startDate.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB' : '-';
+  const dateStr = event.startDate ? formatDateWithWeekday(event.startDate) : '-';
+  const timeStr = event.startDate ? formatDateTime(event.startDate).split(', ')[1] : '-';
 
   // Parse benefits if stored as JSON
   const benefits = event.benefits ? (typeof event.benefits === 'string' ? JSON.parse(event.benefits) : event.benefits) : [];
+
+  const divisionLabel = typeof event.division === 'string' ? event.division : event.division && typeof event.division === 'object' ? event.division.name : '';
 
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Hero Image */}
         <div className="mb-8">
-          {event.coverImage ? <img src={event.coverImage} alt={event.title} className="w-full h-auto rounded-lg object-cover max-h-96" /> : <MediaPlaceholder ratio="16/9" label="Poster Event" icon="camera" className="rounded-lg" />}
+          {event.coverImage ? (
+            <img src={normalizeFileUrl(event.coverImage)} alt={event.title} className="w-full h-auto rounded-lg object-cover max-h-96" />
+          ) : (
+            <MediaPlaceholder ratio="16/9" label="Poster Event" icon="camera" className="rounded-lg" />
+          )}
         </div>
 
         {/* Event Content */}
@@ -112,10 +121,10 @@ const EventDetailPage = ({ onNavigate, eventId }) => {
           )}
 
           {/* Division info */}
-          {event.division && (
+          {divisionLabel && (
             <div className="mb-8">
               <p className="text-sm text-gray-500">
-                Divisi: <span className="font-medium text-gray-900">{event.division}</span>
+                Divisi: <span className="font-medium text-gray-900">{divisionLabel}</span>
               </p>
             </div>
           )}
