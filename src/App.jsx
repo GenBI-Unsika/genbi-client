@@ -169,7 +169,8 @@ function App() {
         if (alive) setIsLoggedIn(true);
         // Sinkronisasi data profil (termasuk avatar) saat aplikasi dimuat
         try {
-          await syncMe();
+          const user = await syncMe();
+          if (alive && user) checkProfileCompletion(user);
         } catch (e) {
           // Gagal diam-diam - user masih bisa menggunakan aplikasi dengan data cache
           console.debug('Failed to sync user profile:', e?.message);
@@ -179,6 +180,10 @@ function App() {
       try {
         const ok = await ensureAuthed();
         if (alive) setIsLoggedIn(ok);
+        if (ok && alive) {
+          const user = await syncMe();
+          if (user) checkProfileCompletion(user);
+        }
       } catch (e) {
         // Gagal diam-diam - user hanya belum login
         console.debug('Auth refresh failed:', e?.message);
@@ -232,51 +237,52 @@ function App() {
     setIsLoggedIn(true);
 
     // Cek kelengkapan profil setelah login
-    setTimeout(() => {
-      checkProfileCompletion();
+    setTimeout(async () => {
+      const user = await syncMe();
+      checkProfileCompletion(user);
     }, 1000);
   };
 
-  const checkProfileCompletion = async () => {
-    try {
-      const user = await syncMe();
-      if (user && user.profile) {
-        const { npm, facultyId, studyProgramId, birthDate, gender } = user.profile;
+  const checkProfileCompletion = (user) => {
+    if (!user || !user.profile) return;
 
-        // Cek jika field profil penting belum diisi
-        if (!npm || !facultyId || !studyProgramId || !birthDate || !gender) {
-          toast(
-            (t) => (
-              <div className="flex items-center gap-3">
-                <div className="flex-shrink-0">
-                  <svg className="w-6 h-6 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                  </svg>
-                </div>
-                <div className="flex-1">
-                  <p className="font-medium text-gray-900">Lengkapi Profil Anda</p>
-                  <p className="text-sm text-gray-600">Data profil Anda belum lengkap</p>
-                </div>
-                <button
-                  onClick={() => {
-                    toast.dismiss(t.id);
-                    navigate('/profile');
-                  }}
-                  className="flex-shrink-0 bg-primary-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-600"
-                >
-                  Lengkapi Sekarang
-                </button>
+    try {
+      const { npm, facultyId, studyProgramId, birthDate, gender } = user.profile;
+
+      // Cek jika field profil penting belum diisi
+      if (!npm || !facultyId || !studyProgramId || !birthDate || !gender) {
+        toast(
+          (t) => (
+            <div className="flex items-center gap-3">
+              <div className="flex-shrink-0">
+                <svg className="w-6 h-6 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
               </div>
-            ),
-            {
-              duration: 6000,
-              position: 'top-center',
-              style: {
-                minWidth: '400px',
-              },
+              <div className="flex-1">
+                <p className="font-medium text-gray-900">Lengkapi Profil Anda</p>
+                <p className="text-sm text-gray-600">Data profil Anda belum lengkap</p>
+              </div>
+              <button
+                onClick={() => {
+                  toast.dismiss(t.id);
+                  navigate('/profile');
+                }}
+                className="flex-shrink-0 bg-primary-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-600"
+              >
+                Lengkapi Sekarang
+              </button>
+            </div>
+          ),
+          {
+            id: 'profile-incomplete-warning',
+            duration: 6000,
+            position: 'top-center',
+            style: {
+              minWidth: '400px',
             },
-          );
-        }
+          },
+        );
       }
     } catch (error) {
       console.error('Error checking profile:', error);
