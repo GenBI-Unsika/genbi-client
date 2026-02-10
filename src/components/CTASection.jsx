@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import ScrollReveal from './ScrollReveal';
 import { apiFetch } from '../services/api.js';
 
@@ -10,6 +11,7 @@ const defaultCtaContent = {
 
 const CTASection = () => {
   const [content, setContent] = useState(defaultCtaContent);
+  const navigate = useNavigate();
 
   useEffect(() => {
     let alive = true;
@@ -30,7 +32,7 @@ const CTASection = () => {
   }, []);
 
   return (
-    <div className="relative z-20 pb-16 md:pb-0 md:-mb-24">
+    <div className="relative z-20 pb-16 md:pb-0 md:-mb-18">
       <ScrollReveal as="div" once className="relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* CTA Card */}
@@ -47,8 +49,7 @@ const CTASection = () => {
                   <button
                     className="cursor-pointer bg-white text-[#01319F] px-6 py-2.5 rounded-lg hover:bg-gray-50 transition-all duration-300 transform hover:scale-105 hover:shadow-lg active:scale-95 font-medium text-sm whitespace-nowrap"
                     onClick={() => {
-                      // Add your navigation logic here
-                      window.location.href = '/scholarship/register';
+                      navigate('/scholarship/register');
                     }}
                   >
                     {content.buttonText}

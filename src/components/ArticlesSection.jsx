@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { apiFetch } from '../services/api.js';
 import EmptyState from './EmptyState';
 import ScrollReveal from './ScrollReveal';
+import { Link } from 'react-router-dom';
 
 const ArticlesSection = () => {
   const [articles, setArticles] = useState([]);
@@ -38,26 +39,21 @@ const ArticlesSection = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-3xl sm:text-4xl font-semibold text-primary-600">Artikel</h2>
-            <a href="/articles" className="text-primary-600 hover:text-primary-700 font-medium">
+            <Link to="/articles" className="text-primary-600 hover:text-primary-700 font-medium">
               Lihat Lainnya →
-            </a>
+            </Link>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {loading ? <div className="text-gray-500">Memuat...</div> : null}
             {!loading && articles.length === 0 ? (
               <div className="col-span-full">
-                <EmptyState
-                  icon="files"
-                  title="Belum ada artikel"
-                  description="Artikel terbaru akan muncul di sini"
-                  variant="primary"
-                />
+                <EmptyState icon="files" title="Belum ada artikel" description="Artikel terbaru akan muncul di sini" variant="primary" />
               </div>
             ) : null}
             {articles.map((a, idx) => (
               <ScrollReveal key={a.id || a.slug || a.title} as="div" once className="h-full" delayMs={idx * 70}>
-                <ArticleCard {...a} to={a.href || (a.id ? `/articles/${a.id}` : '/articles')} />
+                <ArticleCard {...a} to={a.href || (a.slug ? `/articles/${a.slug}` : '/articles')} />
               </ScrollReveal>
             ))}
           </div>

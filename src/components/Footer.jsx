@@ -14,7 +14,7 @@ const defaultFooterContent = {
   ],
 };
 
-const Footer = () => {
+const Footer = ({ ctaOverlap = false }) => {
   const year = new Date().getFullYear();
   const [content, setContent] = useState(defaultFooterContent);
 
@@ -38,12 +38,11 @@ const Footer = () => {
 
   return (
     <div className="w-full bg-blue-50">
-      {/* MAIN FOOTER - dengan padding top untuk CTA overlap */}
-      <footer className="max-w-7xl mx-auto px-6 pt-40 md:pt-48 pb-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8">
+      <footer className={`max-w-7xl mx-auto px-6 pb-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 ${ctaOverlap ? 'pt-40 md:pt-48' : 'pt-12 md:pt-16'}`}>
         {/* Brand + Description - Takes 5 columns on large screens */}
         <div className="lg:col-span-5 space-y-4">
           <div className="flex items-center gap-2 text-xl font-semibold text-primary-600">
-            <img src="./genbi-unsika.webp" alt="Logo GenBI Unsika" className="h-8 w-auto flex-shrink-0" loading="eager" decoding="async" />
+            <img src="/genbi-unsika.webp" alt="Logo GenBI Unsika" className="h-8 w-auto flex-shrink-0" loading="eager" decoding="async" />
             <span>GenBI Unsika</span>
           </div>
 

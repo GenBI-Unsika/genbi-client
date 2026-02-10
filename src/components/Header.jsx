@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Menu, X, ChevronDown, Search as SearchIcon } from 'lucide-react';
-import toast from 'react-hot-toast';
 import { getMe } from '../utils/auth.js';
 import { apiFetch } from '../utils/api.js';
 import { useConfirm } from '../contexts/ConfirmContext.jsx';
@@ -151,11 +150,12 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
   };
 
   const handleSignInClick = () => {
-    if (onLoginToggle) onLoginToggle();
+    if (onLoginToggle) return onLoginToggle();
+    navigate('/signin');
   };
 
   const handleRegister = () => {
-    navigate('/scholarship/register');
+    navigate('/signup');
   };
 
   const handleProfileNavigation = (path) => {
@@ -181,7 +181,7 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-2 md:py-3 gap-3">
           <button onClick={() => handleNavigation('home')} className="flex items-center gap-3 sm:gap-4 whitespace-nowrap cursor-pointer" aria-label="GenBI Unsika - Beranda">
-            <img src="./genbi-unsika.webp" alt="Logo GenBI Unsika" className="h-6 md:h-8 lg:h-12 w-auto flex-shrink-0" loading="eager" decoding="async" />
+            <img src="/genbi-unsika.webp" alt="Logo GenBI Unsika" className="h-6 md:h-8 lg:h-12 w-auto flex-shrink-0" loading="eager" decoding="async" />
           </button>
 
           <nav className="hidden md:flex items-center gap-3 lg:gap-6 flex-nowrap">
