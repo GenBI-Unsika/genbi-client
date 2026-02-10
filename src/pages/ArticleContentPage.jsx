@@ -1,49 +1,59 @@
 import { ChevronRight } from 'lucide-react';
 import MediaPlaceholder from '../components/shared/MediaPlaceholder';
 
-const ArticleContentPage = ({ onNavigate }) => {
+const ArticleContentPage = ({ onNavigate, article }) => {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen bg-white">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
         {/* Breadcrumb */}
-        <nav className="flex items-center space-x-2 text-sm text-gray-500 mb-8">
-          <button onClick={() => onNavigate('home')} className="hover:text-primary-600 transition-colors">
+        <nav className="flex items-center space-x-1 text-sm text-gray-500 mb-6">
+          <button onClick={() => onNavigate?.('home')} className="hover:text-blue-600 transition-colors">
             Beranda
           </button>
-          <ChevronRight className="w-4 h-4" />
-          <button onClick={() => onNavigate('articles')} className="hover:text-primary-600 transition-colors">
+          <ChevronRight className="w-4 h-4 text-gray-400 flex-shrink-0" />
+          <button onClick={() => onNavigate?.('articles')} className="hover:text-blue-600 transition-colors">
             Artikel
           </button>
-          <ChevronRight className="w-4 h-4" />
-          <span className="text-gray-900">Judul Artikel</span>
+          <ChevronRight className="w-4 h-4 text-gray-400 flex-shrink-0" />
+          <span className="text-gray-800 font-medium">{article?.title ?? 'Judul Artikel'}</span>
         </nav>
 
-        {/* Article Header */}
-        <header className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Artikel</h1>
-          <div className="text-sm text-gray-500 mb-6">
-            <span className="font-medium">GenBI Unsika</span>
-          </div>
-        </header>
+        {/* Article Title */}
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight mb-4">{article?.title}</h1>
 
-        {/* Featured Image */}
-        <div className="mb-8">
-          <MediaPlaceholder ratio="16/9" label="Gambar Utama Artikel" />
-          <p className="text-center text-xs text-gray-500 mt-2">Sumber : Source Pic</p>
+        {/* Author & Date */}
+        <div className="flex flex-col gap-0.5 mb-6">
+          <span className="text-sm font-semibold text-gray-700">{article?.author}</span>
+          <span className="text-sm text-gray-500">{article?.date}</span>
         </div>
 
-        {/* Article Content */}
-        <article className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-8 transform hover:shadow-md transition-shadow duration-300">
-          <div className="prose max-w-none text-gray-700 leading-relaxed">
-            <p className="mb-4">Konten artikel akan ditampilkan dari backend setelah endpoint artikel tersedia.</p>
-          </div>
-        </article>
+        {/* Featured Image */}
+        <div className="mb-6 border border-gray-200 rounded-lg overflow-hidden">
+          {article?.image ? <img src={article.image} alt={article.title} className="w-full object-cover" /> : <MediaPlaceholder ratio="16/9" label="Gambar Utama Artikel" />}
+          {article?.imageSource && <p className="text-center text-xs text-gray-400 py-2 border-t border-gray-100">Sumber : {article.imageSource}</p>}
+        </div>
 
-        {/* References Section */}
-        <section className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 transform hover:shadow-md transition-shadow duration-300">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Referensi</h2>
-          <div className="text-sm text-gray-700">Referensi akan ditampilkan dari backend.</div>
-        </section>
+        {/* Article Body */}
+        <article className="text-gray-700 text-sm leading-relaxed mb-10 space-y-4">{article?.content}</article>
+
+        {/* References */}
+        {article?.references?.length > 0 && (
+          <section className="mb-10">
+            <h2 className="text-xl font-bold text-gray-900 mb-4">Referensi</h2>
+            <div className="space-y-3 text-sm text-gray-700">
+              {article.references.map((ref, i) => (
+                <p key={i} className="leading-relaxed">
+                  {ref.text}{' '}
+                  {ref.url && (
+                    <a href={ref.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline break-all">
+                      {ref.url}
+                    </a>
+                  )}
+                </p>
+              ))}
+            </div>
+          </section>
+        )}
       </div>
     </div>
   );

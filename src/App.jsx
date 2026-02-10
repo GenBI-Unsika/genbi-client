@@ -16,8 +16,6 @@ import Footer from './components/Footer';
 // Halaman detail/baru (wrapper yang sudah kamu punya)
 import EventDetailRoute from './router/EventDetailRoute';
 import RegistrationRoute from './router/RegistrationRoute';
-import ArticleContentRoute from './router/ArticleContentRoute';
-import ArticleDetailRoute from './router/ArticleDetailRoute';
 
 import ProfileLayout from './components/ProfileLayout';
 
@@ -44,13 +42,13 @@ const EventsPage = React.lazy(() => import('./pages/EventsPage'));
 const ProkerPage = React.lazy(() => import('./pages/ProkerPage'));
 const ScholarshipPageDetailed = React.lazy(() => import('./pages/ScholarshipPage'));
 const ArticlesPage = React.lazy(() => import('./pages/ArticlesPage'));
+const ArticleDetailPage = React.lazy(() => import('./pages/ArticleDetailPage'));
 
 const ScholarshipRegister = React.lazy(() => import('./pages/scholarship/ScholarshipRegister'));
 const ScholarshipSelectionAdmin = React.lazy(() => import('./pages/scholarship/ScholarshipSelectionAdmin'));
 const ScholarshipSelectionInterview = React.lazy(() => import('./pages/scholarship/ScholarshipSelectionInterview'));
 const ScholarshipSelectionAnnouncement = React.lazy(() => import('./pages/scholarship/ScholarshipSelectionAnnouncement'));
 const ScholarshipRegisterSuccess = React.lazy(() => import('./pages/scholarship/ScholarshipRegisterSuccess'));
-
 
 const pathForKey = (key) => {
   switch (key) {
@@ -96,7 +94,6 @@ const pathForKey = (key) => {
   }
 };
 
-
 const HomePage = ({ isLoggedIn }) => (
   <>
     <HeroSection />
@@ -108,10 +105,9 @@ const HomePage = ({ isLoggedIn }) => (
     {isLoggedIn && <FAQSection />}
     <TestimonialsSection />
     {!isLoggedIn && <CTASection />}
-    <Footer />
+    <Footer ctaOverlap={!isLoggedIn} />
   </>
 );
-
 
 const ProfileRoutesLayout = ({ onNavigate, onLogout }) => {
   const location = useLocation();
@@ -130,7 +126,6 @@ const ProfileRoutesLayout = ({ onNavigate, onLogout }) => {
     </ProfileLayout>
   );
 };
-
 
 const RequireAuth = ({ children }) => {
   const [checking, setChecking] = useState(true);
@@ -412,8 +407,24 @@ function App() {
           {/* Detail / konten */}
           <Route path="/events/:eventId" element={<EventDetailRoute />} />
           <Route path="/events/:eventId/register" element={<RegistrationRoute />} />
-          <Route path="/articles/:slug" element={<ArticleContentRoute />} />
-          <Route path="/proker/:slug" element={<ArticleDetailRoute />} />
+          <Route
+            path="/articles/:slug"
+            element={
+              <>
+                <ArticleDetailPage />
+                <Footer />
+              </>
+            }
+          />
+          <Route
+            path="/proker/:eventId"
+            element={
+              <>
+                <EventDetailRoute />
+                <Footer />
+              </>
+            }
+          />
 
           {/* Otentikasi */}
           <Route path="/signin" element={<SignInPage onNavigate={onNavigate} onLogin={handleLoginSuccess} />} />
