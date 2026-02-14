@@ -42,11 +42,11 @@ const ActivitiesSection = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Activities */}
         <div className="mb-16">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-primary-500 mb-6">Aktivitas</h2>
+          <h2 className="font-semibold text-primary-500 mb-6">Aktivitas</h2>
 
           <div className="flex items-center justify-between gap-3 flex-wrap sm:flex-nowrap mb-8">
-            <h3 className="text-xl font-semibold text-neutral-800">Yuk, Ikuti Event Kami</h3>
-            <a href="/events" className="text-primary-600 hover:text-primary-700 font-medium whitespace-nowrap">
+            <h3 className="font-semibold text-neutral-800">Yuk, Ikuti Event Kami</h3>
+            <a href="/events" className="text-primary-600 hover:text-primary-700 font-medium whitespace-nowrap transition-transform duration-200 hover:translate-x-1 inline-block">
               Lihat Semua →
             </a>
           </div>
@@ -69,8 +69,8 @@ const ActivitiesSection = () => {
         {/* Projects */}
         <div>
           <div className="flex justify-between items-center mb-8">
-            <h3 className="text-xl font-semibold text-neutral-800">Proker Kami</h3>
-            <a href="/proker" className="text-primary-600 hover:text-primary-700 font-medium">
+            <h3 className="font-semibold text-neutral-800">Proker Kami</h3>
+            <a href="/proker" className="text-primary-600 hover:text-primary-700 font-medium transition-transform duration-200 hover:translate-x-1 inline-block">
               Lihat Semua →
             </a>
           </div>

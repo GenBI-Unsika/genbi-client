@@ -40,13 +40,13 @@ const CompleteProfileModal = ({ isOpen, onClose, missingFields = [] }) => {
           <p className="text-gray-600 text-sm px-4 leading-relaxed">Demi kelancaran administrasi dan kegiatan, kami membutuhkan data diri kamu yang valid.</p>
         </div>
 
-        <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 sm:gap-3 mt-2">
-          <button onClick={onClose} className="px-4 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+        <div className="flex flex-row justify-end gap-2 sm:gap-3 mt-2">
+          <button onClick={onClose} className="px-3 py-2.5 sm:px-4 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-all duration-200 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
             Nanti Saja
           </button>
           <button
             onClick={handleCompleteNow}
-            className="px-4 py-2.5 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 shadow-sm"
+            className="px-3 py-2.5 sm:px-4 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-all duration-200 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 shadow-sm hover:shadow-md"
           >
             Lengkapi Sekarang
           </button>

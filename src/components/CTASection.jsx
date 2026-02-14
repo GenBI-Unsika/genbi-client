@@ -37,17 +37,17 @@ const CTASection = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* CTA Card */}
           <div className="bg-[#01319F] rounded-2xl overflow-hidden">
-            <div className="px-6 py-8 sm:px-10 sm:py-10 lg:px-12 lg:py-10">
-              <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+            <div className="px-6 py-4 sm:px-10 sm:py-5 lg:px-12 lg:py-5">
+              <div className="flex flex-row justify-between items-center gap-4 lg:gap-6">
                 {/* Text Content */}
-                <div className="flex-1 text-center md:text-left">
-                  <h3 className="text-base sm:text-lg lg:text-xl font-semibold text-white leading-relaxed">{content.text}</h3>
+                <div className="flex-1">
+                  <h3 className="text-body-lg font-semibold text-white leading-snug">{content.text}</h3>
                 </div>
 
                 {/* CTA Button */}
                 <div className="flex-shrink-0">
                   <button
-                    className="cursor-pointer bg-white text-[#01319F] px-6 py-2.5 rounded-lg hover:bg-gray-50 transition-all duration-300 transform hover:scale-105 hover:shadow-lg active:scale-95 font-medium text-sm whitespace-nowrap"
+                    className="cursor-pointer bg-white text-[#01319F] px-4 py-2 sm:px-6 sm:py-2.5 rounded-lg hover:bg-gray-50 transition-all duration-300 transform hover:scale-105 hover:shadow-lg active:scale-95 text-btn whitespace-nowrap"
                     onClick={() => {
                       navigate('/scholarship/register');
                     }}

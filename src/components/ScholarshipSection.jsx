@@ -46,10 +46,10 @@ const ScholarshipSection = () => {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             {/* Left content */}
             <div className="order-2 lg:order-1 lg:col-span-6 space-y-4 sm:space-y-6 max-w-2xl">
-              <h2 className="text-3xl sm:text-4xl font-semibold text-primary-600">{content.title}</h2>
-              <p className="text-gray-600 leading-relaxed text-base sm:text-lg">{content.description}</p>
+              <h2 className="section-title text-primary-600">{content.title}</h2>
+              <p className="section-subtitle text-gray-600">{content.description}</p>
               <div className="flex flex-col sm:flex-row gap-3">
-                <button onClick={handleButtonClick} className="w-full sm:w-auto bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition-colors">
+                <button onClick={handleButtonClick} className="w-full sm:w-auto bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition-all duration-300 hover:scale-105 active:scale-95 shadow-md hover:shadow-lg">
                   {content.buttonText}
                 </button>
               </div>

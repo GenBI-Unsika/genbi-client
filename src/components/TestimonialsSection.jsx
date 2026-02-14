@@ -67,22 +67,18 @@ export default function TestimonialsSection() {
   return (
     <ScrollReveal as="section" className="py-16 lg:py-24 bg-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Title Row - Terpisah */}
         <div className="mb-12 lg:mb-16">
-          <h2 className="text-[#003D7A] text-3xl lg:text-4xl font-bold">Pengalaman Alumni</h2>
+          <h2 className="section-title text-[#003D7A]">Pengalaman Alumni</h2>
         </div>
 
-        {/* Content Row - Split Left & Right */}
         <div className="flex flex-col lg:flex-row lg:items-center gap-12 lg:gap-16">
-          {/* Left Content */}
           <div className="lg:w-[40%] flex-shrink-0">
             <div className="space-y-4">
-              <h3 className="text-gray-900 text-xl lg:text-2xl font-bold">Bagaimana Pendapat Alumni GenBI Unsika</h3>
-              <p className="text-gray-700 text-base leading-relaxed">Yukk, cari tahu bagaimana pengalaman alumni selama menjadi anggota GenBI Unsika</p>
+              <h3 className="text-h3 text-gray-900 font-bold">Bagaimana Pendapat Alumni GenBI Unsika</h3>
+              <p className="text-body text-gray-700 leading-relaxed">Yukk, cari tahu bagaimana pengalaman alumni selama menjadi anggota GenBI Unsika</p>
             </div>
           </div>
 
-          {/* Right Carousel */}
           <div className="lg:w-[60%] relative">
             {loading ? (
               <div className="text-gray-500 py-24 text-center">Memuat testimoni...</div>
@@ -114,15 +110,15 @@ export default function TestimonialsSection() {
                   onClick={scrollPrev}
                   disabled={!canPrev}
                   className="
-                    absolute left-0 top-1/2 -translate-y-1/2 translate-x-0 md:-translate-x-6 z-20
-                    flex items-center justify-center
-                    w-10 h-10 md:w-12 md:h-12 rounded-full
-                    bg-[#1E40AF] text-white
-                    hover:bg-[#1E3A8A]
-                    disabled:bg-gray-400 disabled:cursor-not-allowed
-                    transition-colors duration-200
-                    shadow-lg
-                  "
+                      absolute left-0 top-1/2 -translate-y-1/2 translate-x-0 md:-translate-x-6 z-20
+                      flex items-center justify-center
+                      w-10 h-10 md:w-12 md:h-12 rounded-full
+                      bg-[#1E40AF] text-white
+                      hover:bg-[#1E3A8A]
+                      disabled:bg-gray-400 disabled:cursor-not-allowed
+                      transition-colors duration-200
+                      shadow-lg hover-animate
+                    "
                 >
                   <ChevronLeft className="w-5 h-5" strokeWidth={3} />
                 </button>
@@ -133,15 +129,15 @@ export default function TestimonialsSection() {
                   onClick={scrollNext}
                   disabled={!canNext}
                   className="
-                    absolute right-0 top-1/2 -translate-y-1/2 translate-x-0 md:translate-x-6 z-20
-                    flex items-center justify-center
-                    w-10 h-10 md:w-12 md:h-12 rounded-full
-                    bg-[#1E40AF] text-white
-                    hover:bg-[#1E3A8A]
-                    disabled:bg-gray-400 disabled:cursor-not-allowed
-                    transition-colors duration-200
-                    shadow-lg
-                  "
+                      absolute right-0 top-1/2 -translate-y-1/2 translate-x-0 md:translate-x-6 z-20
+                      flex items-center justify-center
+                      w-10 h-10 md:w-12 md:h-12 rounded-full
+                      bg-[#1E40AF] text-white
+                      hover:bg-[#1E3A8A]
+                      disabled:bg-gray-400 disabled:cursor-not-allowed
+                      transition-colors duration-200
+                      shadow-lg hover-animate
+                    "
                 >
                   <ChevronRight className="w-5 h-5" strokeWidth={3} />
                 </button>

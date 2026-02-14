@@ -38,7 +38,7 @@ const ArticlesSection = () => {
       <div className="py-12 sm:py-16 bg-primary-50 rounded-none md:rounded-tl-[72px] xl:rounded-tl-[100px] md:rounded-br-[72px] xl:rounded-br-[100px]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center mb-8">
-            <h2 className="text-3xl sm:text-4xl font-semibold text-primary-600">Artikel</h2>
+            <h2 className="font-semibold text-primary-600">Artikel</h2>
             <Link to="/articles" className="text-primary-600 hover:text-primary-700 font-medium">
               Lihat Lainnya →
             </Link>

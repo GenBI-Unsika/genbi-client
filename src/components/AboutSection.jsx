@@ -4,8 +4,6 @@ import EmptyState from './EmptyState';
 import ScrollReveal from './ScrollReveal';
 import { apiFetch, normalizeFileUrl } from '../services/api.js';
 
-// Default CMS content (fallback if API fails or returns null)
-// Initial state is empty to enforce CMS dependence
 const defaultAboutContent = {
   title: '',
   description: '',
@@ -36,7 +34,6 @@ const AboutSection = ({ imageSrc: propImageSrc, videoUrl: propVideoUrl }) => {
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
 
-  // Fetch CMS content
   useEffect(() => {
     let alive = true;
     (async () => {
@@ -57,7 +54,6 @@ const AboutSection = ({ imageSrc: propImageSrc, videoUrl: propVideoUrl }) => {
     };
   }, []);
 
-  // Props override CMS values if provided
   const imageSrc = normalizeFileUrl(propImageSrc || content.coverImage);
   const videoUrl = propVideoUrl || content.videoUrl;
 
@@ -67,7 +63,6 @@ const AboutSection = ({ imageSrc: propImageSrc, videoUrl: propVideoUrl }) => {
   const openPlayer = useCallback(() => setOpen(true), []);
   const closePlayer = useCallback(() => setOpen(false), []);
 
-  // Tutup dengan tombol Escape
   useEffect(() => {
     if (!open) return;
     const onKey = (e) => e.key === 'Escape' && closePlayer();
@@ -92,13 +87,13 @@ const AboutSection = ({ imageSrc: propImageSrc, videoUrl: propVideoUrl }) => {
           </div>
         ) : !content.title && !content.description ? (
           <div className="text-center py-12">
-            <EmptyState icon="box" title="Konten belum tersedia" description="Admin belum mengatur konten untuk bagian ini." variant="default" />
+            <EmptyState icon="box" title="Konten belum tersedia" description="Silakan coba lagi nanti." variant="default" />
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Left content */}
             <div className="space-y-6">
-              <h2 id="about-heading" className="text-2xl sm:text-3xl md:text-4xl font-semibold text-primary-500">
+              <h2 id="about-heading" className="font-semibold text-primary-500">
                 {content.title}
               </h2>
               <p className="text-gray-600 leading-relaxed">{content.description}</p>
@@ -137,8 +132,8 @@ const AboutSection = ({ imageSrc: propImageSrc, videoUrl: propVideoUrl }) => {
                     onClick={openPlayer}
                     className={
                       hasVideo
-                        ? 'cursor-pointer bg-white/90 backdrop-blur rounded-full p-4 ring-1 ring-black/5 transition hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500'
-                        : 'cursor-pointer bg-white/95 backdrop-blur rounded-full p-4 ring-1 ring-black/5 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500'
+                        ? 'cursor-pointer bg-white/90 backdrop-blur rounded-full p-4 ring-1 ring-black/5 transition-all duration-300 hover:bg-white hover:scale-110 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 shadow-lg'
+                        : 'cursor-pointer bg-white/95 backdrop-blur rounded-full p-4 ring-1 ring-black/5 transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 shadow-lg'
                     }
                     aria-label={hasVideo ? 'Putar video profil GenBI UNSIKA' : 'Video profil belum tersedia (klik untuk info)'}
                     title={hasVideo ? 'Putar video' : 'Video belum tersedia'}

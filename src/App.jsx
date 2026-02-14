@@ -1,6 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Routes, Route, useNavigate, Navigate, Outlet, useLocation } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import { AnimatePresence } from 'framer-motion';
+
 import Header from './components/Header';
 import HeroSection from './components/HeroSection';
 import AboutSection from './components/AboutSection';
@@ -12,6 +14,8 @@ import FAQSection from './components/FAQSection';
 import TestimonialsSection from './components/TestimonialsSection';
 import CTASection from './components/CTASection';
 import Footer from './components/Footer';
+import PageTransition from './components/PageTransition';
+import TopLoadingBar from './components/TopLoadingBar';
 
 // Halaman detail/baru (wrapper yang sudah kamu punya)
 import EventDetailRoute from './router/EventDetailRoute';
@@ -48,6 +52,7 @@ const ScholarshipRegister = React.lazy(() => import('./pages/scholarship/Scholar
 const ScholarshipSelectionAdmin = React.lazy(() => import('./pages/scholarship/ScholarshipSelectionAdmin'));
 const ScholarshipSelectionInterview = React.lazy(() => import('./pages/scholarship/ScholarshipSelectionInterview'));
 const ScholarshipSelectionAnnouncement = React.lazy(() => import('./pages/scholarship/ScholarshipSelectionAnnouncement'));
+const ScholarshipAnnouncementPublic = React.lazy(() => import('./pages/scholarship/ScholarshipAnnouncementPublic'));
 const ScholarshipRegisterSuccess = React.lazy(() => import('./pages/scholarship/ScholarshipRegisterSuccess'));
 
 const pathForKey = (key) => {
@@ -95,7 +100,7 @@ const pathForKey = (key) => {
 };
 
 const HomePage = ({ isLoggedIn }) => (
-  <>
+  <PageTransition>
     <HeroSection />
     <AboutSection />
     <VisionMissionSection />
@@ -106,7 +111,7 @@ const HomePage = ({ isLoggedIn }) => (
     <TestimonialsSection />
     {!isLoggedIn && <CTASection />}
     <Footer ctaOverlap={!isLoggedIn} />
-  </>
+  </PageTransition>
 );
 
 const ProfileRoutesLayout = ({ onNavigate, onLogout }) => {
@@ -162,6 +167,124 @@ function App() {
   const location = useLocation();
   const forcedLogoutToastShown = useRef(false);
   const lastTrackedRef = useRef({ key: '', at: 0 });
+  const profileNotificationShown = useRef(false); // Track per session
+
+  const profileReminderKeyForUser = useCallback((user) => {
+    const raw = user?.id ?? user?.userId ?? user?.uuid ?? user?.email ?? 'anon';
+    return String(raw);
+  }, []);
+
+  const checkProfileCompletion = useCallback(
+    (user, { reason = 'session' } = {}) => {
+      if (!user || !user.profile) return;
+
+      // Jangan tampilkan jika sudah pernah ditampilkan dalam session ini
+      if (profileNotificationShown.current) return;
+
+      try {
+        const { npm, facultyId, studyProgramId, birthDate, gender } = user.profile;
+
+        // Cek jika field profil penting belum diisi
+        if (!npm || !facultyId || !studyProgramId || !birthDate || !gender) {
+          const now = Date.now();
+
+          // Throttle per user supaya tidak muncul tiap refresh.
+          // - reason: 'login'   => boleh tampil (kecuali di-dismiss)
+          // - reason: 'session' => maksimal 1x per 7 hari
+          const userKey = profileReminderKeyForUser(user);
+          const dismissedUntilKey = `profile-reminder-dismissed-until:${userKey}`;
+          const lastShownAtKey = `profile-reminder-last-shown-at:${userKey}`;
+          const legacyDismissedUntil = localStorage.getItem('profile-reminder-dismissed-until');
+
+          let dismissedUntil = null;
+          let lastShownAt = null;
+          try {
+            dismissedUntil = localStorage.getItem(dismissedUntilKey) ?? legacyDismissedUntil;
+            lastShownAt = localStorage.getItem(lastShownAtKey);
+          } catch {
+            // ignore storage errors
+          }
+
+          const dismissedUntilMs = Number.parseInt(dismissedUntil || '', 10);
+          if (Number.isFinite(dismissedUntilMs) && now < dismissedUntilMs) return;
+
+          const throttleMs = reason === 'login' ? 0 : 7 * 24 * 60 * 60 * 1000;
+          const lastShownAtMs = Number.parseInt(lastShownAt || '', 10);
+          if (throttleMs > 0 && Number.isFinite(lastShownAtMs) && now - lastShownAtMs < throttleMs) return;
+
+          // Tandai bahwa notifikasi sudah ditampilkan di session ini
+          profileNotificationShown.current = true;
+
+          try {
+            localStorage.setItem(lastShownAtKey, String(now));
+          } catch {
+            // ignore
+          }
+
+          toast.custom(
+            (t) => (
+              <div className={`${t.visible ? 'animate-enter' : 'animate-leave'} max-w-xl w-full bg-white shadow-lg rounded-xl pointer-events-auto border border-gray-200 mx-3 sm:mx-0`}>
+                <div className="p-3 sm:p-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                    <div className="flex gap-2.5 items-start flex-1">
+                      <div className="flex-shrink-0">
+                        <div className="h-9 w-9 sm:h-10 sm:w-10 rounded-full bg-amber-100 flex items-center justify-center">
+                          <svg className="h-4.5 w-4.5 sm:h-5 sm:w-5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                          </svg>
+                        </div>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-body font-semibold text-gray-900 mb-0.5">Lengkapi Profil Anda</p>
+                        <p className="text-body-sm text-gray-600 leading-relaxed">Mohon lengkapi data diri Anda untuk mengakses semua fitur GenBI.</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-2 flex-shrink-0">
+                      <button
+                        onClick={() => {
+                          toast.dismiss(t.id);
+                          navigate('/profile');
+                        }}
+                        className="flex-1 sm:flex-none px-3.5 py-2 text-btn font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 whitespace-nowrap"
+                      >
+                        Lengkapi Sekarang
+                      </button>
+                      <button
+                        onClick={() => {
+                          toast.dismiss(t.id);
+                          // Simpan timestamp: jangan tampilkan lagi selama 7 hari
+                          const sevenDaysLater = Date.now() + 7 * 24 * 60 * 60 * 1000;
+                          try {
+                            localStorage.setItem(dismissedUntilKey, sevenDaysLater.toString());
+                            localStorage.setItem(lastShownAtKey, String(Date.now()));
+                            // legacy key (backward compatibility)
+                            localStorage.setItem('profile-reminder-dismissed-until', sevenDaysLater.toString());
+                          } catch {
+                            // ignore
+                          }
+                        }}
+                        className="flex-1 sm:flex-none px-3.5 py-2 text-btn font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                      >
+                        Nanti
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ),
+            {
+              id: 'profile-incomplete-warning',
+              duration: 8000,
+              position: 'top-center',
+            },
+          );
+        }
+      } catch (error) {
+        console.error('Error checking profile:', error);
+      }
+    },
+    [navigate, profileReminderKeyForUser],
+  );
 
   useEffect(() => {
     let alive = true;
@@ -171,7 +294,7 @@ function App() {
         // Sinkronisasi data profil (termasuk avatar) saat aplikasi dimuat
         try {
           const user = await syncMe();
-          if (alive && user) checkProfileCompletion(user);
+          if (alive && user) checkProfileCompletion(user, { reason: 'session' });
         } catch (e) {
           // Gagal diam-diam - user masih bisa menggunakan aplikasi dengan data cache
           console.debug('Failed to sync user profile:', e?.message);
@@ -183,7 +306,7 @@ function App() {
         if (alive) setIsLoggedIn(ok);
         if (ok && alive) {
           const user = await syncMe();
-          if (user) checkProfileCompletion(user);
+          if (user) checkProfileCompletion(user, { reason: 'session' });
         }
       } catch (e) {
         // Gagal diam-diam - user hanya belum login
@@ -194,7 +317,7 @@ function App() {
     return () => {
       alive = false;
     };
-  }, []);
+  }, [checkProfileCompletion]);
 
   // Lacak tampilan halaman (analitik website publik)
   useEffect(() => {
@@ -240,80 +363,8 @@ function App() {
     // Cek kelengkapan profil setelah login
     setTimeout(async () => {
       const user = await syncMe();
-      checkProfileCompletion(user);
+      checkProfileCompletion(user, { reason: 'login' });
     }, 1000);
-  };
-
-  const checkProfileCompletion = (user) => {
-    if (!user || !user.profile) return;
-
-    try {
-      const { npm, facultyId, studyProgramId, birthDate, gender } = user.profile;
-
-      // Cek jika field profil penting belum diisi
-      if (!npm || !facultyId || !studyProgramId || !birthDate || !gender) {
-        toast.custom(
-          (t) => (
-            <div className={`${t.visible ? 'animate-enter' : 'animate-leave'} max-w-md w-full bg-white shadow-xl rounded-xl pointer-events-auto flex border border-gray-200`}>
-              <div className="flex-1 p-4 sm:p-5">
-                <div className="flex items-start gap-3">
-                  <div className="flex-shrink-0">
-                    <div className="h-10 w-10 rounded-full bg-amber-100 flex items-center justify-center">
-                      <svg className="h-5 w-5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                      </svg>
-                    </div>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-gray-900 mb-1">Lengkapi Profil Anda</p>
-                    <p className="text-sm text-gray-600 leading-relaxed">Mohon lengkapi data diri Anda untuk mengakses semua fitur GenBI.</p>
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      <button
-                        onClick={() => {
-                          toast.dismiss(t.id);
-                          navigate('/profile');
-                        }}
-                        className="px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-                      >
-                        Lengkapi Sekarang
-                      </button>
-                      <button
-                        onClick={() => toast.dismiss(t.id)}
-                        className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-                      >
-                        Nanti
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="flex border-l border-gray-100">
-                <button
-                  onClick={() => toast.dismiss(t.id)}
-                  className="flex items-center justify-center p-4 text-gray-400 hover:text-gray-600 transition-colors focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500 rounded-r-xl"
-                  aria-label="Tutup notifikasi"
-                >
-                  <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path
-                      fillRule="evenodd"
-                      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </button>
-              </div>
-            </div>
-          ),
-          {
-            id: 'profile-incomplete-warning',
-            duration: 8000,
-            position: 'top-center',
-          },
-        );
-      }
-    } catch (error) {
-      console.error('Error checking profile:', error);
-    }
   };
 
   const handleLogout = async () => {
@@ -329,161 +380,215 @@ function App() {
 
   return (
     <div className="min-h-screen bg-white">
-      <Header isLoggedIn={isLoggedIn} onNavigate={onNavigate} onLogout={handleLogout} />
+      <TopLoadingBar />
+      {!location.pathname.startsWith('/scholarship/announcement') && (
+        <Header isLoggedIn={isLoggedIn} onNavigate={onNavigate} onLogout={handleLogout} />
+      )}
 
       <React.Suspense fallback={<div className="py-16 text-center text-gray-500">Memuat...</div>}>
-        <Routes>
-          {/* Beranda */}
-          <Route path="/" element={<HomePage isLoggedIn={isLoggedIn} />} />
+        <AnimatePresence mode="wait">
+          <Routes location={location} key={location.pathname}>
+            {/* Beranda */}
+            <Route path="/" element={<HomePage isLoggedIn={isLoggedIn} />} />
 
-          {/* Halaman publik */}
-          <Route
-            path="/history"
-            element={
-              <>
-                <HistoryPage />
-                <Footer />
-              </>
-            }
-          />
-          <Route
-            path="/teams"
-            element={
-              <>
-                <TeamsPage />
-                <Footer />
-              </>
-            }
-          />
-          <Route
-            path="/events"
-            element={
-              <>
-                <EventsPage />
-                <Footer />
-              </>
-            }
-          />
-          <Route
-            path="/proker"
-            element={
-              <>
-                <ProkerPage />
-                <Footer />
-              </>
-            }
-          />
-          <Route
-            path="/scholarship"
-            element={
-              <>
-                <ScholarshipPageDetailed />
-                <Footer />
-              </>
-            }
-          />
-          <Route
-            path="/scholarship/register"
-            element={
-              <>
-                <ScholarshipRegister />
-                <Footer />
-              </>
-            }
-          />
-          <Route
-            path="/scholarship/success"
-            element={
-              <>
-                <ScholarshipRegisterSuccess />
-                <Footer />
-              </>
-            }
-          />
-          <Route
-            path="/scholarship/selection/admin"
-            element={
-              <>
-                <ScholarshipSelectionAdmin />
-                <Footer />
-              </>
-            }
-          />
-          <Route
-            path="/scholarship/selection/interview"
-            element={
-              <>
-                <ScholarshipSelectionInterview />
-                <Footer />
-              </>
-            }
-          />
-          <Route
-            path="/scholarship/selection/announcement"
-            element={
-              <>
-                <ScholarshipSelectionAnnouncement />
-                <Footer />
-              </>
-            }
-          />
-          <Route
-            path="/articles"
-            element={
-              <>
-                <ArticlesPage />
-                <Footer />
-              </>
-            }
-          />
+            {/* Halaman publik */}
+            <Route
+              path="/history"
+              element={
+                <PageTransition>
+                  <HistoryPage />
+                  <Footer />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/teams"
+              element={
+                <PageTransition>
+                  <TeamsPage />
+                  <Footer />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/events"
+              element={
+                <PageTransition>
+                  <EventsPage />
+                  <Footer />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/proker"
+              element={
+                <PageTransition>
+                  <ProkerPage />
+                  <Footer />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/scholarship"
+              element={
+                <PageTransition>
+                  <ScholarshipPageDetailed />
+                  <Footer />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/scholarship/register"
+              element={
+                <PageTransition>
+                  <ScholarshipRegister />
+                  <Footer />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/scholarship/success"
+              element={
+                <PageTransition>
+                  <ScholarshipRegisterSuccess />
+                  <Footer />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/scholarship/selection/admin"
+              element={
+                <PageTransition>
+                  <ScholarshipSelectionAdmin />
+                  <Footer />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/scholarship/selection/interview"
+              element={
+                <PageTransition>
+                  <ScholarshipSelectionInterview />
+                  <Footer />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/scholarship/selection/announcement"
+              element={
+                <PageTransition>
+                  <ScholarshipSelectionAnnouncement />
+                  <Footer />
+                </PageTransition>
+              }
+            />
 
-          {/* Detail / konten */}
-          <Route path="/events/:eventId" element={<EventDetailRoute />} />
-          <Route path="/events/:eventId/register" element={<RegistrationRoute />} />
-          <Route
-            path="/articles/:slug"
-            element={
-              <>
-                <ArticleDetailPage />
-                <Footer />
-              </>
-            }
-          />
-          <Route
-            path="/proker/:eventId"
-            element={
-              <>
-                <EventDetailRoute />
-                <Footer />
-              </>
-            }
-          />
+            <Route
+              path="/scholarship/announcement"
+              element={
+                <PageTransition>
+                  <ScholarshipAnnouncementPublic />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/articles"
+              element={
+                <PageTransition>
+                  <ArticlesPage />
+                  <Footer />
+                </PageTransition>
+              }
+            />
 
-          {/* Otentikasi */}
-          <Route path="/signin" element={<SignInPage onNavigate={onNavigate} onLogin={handleLoginSuccess} />} />
-          <Route path="/signup" element={<SignUpPage onNavigate={onNavigate} onLogin={handleLoginSuccess} />} />
-          <Route path="/forgot-password" element={<ForgotPasswordPage onNavigate={onNavigate} />} />
-          <Route path="/two-factor" element={<TwoFactorAuthPage onNavigate={onNavigate} />} />
-          <Route path="/verify-email" element={<VerifyEmailPage onNavigate={onNavigate} />} />
+            {/* Detail / konten */}
+            <Route path="/events/:eventId" element={<EventDetailRoute />} />
+            <Route path="/events/:eventId/register" element={<RegistrationRoute />} />
+            <Route
+              path="/articles/:slug"
+              element={
+                <PageTransition>
+                  <ArticleDetailPage />
+                  <Footer />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/proker/:eventId"
+              element={
+                <PageTransition>
+                  <EventDetailRoute />
+                  <Footer />
+                </PageTransition>
+              }
+            />
 
-          {/* Profil (terlindungi) */}
-          <Route
-            path="/profile"
-            element={
-              <RequireAuth>
-                <ProfileRoutesLayout onNavigate={onNavigate} onLogout={handleLogout} />
-              </RequireAuth>
-            }
-          >
-            <Route index element={<ProfilePage />} />
-            <Route path="activity-history" element={<ActivityHistoryPage />} />
-            <Route path="transactions" element={<TransactionPage />} />
-            <Route path="settings" element={<SettingsPage />} />
-          </Route>
+            {/* Otentikasi */}
+            <Route
+              path="/signin"
+              element={
+                <PageTransition>
+                  <SignInPage onNavigate={onNavigate} onLogin={handleLoginSuccess} />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/signup"
+              element={
+                <PageTransition>
+                  <SignUpPage onNavigate={onNavigate} onLogin={handleLoginSuccess} />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/forgot-password"
+              element={
+                <PageTransition>
+                  <ForgotPasswordPage onNavigate={onNavigate} />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/two-factor"
+              element={
+                <PageTransition>
+                  <TwoFactorAuthPage onNavigate={onNavigate} />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/verify-email"
+              element={
+                <PageTransition>
+                  <VerifyEmailPage onNavigate={onNavigate} />
+                </PageTransition>
+              }
+            />
 
-          {/* 404 (opsional) */}
-          {/* <Route path="*" element={<NotFoundPage />} /> */}
-        </Routes>
+            {/* Profil (terlindungi) */}
+            <Route
+              path="/profile"
+              element={
+                <RequireAuth>
+                  <ProfileRoutesLayout onNavigate={onNavigate} onLogout={handleLogout} />
+                </RequireAuth>
+              }
+            >
+              <Route index element={<ProfilePage />} />
+              <Route path="activity-history" element={<ActivityHistoryPage />} />
+              <Route path="transactions" element={<TransactionPage />} />
+              <Route path="settings" element={<SettingsPage />} />
+            </Route>
+
+            {/* Legacy profile paths (compatibility redirects) */}
+            <Route path="/riwayat-aktivitas" element={<Navigate to="/profile/activity-history" replace />} />
+            <Route path="/transaksi" element={<Navigate to="/profile/transactions" replace />} />
+            <Route path="/pengaturan" element={<Navigate to="/profile/settings" replace />} />
+
+            {/* 404 (opsional) */}
+            {/* <Route path="*" element={<NotFoundPage />} /> */}
+          </Routes>
+        </AnimatePresence>
       </React.Suspense>
     </div>
   );
