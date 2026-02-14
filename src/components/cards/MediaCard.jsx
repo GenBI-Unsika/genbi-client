@@ -22,7 +22,7 @@ const MediaCard = ({ title, subtitle, image, category, date, href, to, gradientC
 
   return (
     <article
-      className={`group bg-white rounded-xl overflow-hidden border border-[#F3F5F9] shadow-sm h-full flex flex-col transform-gpu transition-transform duration-200 ease-out cursor-pointer hover:scale-[1.02] hover:shadow-xl-primary-500/30 ${className}`}
+      className={`group bg-white rounded-xl overflow-hidden border border-[#F3F5F9] shadow-sm h-full flex flex-col transform-gpu transition-transform duration-200 ease-out cursor-pointer hover:scale-[1.02] hover:shadow-lg ${className}`}
     >
       <div className="relative w-full aspect-[16/9] bg-gray-100 overflow-hidden">
         <div className="absolute inset-0">
@@ -38,10 +38,10 @@ const MediaCard = ({ title, subtitle, image, category, date, href, to, gradientC
         className={`p-4 bg-gradient-to-r ${gradientClass} text-white rounded-b-xl flex-1 flex flex-col focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300 focus-visible:ring-offset-2`}
       >
         <div>
-          {category && <span className="inline-flex w-fit items-center bg-white/15 text-white text-[11px] leading-none px-2 py-0.5 rounded-full mb-2 border border-white/25">{category}</span>}
-          <h4 className="font-semibold text-white mb-1 leading-snug">{title}</h4>
+          {category && <span className="inline-flex w-fit items-center bg-white/15 text-white badge-text-sm leading-none px-2 py-0.5 rounded-full mb-2 border border-white/25">{category}</span>}
+          <h4 className="card-title text-white mb-1 leading-snug">{title}</h4>
           {subtitle && (
-            <p className="text-sm text-white/85" title={stripHtml(subtitle)}>
+            <p className="text-body-sm text-white/85" title={stripHtml(subtitle)}>
               {limitWords(stripHtml(subtitle), subtitleWordsLimit)}
             </p>
           )}

@@ -19,12 +19,12 @@ const ArticleContentPage = ({ onNavigate, article }) => {
         </nav>
 
         {/* Article Title */}
-        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight mb-4">{article?.title}</h1>
+        <h1 className="text-h1 font-bold text-gray-900 leading-tight mb-4">{article?.title}</h1>
 
         {/* Author & Date */}
         <div className="flex flex-col gap-0.5 mb-6">
-          <span className="text-sm font-semibold text-gray-700">{article?.author}</span>
-          <span className="text-sm text-gray-500">{article?.date}</span>
+          <span className="text-body-sm font-semibold text-gray-700">{article?.author}</span>
+          <span className="meta-text">{article?.date}</span>
         </div>
 
         {/* Featured Image */}

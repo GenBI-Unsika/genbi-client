@@ -9,6 +9,8 @@ const EventsPage = () => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [sortBy, setSortBy] = useState('startDate');
+  const [sortOrder, setSortOrder] = useState('asc');
 
   useEffect(() => {
     let alive = true;
@@ -16,7 +18,10 @@ const EventsPage = () => {
       try {
         setError('');
         setLoading(true);
-        const json = await apiFetch('/public/events', { method: 'GET', skipAuth: true });
+        const params = new URLSearchParams();
+        params.set('sortBy', sortBy);
+        params.set('sortOrder', sortOrder);
+        const json = await apiFetch(`/public/events?${params.toString()}`, { method: 'GET', skipAuth: true });
         const items = json?.data?.items || json?.data || [];
         if (alive) setEvents(Array.isArray(items) ? items : []);
       } catch (e) {
@@ -35,14 +40,32 @@ const EventsPage = () => {
     return () => {
       alive = false;
     };
-  }, []);
+  }, [sortBy, sortOrder]);
 
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="mb-12">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">Event Kami</h1>
-          <p className="text-gray-600 text-lg">Ikuti berbagai kegiatan seru dan bermanfaat</p>
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+          <div>
+            <h1 className="page-title mb-4">Event Kami</h1>
+            <p className="section-subtitle">Ikuti berbagai kegiatan seru dan bermanfaat</p>
+          </div>
+
+          <div className="flex gap-3">
+            <select
+              value={`${sortBy}-${sortOrder}`}
+              onChange={(e) => {
+                const [newSort, newOrder] = e.target.value.split('-');
+                setSortBy(newSort);
+                setSortOrder(newOrder);
+              }}
+              className="px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-700 text-sm focus:ring-2 focus:ring-primary-500 outline-none"
+            >
+              <option value="startDate-asc">Terdekat</option>
+              <option value="startDate-desc">Terlama</option>
+              <option value="title-asc">Judul (A-Z)</option>
+            </select>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">

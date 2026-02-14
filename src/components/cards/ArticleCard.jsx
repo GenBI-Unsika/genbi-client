@@ -16,7 +16,7 @@ const ArticleCard = ({ title, excerpt, image, coverImage, date, readTime, badge,
 
   const Card = (
     <article
-      className={`group bg-white rounded-xl overflow-hidden border border-[#F3F5F9] shadow-sm h-full flex flex-col transform-gpu transition-transform duration-200 ease-out cursor-pointer hover:scale-[1.02] hover:shadow-xl-primary-500/30 ${className}`}
+      className={`group bg-white rounded-xl overflow-hidden border border-[#F3F5F9] shadow-sm h-full flex flex-col transform-gpu transition-all duration-300 ease-in-out cursor-pointer hover:scale-[1.02] hover:-rotate-1 hover:shadow-xl-primary-500/30 ${className}`}
     >
       <div className="relative">
         <div className="w-full aspect-[16/10] bg-gray-100 overflow-hidden">
@@ -51,10 +51,10 @@ const ArticleCard = ({ title, excerpt, image, coverImage, date, readTime, badge,
       </div>
 
       <div className="p-4 flex-1 flex flex-col focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300 focus-visible:ring-offset-2">
-        <h4 className="font-semibold text-neutral-800 mb-1 leading-snug line-clamp-2">{title}</h4>
-        {excerpt && <p className="text-sm text-gray-600 mb-3 line-clamp-2">{stripHtml(excerpt)}</p>}
+        <h4 className="card-title mb-1 leading-snug line-clamp-2">{title}</h4>
+        {excerpt && <p className="text-body-sm text-gray-600 mb-3 line-clamp-2">{stripHtml(excerpt)}</p>}
 
-        <div className="mt-0.5 flex items-center gap-3 text-sm text-gray-500">
+        <div className="mt-0.5 flex items-center gap-3 meta-text">
           {date && (
             <span className="inline-flex items-center gap-1">
               <Calendar className="w-3.5 h-3.5" />
@@ -70,7 +70,7 @@ const ArticleCard = ({ title, excerpt, image, coverImage, date, readTime, badge,
         </div>
 
         <div className="mt-auto pt-3">
-          <span className="w-full inline-flex items-center justify-center bg-[#F3F5F9] text-[#01319F] text-sm font-medium rounded-lg px-3 py-2 group">
+          <span className="w-full inline-flex items-center justify-center bg-[#F3F5F9] text-[#01319F] text-btn rounded-lg px-3 py-2 group">
             <span className="group-hover:underline">Baca selengkapnya</span>
             <ArrowRight className="w-4 h-4 ml-1" />
           </span>

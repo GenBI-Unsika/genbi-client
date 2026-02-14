@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Calendar, Clock, MapPin, Users, ChevronLeft } from 'lucide-react';
+import { Calendar, Clock, MapPin, Users, ChevronLeft, Loader2 } from 'lucide-react';
 import MediaPlaceholder from '../components/shared/MediaPlaceholder';
 import ScrollReveal from '../components/ScrollReveal';
 import { apiFetch } from '../services/api.js';
 import { formatDateWithWeekday, formatDateTime } from '../utils/formatters';
 import { normalizeFileUrl } from '../utils/api';
+import ShareButtons from '../components/shared/ShareButtons';
 
 const EventDetailPage = ({ onNavigate, eventId }) => {
   const [event, setEvent] = useState(null);
@@ -77,9 +78,12 @@ const EventDetailPage = ({ onNavigate, eventId }) => {
 
         {/* Event Content */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6 lg:p-8 mb-8 transform hover:shadow-lg transition-shadow duration-300">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">{event.title}</h1>
+          <h1 className="text-h2 font-bold text-gray-900 mb-4">{event.title}</h1>
 
-          <p className="text-gray-700 leading-relaxed mb-8">{event.description || 'Deskripsi event akan ditampilkan di sini.'}</p>
+          {/* Share Buttons */}
+          <ShareButtons title={event.title} className="mb-6" />
+
+          <p className="text-body text-gray-700 leading-relaxed mb-8">{event.description || 'Deskripsi event akan ditampilkan di sini.'}</p>
 
           {/* Event Details */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
