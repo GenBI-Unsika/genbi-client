@@ -40,7 +40,7 @@ const TransactionsPage = () => {
 
   return (
     <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6 lg:p-8">
-      <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-6 sm:mb-8">Transaksi</h2>
+      <h2 className="text-h2 font-bold text-gray-900 mb-6 sm:mb-8">Transaksi</h2>
 
       <div className="space-y-4">
         {loading ? <div className="text-gray-500">Memuat...</div> : null}

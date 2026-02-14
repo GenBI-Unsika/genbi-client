@@ -58,14 +58,14 @@ const MemberCard = ({ member = {}, onClick, showStudyInfo = true }) => {
       <div className="flex justify-between">
         {/* Content */}
         <div className="p-4">
-          <h3 className="font-semibold text-gray-900 text-sm mb-1 line-clamp-1">{name}</h3>
-          <p className="text-gray-600 text-sm line-clamp-1">{displayJabatan}</p>
-          {showStudyInfo && (major || faculty) && (
+          <h3 className="card-title text-sm mb-1 line-clamp-1">{name}</h3>
+          <p className="text-body-sm text-gray-600 line-clamp-1">{displayJabatan}</p>
+          {/* {showStudyInfo && (major || faculty) && (
             <div className="mt-2 pt-2 border-t border-gray-100">
-              {major && <p className="text-xs text-primary-600 font-medium line-clamp-1">{major}</p>}
-              {faculty && <p className="text-[11px] text-gray-500 line-clamp-1 uppercase tracking-wider">{faculty}</p>}
+              {major && <p className="text-caption text-primary-600 font-medium line-clamp-1">{major}</p>}
+              {faculty && <p className="text-overline text-gray-500 line-clamp-1">{faculty}</p>}
             </div>
-          )}
+          )} */}
         </div>
         {/* Socials */}
         <div className="mt-3 pr-4 opacity-100 sm:opacity-90 sm:group-hover:opacity-100 transition-opacity">

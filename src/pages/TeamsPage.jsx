@@ -52,7 +52,10 @@ const TeamsPage = () => {
   const grouped = useMemo(() => {
     const map = new Map();
     for (const m of members) {
-      const divisionLabel = m.divisionTitle || (typeof m.division === 'string' ? m.division : m.division && typeof m.division === 'object' ? m.division.name : '') || 'Lainnya';
+      const divisionLabel = m.divisionTitle || (typeof m.division === 'string' ? m.division : m.division && typeof m.division === 'object' ? m.division.name : '') || '';
+
+      // Skip members tanpa divisi
+      if (!divisionLabel) continue;
 
       if (!map.has(divisionLabel)) map.set(divisionLabel, []);
       map.get(divisionLabel).push(m);
@@ -65,8 +68,8 @@ const TeamsPage = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         {/* Header */}
         <div className="mb-12">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">Anggota GenBI Unsika</h1>
-          <p className="text-gray-600 text-lg">Yuk, kenal lebih dekat dengan kami</p>
+          <h1 className="page-title mb-4">Anggota GenBI Unsika</h1>
+          <p className="section-subtitle">Yuk, kenal lebih dekat dengan kami</p>
         </div>
 
         {loading ? <LoadingSpinner text="Memuat anggota..." /> : null}
@@ -81,7 +84,7 @@ const TeamsPage = () => {
           ) : (
             grouped.map(({ title, members: list }) => (
               <section key={title} className="mb-16">
-                <h2 className="text-2xl font-bold text-gray-900 mb-8">{title}</h2>
+                <h2 className="section-title mb-8">{title}</h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                   {list.map((m, i) => (

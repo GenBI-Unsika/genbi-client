@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Menu, X, ChevronDown, Search as SearchIcon } from 'lucide-react';
+import { Menu, X, ChevronDown, Search as SearchIcon, LogIn, UserPlus } from 'lucide-react';
 import { getMe } from '../utils/auth.js';
 import { apiFetch } from '../utils/api.js';
 import { useConfirm } from '../contexts/ConfirmContext.jsx';
 import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+
+const MotionDiv = motion.div;
 
 function useHoverIntent(delay = 160) {
   const [open, setOpen] = useState(false);
@@ -179,13 +182,14 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
   return (
     <header className="sticky top-0 z-50 bg-primary-50 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-2 md:py-3 gap-3">
-          <button onClick={() => handleNavigation('home')} className="flex items-center gap-3 sm:gap-4 whitespace-nowrap cursor-pointer" aria-label="GenBI Unsika - Beranda">
-            <img src="/genbi-unsika.webp" alt="Logo GenBI Unsika" className="h-6 md:h-8 lg:h-12 w-auto flex-shrink-0" loading="eager" decoding="async" />
+        <div className="flex justify-between items-center py-3 md:py-4 gap-4 lg:gap-6">
+          <button type="button" onClick={() => handleNavigation('home')} className="flex items-center gap-3 sm:gap-4 whitespace-nowrap cursor-pointer flex-shrink-0" aria-label="GenBI Unsika - Beranda">
+            <img src="/genbi-unsika.webp" alt="Logo GenBI Unsika" className="h-4 md:h-6 lg:h-10 w-auto flex-shrink-0" loading="eager" decoding="async" />
+            <span className="hidden lg:block text-base md:text-lg lg:text-xl font-bold text-primary-700 leading-none">GenBI Unsika</span>
           </button>
 
-          <nav className="hidden md:flex items-center gap-3 lg:gap-6 flex-nowrap">
-            <button onClick={() => handleNavigation('home')} className="px-3.5 py-2.5 rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary-50 font-medium cursor-pointer whitespace-nowrap">
+          <nav className="hidden md:flex items-center gap-2 lg:gap-6 flex-nowrap text-sm lg:text-base flex-shrink">
+            <button onClick={() => handleNavigation('home')} className="px-2 lg:px-3.5 py-2.5 rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary-50 font-medium cursor-pointer whitespace-nowrap">
               Beranda
             </button>
 
@@ -290,13 +294,13 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
                       <button onClick={() => handleProfileNavigation('/profile')} className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
                         Profil Saya
                       </button>
-                      <button onClick={() => handleProfileNavigation('/riwayat-aktivitas')} className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                      <button onClick={() => handleProfileNavigation('/profile/activity-history')} className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
                         Riwayat Aktivitas
                       </button>
-                      <button onClick={() => handleProfileNavigation('/transaksi')} className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                      <button onClick={() => handleProfileNavigation('/profile/transactions')} className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
                         Transaksi
                       </button>
-                      <button onClick={() => handleProfileNavigation('/pengaturan')} className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                      <button onClick={() => handleProfileNavigation('/profile/settings')} className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
                         Pengaturan
                       </button>
                     </div>
@@ -311,10 +315,12 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
               </div>
             ) : (
               <div className="hidden md:flex items-center gap-2.5 whitespace-nowrap">
-                <button onClick={handleSignInClick} className="cursor-pointer inline-flex items-center gap-2 px-3.5 py-2.5 text-sm font-medium rounded-lg border border-primary-200 text-primary-700 hover:bg-primary-50">
+                <button onClick={handleSignInClick} className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg border border-primary-200 text-primary-700 hover:bg-primary-50 hover-animate">
+                  <LogIn className="w-4 h-4" />
                   Masuk
                 </button>
-                <button onClick={handleRegister} className="cursor-pointer inline-flex items-center gap-2 px-3.5 py-2.5 text-sm font-medium rounded-lg bg-primary-600 text-white hover:bg-primary-700">
+                <button onClick={handleRegister} className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg bg-primary-600 text-white hover:bg-primary-700 hover-animate">
+                  <UserPlus className="w-4 h-4" />
                   Daftar Akun
                 </button>
               </div>
@@ -326,154 +332,175 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
           </div>
         </div>
 
-        {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-primary-200 max-h-[calc(100dvh-60px)] overflow-y-auto">
-            <div className="flex flex-col">
-              {/* Mobile Search */}
-              <div className="px-2 pb-3 mb-2 border-b border-primary-100">
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Telusuri..."
-                    className="w-full pl-9 pr-3 h-10 bg-white border border-primary-200 rounded-lg text-sm placeholder:text-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                  />
-                  <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary-500" aria-hidden="true" />
+        <AnimatePresence>
+          {isMenuOpen && (
+            <MotionDiv
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.3, ease: 'easeInOut' }}
+              className="md:hidden border-t border-primary-200 overflow-hidden"
+            >
+              <div className="py-4 max-h-[calc(100dvh-60px)] overflow-y-auto">
+                <div className="flex flex-col">
+                  {/* ... contents ... */}
+                  {/* Mobile Search */}
+                  <div className="px-2 pb-3 mb-2 border-b border-primary-100">
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder="Telusuri..."
+                        className="w-full pl-9 pr-3 h-10 bg-white border border-primary-200 rounded-lg text-sm placeholder:text-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                      />
+                      <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary-500" aria-hidden="true" />
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      handleNavigation('home');
+                      setIsMenuOpen(false);
+                    }}
+                    className="px-2 py-3 rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary-50 cursor-pointer text-left"
+                  >
+                    Beranda
+                  </button>
+
+                  <button
+                    className="flex items-center justify-between w-full px-2 py-3 text-left rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary-50 cursor-pointer"
+                    onClick={() => setMAboutOpen((v) => !v)}
+                    aria-expanded={mAboutOpen}
+                    aria-controls="m-about"
+                  >
+                    <span>Tentang Kami</span>
+                    <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${mAboutOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  <AnimatePresence>
+                    {mAboutOpen && (
+                      <MotionDiv id="m-about" initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="pl-3 overflow-hidden">
+                        <div className="pb-2">
+                          <button
+                            onClick={() => {
+                              handleNavigation('history');
+                              setIsMenuOpen(false);
+                            }}
+                            className="block w-full text-left py-2.5 rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary-50 cursor-pointer"
+                          >
+                            Sejarah
+                          </button>
+                          <button
+                            onClick={() => {
+                              handleNavigation('teams');
+                              setIsMenuOpen(false);
+                            }}
+                            className="block w-full text-left py-2.5 rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary-50 cursor-pointer"
+                          >
+                            Tim
+                          </button>
+                        </div>
+                      </MotionDiv>
+                    )}
+                  </AnimatePresence>
+
+                  <button
+                    onClick={() => {
+                      handleNavigation('scholarship');
+                      setIsMenuOpen(false);
+                    }}
+                    className="px-2 py-3 rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary-50 cursor-pointer text-left"
+                  >
+                    Beasiswa
+                  </button>
+
+                  <button
+                    className="flex items-center justify-between w-full px-2 py-3 text-left rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary-50 cursor-pointer"
+                    onClick={() => setMActivityOpen((v) => !v)}
+                    aria-expanded={mActivityOpen}
+                    aria-controls="m-activity"
+                  >
+                    <span>Aktivitas</span>
+                    <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${mActivityOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  <AnimatePresence>
+                    {mActivityOpen && (
+                      <MotionDiv id="m-activity" initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="pl-3 overflow-hidden">
+                        <div className="pb-2">
+                          <button
+                            onClick={() => {
+                              handleNavigation('events');
+                              setIsMenuOpen(false);
+                            }}
+                            className="block w-full text-left py-2.5 rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary-50 cursor-pointer"
+                          >
+                            Event
+                          </button>
+                          <button
+                            onClick={() => {
+                              handleNavigation('proker');
+                              setIsMenuOpen(false);
+                            }}
+                            className="block w-full text-left py-2.5 rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary-50 cursor-pointer"
+                          >
+                            Proker
+                          </button>
+                        </div>
+                      </MotionDiv>
+                    )}
+                  </AnimatePresence>
+
+                  <button
+                    onClick={() => {
+                      handleNavigation('articles');
+                      setIsMenuOpen(false);
+                    }}
+                    className="px-2 py-3 rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary-50 cursor-pointer text-left"
+                  >
+                    Artikel
+                  </button>
+
+                  {!isLoggedIn ? (
+                    <div className="mt-3 grid grid-cols-2 gap-2">
+                      <button
+                        onClick={() => {
+                          handleSignInClick();
+                          setIsMenuOpen(false);
+                        }}
+                        className="cursor-pointer inline-flex items-center justify-center gap-2 px-3.5 py-2.5 text-sm font-medium rounded-lg border border-primary-200 text-primary-700 hover:bg-primary-50 hover-animate"
+                      >
+                        <LogIn className="w-4 h-4" />
+                        Masuk
+                      </button>
+                      <button
+                        onClick={() => {
+                          handleRegister();
+                          setIsMenuOpen(false);
+                        }}
+                        className="cursor-pointer inline-flex items-center justify-center gap-2 px-3.5 py-2.5 text-sm font-medium rounded-lg bg-primary-600 text-white hover:bg-primary-700 hover-animate"
+                      >
+                        <UserPlus className="w-4 h-4" />
+                        Daftar Akun
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="mt-3">
+                      <button
+                        onClick={() => {
+                          handleLogout();
+                          setIsMenuOpen(false);
+                        }}
+                        className="cursor-pointer inline-flex items-center justify-center w-full px-3.5 py-2.5 text-sm font-medium rounded-lg border border-primary-200 text-primary-700 hover:bg-primary-50"
+                      >
+                        Logout
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
-
-              <button
-                onClick={() => {
-                  handleNavigation('home');
-                  setIsMenuOpen(false);
-                }}
-                className="px-2 py-3 rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary-50 cursor-pointer text-left"
-              >
-                Beranda
-              </button>
-
-              <button
-                className="flex items-center justify-between w-full px-2 py-3 text-left rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary-50 cursor-pointer"
-                onClick={() => setMAboutOpen((v) => !v)}
-                aria-expanded={mAboutOpen}
-                aria-controls="m-about"
-              >
-                <span>Tentang Kami</span>
-                <ChevronDown className={`w-4 h-4 transition ${mAboutOpen ? 'rotate-180' : ''}`} />
-              </button>
-              {mAboutOpen && (
-                <div id="m-about" className="pl-3 pb-2">
-                  <button
-                    onClick={() => {
-                      handleNavigation('history');
-                      setIsMenuOpen(false);
-                    }}
-                    className="block w-full text-left py-2.5 rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary-50 cursor-pointer"
-                  >
-                    Sejarah
-                  </button>
-                  <button
-                    onClick={() => {
-                      handleNavigation('teams');
-                      setIsMenuOpen(false);
-                    }}
-                    className="block w-full text-left py-2.5 rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary-50 cursor-pointer"
-                  >
-                    Tim
-                  </button>
-                </div>
-              )}
-
-              <button
-                onClick={() => {
-                  handleNavigation('scholarship');
-                  setIsMenuOpen(false);
-                }}
-                className="px-2 py-3 rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary-50 cursor-pointer text-left"
-              >
-                Beasiswa
-              </button>
-
-              <button
-                className="flex items-center justify-between w-full px-2 py-3 text-left rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary-50 cursor-pointer"
-                onClick={() => setMActivityOpen((v) => !v)}
-                aria-expanded={mActivityOpen}
-                aria-controls="m-activity"
-              >
-                <span>Aktivitas</span>
-                <ChevronDown className={`w-4 h-4 transition ${mActivityOpen ? 'rotate-180' : ''}`} />
-              </button>
-              {mActivityOpen && (
-                <div id="m-activity" className="pl-3 pb-2">
-                  <button
-                    onClick={() => {
-                      handleNavigation('events');
-                      setIsMenuOpen(false);
-                    }}
-                    className="block w-full text-left py-2.5 rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary-50 cursor-pointer"
-                  >
-                    Event
-                  </button>
-                  <button
-                    onClick={() => {
-                      handleNavigation('proker');
-                      setIsMenuOpen(false);
-                    }}
-                    className="block w-full text-left py-2.5 rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary-50 cursor-pointer"
-                  >
-                    Proker
-                  </button>
-                </div>
-              )}
-
-              <button
-                onClick={() => {
-                  handleNavigation('articles');
-                  setIsMenuOpen(false);
-                }}
-                className="px-2 py-3 rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary-50 cursor-pointer text-left"
-              >
-                Artikel
-              </button>
-
-              {!isLoggedIn ? (
-                <div className="mt-3 grid grid-cols-2 gap-2">
-                  <button
-                    onClick={() => {
-                      handleSignInClick();
-                      setIsMenuOpen(false);
-                    }}
-                    className="cursor-pointer inline-flex items-center justify-center gap-2 px-3.5 py-2.5 text-sm font-medium rounded-lg border border-primary-200 text-primary-700 hover:bg-primary-50"
-                  >
-                    Masuk
-                  </button>
-                  <button
-                    onClick={() => {
-                      handleRegister();
-                      setIsMenuOpen(false);
-                    }}
-                    className="cursor-pointer inline-flex items-center justify-center gap-2 px-3.5 py-2.5 text-sm font-medium rounded-lg bg-primary-600 text-white hover:bg-primary-700"
-                  >
-                    Daftar Akun
-                  </button>
-                </div>
-              ) : (
-                <div className="mt-3">
-                  <button
-                    onClick={() => {
-                      handleLogout();
-                      setIsMenuOpen(false);
-                    }}
-                    className="cursor-pointer inline-flex items-center justify-center w-full px-3.5 py-2.5 text-sm font-medium rounded-lg border border-primary-200 text-primary-700 hover:bg-primary-50"
-                  >
-                    Logout
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
+            </MotionDiv>
+          )}
+        </AnimatePresence>
       </div>
     </header>
   );

@@ -81,8 +81,8 @@ const ProfileLayout = ({ children, currentPage, onNavigate, onLogout }) => {
         <div className="mb-8 flex flex-col sm:flex-row items-center sm:items-center gap-4">
           <img src={userAvatar} alt={userName} className="w-16 h-16 rounded-full object-cover flex-shrink-0" referrerPolicy="no-referrer" />
           <div className="text-center sm:text-left">
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-1">Halo, {userName}</h1>
-            <p className="text-sm sm:text-base text-gray-600">Berikut informasi mengenai profil dan aktivitas kamu</p>
+            <h1 className="text-h2 font-bold text-gray-900 mb-1">Halo, {userName}</h1>
+            <p className="text-body text-gray-600">Berikut informasi mengenai profil dan aktivitas kamu</p>
           </div>
         </div>
 
@@ -95,15 +95,15 @@ const ProfileLayout = ({ children, currentPage, onNavigate, onLogout }) => {
                   <button
                     key={item.id}
                     onClick={() => handleNavigation(item.id)}
-                    className={`flex items-center px-4 py-3 lg:px-6 lg:py-4 text-left transition-colors whitespace-nowrap flex-shrink-0 lg:flex-shrink lg:w-full ${activeTab === item.id ? 'bg-primary-500 text-white' : 'text-gray-700 hover:bg-gray-50'}`}
+                    className={`flex items-center px-4 py-3 lg:px-6 lg:py-4 text-left whitespace-nowrap flex-shrink-0 lg:flex-shrink lg:w-full transition-all duration-200 ${activeTab === item.id ? 'bg-primary-500 text-white shadow-md' : 'text-gray-700 hover:bg-gray-50 hover:translate-x-1'}`}
                   >
                     <span className="mr-2 lg:mr-3">{item.icon}</span>
-                    <span className="font-medium text-sm lg:text-base">{item.label}</span>
+                    <span className="nav-link">{item.label}</span>
                   </button>
                 ))}
 
                 {/* Logout Button */}
-                <button onClick={handleLogout} className="flex items-center px-4 py-3 lg:px-6 lg:py-4 text-left text-gray-700 hover:bg-gray-50 transition-colors whitespace-nowrap flex-shrink-0 lg:flex-shrink lg:w-full">
+                <button onClick={handleLogout} className="flex items-center px-4 py-3 lg:px-6 lg:py-4 text-left text-gray-700 hover:bg-gray-50 transition-all duration-200 hover:translate-x-1 whitespace-nowrap flex-shrink-0 lg:flex-shrink lg:w-full">
                   <span className="mr-2 lg:mr-3">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />

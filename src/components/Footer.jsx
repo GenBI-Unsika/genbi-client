@@ -37,84 +37,192 @@ const Footer = ({ ctaOverlap = false }) => {
   }, []);
 
   return (
-    <div className="w-full bg-blue-50">
-      <footer className={`max-w-7xl mx-auto px-4 sm:px-6 pb-8 sm:pb-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-6 sm:gap-8 ${ctaOverlap ? 'pt-40 md:pt-48' : 'pt-12 md:pt-16'}`}>
-        {/* Brand + Description - Takes full width on mobile/tablet, 5 columns on large */}
-        <div className="sm:col-span-2 lg:col-span-5 space-y-3 sm:space-y-4">
-          <div className="flex items-center gap-2 text-lg sm:text-xl font-semibold text-primary-600">
-            <img src="/genbi-unsika.webp" alt="Logo GenBI Unsika" className="h-7 sm:h-8 w-auto flex-shrink-0" loading="eager" decoding="async" />
-            <span>GenBI Unsika</span>
+    <footer className="w-full bg-blue-50">
+      <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ${ctaOverlap ? 'pt-32 sm:pt-40 md:pt-48' : 'pt-8 sm:pt-12 md:pt-16'} pb-6 sm:pb-8`}>
+        {/* MOBILE LAYOUT (< 768px) */}
+        <div className="md:hidden">
+          {/* Brand */}
+          <div className="mb-6">
+            <div className="flex items-center gap-2 text-body-lg font-semibold text-primary-600 mb-3">
+              <img src="/genbi-unsika.webp" alt="Logo GenBI Unsika" className="h-7 w-auto flex-shrink-0" loading="lazy" decoding="async" />
+              <span>GenBI Unsika</span>
+            </div>
+            <p className="text-body-sm text-gray-700 leading-relaxed mb-2">{content.description}</p>
+            <p className="text-caption text-gray-600 leading-relaxed">{content.address}</p>
           </div>
 
-          <p className="text-sm text-gray-700 leading-relaxed">{content.description}</p>
+          {/* Mobile nav: side-by-side (no dropdown) */}
+          <div className="grid grid-cols-2 gap-6 mb-6">
+            <nav className="space-y-2">
+              <h6 className="text-label font-semibold text-gray-900">Tentang</h6>
+              <ul className="space-y-2">
+                <li>
+                  <a href="/#about" className="block text-sm text-gray-600 active:text-primary-700">
+                    Tentang Kami
+                  </a>
+                </li>
+                <li>
+                  <a href="/history" className="block text-sm text-gray-600 active:text-primary-700">
+                    Sejarah
+                  </a>
+                </li>
+                <li>
+                  <a href="/teams" className="block text-sm text-gray-600 active:text-primary-700">
+                    Tim Kami
+                  </a>
+                </li>
+                <li>
+                  <a href="/#vision-mission" className="block text-sm text-gray-600 active:text-primary-700">
+                    Visi & Misi
+                  </a>
+                </li>
+              </ul>
+            </nav>
 
-          <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">{content.address}</p>
+            <nav className="space-y-2">
+              <h6 className="font-semibold text-gray-900 text-sm">Program</h6>
+              <ul className="space-y-2">
+                <li>
+                  <a href="/scholarship" className="block text-sm text-gray-600 active:text-primary-700">
+                    Beasiswa
+                  </a>
+                </li>
+                <li>
+                  <a href="/events" className="block text-sm text-gray-600 active:text-primary-700">
+                    Event
+                  </a>
+                </li>
+                <li>
+                  <a href="/proker" className="block text-sm text-gray-600 active:text-primary-700">
+                    Program Kerja
+                  </a>
+                </li>
+                <li>
+                  <a href="/articles" className="block text-sm text-gray-600 active:text-primary-700">
+                    Artikel
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+
+          {/* Social: professional icon buttons (mobile) */}
+          <div className="mb-6">
+            <h6 className="font-semibold text-gray-900 text-sm mb-3">Kontak</h6>
+            <div className="flex flex-wrap gap-4">
+              {content.socialLinks.map((link, index) => (
+                <a
+                  key={index}
+                  href={link.url}
+                  target={link.type !== 'email' ? '_blank' : undefined}
+                  rel={link.type !== 'email' ? 'noopener noreferrer' : undefined}
+                  className="inline-flex items-center gap-2 text-gray-700 hover:text-primary-600 transition-colors hover-animate group"
+                  aria-label={link.label}
+                >
+                  <span className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-primary-600 text-white hover:bg-primary-700 transition-colors">
+                    <Icon icon={link.icon || 'tabler:link'} className="w-4 h-4" />
+                  </span>
+                  <span className="text-xs font-medium group-hover:underline">{link.type === 'email' ? 'Email' : link.type.charAt(0).toUpperCase() + link.type.slice(1)}</span>
+                </a>
+              ))}
+            </div>
+          </div>
         </div>
 
-        {/* Column 2 - Takes 1 column on mobile, 2 on large */}
-        <nav className="lg:col-span-2 space-y-2 sm:space-y-3">
-          <h6 className="font-semibold text-gray-900 text-sm sm:text-base mb-3 sm:mb-4">Tentang Kami</h6>
-          <a href="/about" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
-            Tentang Kami
-          </a>
-          <a href="/scholarship" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
-            Beasiswa
-          </a>
-          <a href="/activities" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
-            Kegiatan
-          </a>
-          <a href="/articles" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
-            Artikel
-          </a>
-        </nav>
+        {/* DESKTOP LAYOUT (>= 768px) */}
+        <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-12 pb-8">
+          {/* Brand Section */}
+          <div className="md:col-span-2 lg:col-span-5 space-y-4">
+            <div className="flex items-center gap-2 text-xl font-semibold text-primary-600">
+              <img src="/genbi-unsika.webp" alt="Logo GenBI Unsika" className="h-8 w-auto flex-shrink-0" loading="lazy" decoding="async" />
+              <span>GenBI Unsika</span>
+            </div>
+            <p className="text-sm text-gray-700 leading-relaxed">{content.description}</p>
+            <p className="text-xs text-gray-600 leading-relaxed">{content.address}</p>
+          </div>
 
-        {/* Column 3 - Takes 1 column on mobile, 2 on large */}
-        <nav className="lg:col-span-2 space-y-2 sm:space-y-3">
-          <h6 className="font-semibold text-gray-900 text-sm sm:text-base mb-3 sm:mb-4">Layanan</h6>
-          <a href="/events" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
-            Event
-          </a>
-          <a href="/proker" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
-            Proker
-          </a>
-          <a href="#testimonials" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
-            Pengalaman Alumni
-          </a>
-          <a href="#faq" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
-            Pertanyaan Umum
-          </a>
-          <a href="#vision-mission" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
-            Visi Misi
-          </a>
-        </nav>
+          {/* Navigation - Desktop */}
+          <nav className="lg:col-span-2 space-y-3">
+            <h6 className="font-semibold text-gray-900 text-base mb-4">Tentang</h6>
+            <ul className="space-y-2">
+              <li>
+                <a href="/#about" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
+                  Tentang Kami
+                </a>
+              </li>
+              <li>
+                <a href="/history" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
+                  Sejarah
+                </a>
+              </li>
+              <li>
+                <a href="/teams" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
+                  Tim Kami
+                </a>
+              </li>
+              <li>
+                <a href="/#vision-mission" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
+                  Visi & Misi
+                </a>
+              </li>
+            </ul>
+          </nav>
 
-        {/* Column 4 - Social Media Links - Takes full width on mobile, 2 cols on tablet, 3 on large */}
-        <nav className="sm:col-span-2 lg:col-span-3 space-y-2 sm:space-y-3">
-          <h6 className="font-semibold text-gray-900 text-sm sm:text-base mb-3 sm:mb-4">Kontak</h6>
-          {content.socialLinks.map((link, index) => (
-            <a
-              key={index}
-              href={link.url}
-              target={link.type !== 'email' ? '_blank' : undefined}
-              rel={link.type !== 'email' ? 'noreferrer' : undefined}
-              className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm text-gray-600 hover:text-primary-600 transition-colors group"
-            >
-              <div className="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-primary-600 text-white group-hover:bg-primary-700 transition-colors flex-shrink-0">
-                <Icon icon={link.icon || 'tabler:link'} className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              </div>
-              <span className="truncate">{link.label}</span>
-            </a>
-          ))}
-        </nav>
-      </footer>
+          <nav className="lg:col-span-2 space-y-3">
+            <h6 className="font-semibold text-gray-900 text-base mb-4">Program</h6>
+            <ul className="space-y-2">
+              <li>
+                <a href="/scholarship" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
+                  Beasiswa
+                </a>
+              </li>
+              <li>
+                <a href="/events" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
+                  Event
+                </a>
+              </li>
+              <li>
+                <a href="/proker" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
+                  Program Kerja
+                </a>
+              </li>
+              <li>
+                <a href="/articles" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
+                  Artikel
+                </a>
+              </li>
+            </ul>
+          </nav>
 
-      {/* BOTTOM BAR */}
-      <footer className="border-t border-gray-200 bg-blue-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
-          <p className="text-center text-xs sm:text-sm text-gray-600">GenBI Unsika. All Rights Reserved {year}</p>
+          {/* Contact - Desktop */}
+          <nav className="md:col-span-2 lg:col-span-3 space-y-3">
+            <h6 className="font-semibold text-gray-900 text-base mb-4">Hubungi Kami</h6>
+            <ul className="space-y-3">
+              {content.socialLinks.map((link, index) => (
+                <li key={index}>
+                  <a
+                    href={link.url}
+                    target={link.type !== 'email' ? '_blank' : undefined}
+                    rel={link.type !== 'email' ? 'noopener noreferrer' : undefined}
+                    className="flex items-center gap-3 text-sm text-gray-600 hover:text-primary-600 transition-colors group"
+                  >
+                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary-600 text-white group-hover:bg-primary-700 transition-colors flex-shrink-0">
+                      <Icon icon={link.icon || 'tabler:link'} className="w-4 h-4" />
+                    </div>
+                    <span className="truncate text-sm">{link.label}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
         </div>
-      </footer>
-    </div>
+
+        {/* Bottom Bar */}
+        <div className="border-t border-gray-200 pt-4">
+          <p className="text-center text-caption text-gray-600">© {year} GenBI Unsika. All Rights Reserved.</p>
+        </div>
+      </div>
+    </footer>
   );
 };
 

@@ -389,7 +389,7 @@ const ProfilePage = () => {
         </div>
 
         <div className="flex justify-end pt-6">
-          <button type="submit" disabled={saving} className="bg-secondary-500 text-white px-8 py-3 rounded-lg hover:bg-secondary-600 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed">
+          <button type="submit" disabled={saving} className="bg-primary-500 text-white px-8 py-3 rounded-lg hover:bg-primary-600 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed">
             {saving ? 'Menyimpan...' : 'Simpan Perubahan'}
           </button>
         </div>
