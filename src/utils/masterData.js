@@ -21,7 +21,8 @@ export function clearFacultiesCache() {
 
 export async function fetchStudyProgramsByFaculty(facultyId) {
   try {
-    const response = await apiFetch(`/master-data/faculties/${facultyId}/study-programs`);
+    // FIX: The backend route is /study-programs?facultyId=... not /faculties/:id/study-programs
+    const response = await apiFetch(`/master-data/study-programs?facultyId=${facultyId}`);
     return response.data || [];
   } catch (error) {
     console.error('Failed to fetch study programs:', error);

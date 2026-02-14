@@ -57,12 +57,12 @@ const SignUpPage = ({ onNavigate, onLogin }) => {
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
         <div className="max-w-md w-full">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Daftar Akun GenBI Unsika</h1>
+            <h1 className="text-h2 font-bold text-gray-900 mb-2">Daftar Akun GenBI Unsika</h1>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap</label>
+              <label className="form-label mb-2 block">Nama Lengkap</label>
               <input
                 type="text"
                 name="fullName"

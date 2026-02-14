@@ -1,48 +1,48 @@
 import React from 'react';
-import useInView from '../utils/useInView';
+import { motion } from 'framer-motion';
 
 /**
- * ScrollReveal - wrapper untuk animasi masuk/keluar saat scroll.
- * Default: fade + translateY.
+ * ScrollReveal - wrapper untuk animasi masuk saat scroll menggunakan Framer Motion.
  */
 export default function ScrollReveal({
   as = 'div',
   className = '',
-  hiddenClassName = 'opacity-0 translate-y-4',
-  shownClassName = 'opacity-100 translate-y-0',
-  once = true,
-  rootMargin,
-  threshold,
-  delayMs = 0,
-  durationMs = 520,
-  style,
   children,
+  width = '100%',
+  delay = 0, // delay in seconds (framer-motion uses seconds)
+  duration = 0.5,
+  once = true,
+  variants, // custom variants if needed
   ...rest
 }) {
-  const Comp = as;
-  const { ref, inView, hasEntered, reducedMotion } = useInView({
-    once,
-    rootMargin,
-    threshold,
-  });
+  // Translate delayMs (if passed from old code) to seconds
+  const finalDelay = rest.delayMs ? rest.delayMs / 1000 : delay;
 
-  const isVisible = once ? hasEntered : inView;
+  const defaultVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: duration,
+        delay: finalDelay,
+        ease: [0.25, 0.46, 0.45, 0.94], // Smooth easeOutQuad-ish
+      }
+    },
+  };
 
-  const transitionStyle = reducedMotion
-    ? style
-    : {
-        ...style,
-        transitionDelay: delayMs ? `${delayMs}ms` : style?.transitionDelay,
-        transitionDuration: durationMs ? `${durationMs}ms` : style?.transitionDuration,
-      };
-
-  const base = 'will-change-transform will-change-opacity transition-all ease-out motion-reduce:transition-none motion-reduce:transform-none';
-
-  const state = reducedMotion ? '' : isVisible ? shownClassName : hiddenClassName;
+  const Component = motion[as] || motion.div;
 
   return (
-    <Comp ref={ref} className={[base, state, className].filter(Boolean).join(' ')} style={transitionStyle} {...rest}>
+    <Component
+      variants={variants || defaultVariants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: once, margin: "-50px" }}
+      className={className}
+      {...rest}
+    >
       {children}
-    </Comp>
+    </Component>
   );
 }

@@ -81,9 +81,9 @@ const VerifyEmailPage = ({ onNavigate }) => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
             </svg>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Verifikasi Email Anda</h1>
-          <p className="text-gray-600 mb-4">Kami telah mengirimkan link verifikasi ke email Anda. Silakan cek email dan klik link untuk mengaktifkan akun.</p>
-          <p className="text-sm text-gray-500">Tidak menerima email? Cek folder spam atau kirim ulang.</p>
+          <h1 className="text-h2 font-bold text-gray-900 mb-2">Verifikasi Email Anda</h1>
+          <p className="text-body text-gray-600 mb-4">Kami telah mengirimkan link verifikasi ke email Anda. Silakan cek email dan klik link untuk mengaktifkan akun.</p>
+          <p className="text-body-sm text-gray-500">Tidak menerima email? Cek folder spam atau kirim ulang.</p>
         </div>
 
         {status ? <div className="mb-4 text-sm text-green-700">{status}</div> : null}

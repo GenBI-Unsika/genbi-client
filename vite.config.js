@@ -25,8 +25,51 @@ export default defineConfig({
     proxy: {
       '/api': {
         // Use IPv4 loopback explicitly to avoid occasional IPv6/localhost resolution issues on Windows.
-        target: process.env.VITE_API_PROXY_TARGET || 'http://127.0.0.1:4000',
+        // Default: port 3500 (lebih jarang konflik daripada 4000)
+        target: process.env.VITE_API_PROXY_TARGET || 'http://127.0.0.1:3500',
         changeOrigin: true,
+        // Bulk finalize uploads can take a while (Google Drive). Avoid proxy timeouts.
+        timeout: 5 * 60 * 1000,
+        proxyTimeout: 5 * 60 * 1000,
+        // Make proxy failures diagnosable (otherwise browser often shows 500 with empty body)
+        configure: (proxy) => {
+          proxy.on('error', (err, req, res) => {
+            // eslint-disable-next-line no-console
+            console.error('[Vite Proxy Error]', {
+              method: req?.method,
+              url: req?.url,
+              code: err?.code,
+              message: err?.message,
+            });
+
+            try {
+              if (res && !res.headersSent) {
+                res.writeHead(502, { 'Content-Type': 'application/json' });
+                res.end(
+                  JSON.stringify({
+                    error: {
+                      message: 'Proxy to API failed (dev). Pastikan genbi-server berjalan (default port 3500).',
+                      code: err?.code,
+                      details: err?.message,
+                    },
+                  }),
+                );
+              }
+            } catch {
+              // ignore
+            }
+          });
+
+          proxy.on('proxyReq', (proxyReq, req) => {
+            // eslint-disable-next-line no-console
+            console.debug('[Vite Proxy Req]', req.method, req.url, '->', proxyReq?.getHeader?.('host'));
+          });
+
+          proxy.on('proxyRes', (proxyRes, req) => {
+            // eslint-disable-next-line no-console
+            console.debug('[Vite Proxy Res]', req.method, req.url, proxyRes.statusCode);
+          });
+        },
       },
     },
   },

@@ -3,6 +3,52 @@ const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api/v1';
 // Environment check - only show technical errors in development
 const isDev = import.meta.env.DEV || import.meta.env.MODE === 'development';
 
+// === Global loading tracker (used for TopLoadingBar) ===
+let inFlightCount = 0;
+const inFlightListeners = new Set();
+
+function notifyInFlight() {
+  for (const listener of inFlightListeners) {
+    try {
+      listener(inFlightCount);
+    } catch {
+      // ignore listener errors
+    }
+  }
+}
+
+export function getApiInFlightCount() {
+  return inFlightCount;
+}
+
+/**
+ * Subscribe to API loading state changes.
+ * @param {(count:number)=>void} listener
+ * @returns {() => void} unsubscribe
+ */
+export function subscribeApiInFlight(listener) {
+  if (typeof listener !== 'function') return () => {};
+  inFlightListeners.add(listener);
+  try {
+    listener(inFlightCount);
+  } catch {
+    // ignore
+  }
+  return () => {
+    inFlightListeners.delete(listener);
+  };
+}
+
+function beginRequest() {
+  inFlightCount += 1;
+  notifyInFlight();
+}
+
+function endRequest() {
+  inFlightCount = Math.max(0, inFlightCount - 1);
+  notifyInFlight();
+}
+
 /**
  * Normalize error messages for user display
  * Technical errors are hidden from users in production
@@ -35,12 +81,10 @@ function normalizeErrorMessage(message, status) {
     lower.includes('network error');
 
   if (isInternalError) {
-    // Log for debugging (only visible in dev tools)
     if (isDev) console.error('[API Error - Hidden from UI]:', raw);
     return 'Terjadi gangguan pada sistem. Tim kami sedang menangani masalah ini.';
   }
 
-  // === HTTP STATUS BASED MESSAGES ===
   if (status === 500) {
     if (isDev) console.error('[500 Error]:', raw);
     return 'Terjadi kesalahan pada server. Silakan coba lagi nanti.';
@@ -71,8 +115,6 @@ function normalizeErrorMessage(message, status) {
     return 'Data yang dikirim tidak valid. Periksa kembali form Anda.';
   }
 
-  // === SAFE USER-FACING MESSAGES ===
-  // Only return raw message if it looks safe/user-friendly
   const looksUserFriendly = !lower.includes('error') && !lower.includes('exception') && !lower.includes('failed') && raw.length < 200;
 
   if (looksUserFriendly) {
@@ -107,7 +149,26 @@ export function setAccessToken(token) {
 
 async function readJsonSafe(res) {
   try {
+    // If it's JSON, parse it.
     return await res.json();
+  } catch {
+    return null;
+  }
+}
+
+async function readBodySafe(res) {
+  // Note: response bodies can only be read once, so always use clone().
+  try {
+    const json = await readJsonSafe(res.clone());
+    if (json) return json;
+  } catch {
+    // ignore
+  }
+
+  try {
+    const text = await res.clone().text();
+    if (!text) return null;
+    return { _rawText: text };
   } catch {
     return null;
   }
@@ -134,14 +195,22 @@ export async function apiFetch(path, options = {}) {
     body = JSON.stringify(body);
   }
 
-  const res = await fetch(url, {
-    ...options,
-    headers,
-    body,
-    credentials: 'include',
-  });
+  beginRequest();
 
-  const json = await readJsonSafe(res);
+  let res;
+  let json;
+  try {
+    res = await fetch(url, {
+      ...options,
+      headers,
+      body,
+      credentials: 'include',
+    });
+
+    json = await readBodySafe(res);
+  } finally {
+    endRequest();
+  }
 
   if (!res.ok) {
     if (res.status === 401) {
@@ -162,8 +231,34 @@ export async function apiFetch(path, options = {}) {
         }
       }
     }
-    const message = json?.error?.message || json?.message || res.statusText || 'Request failed';
+    const message = json?.error?.message || json?.message || json?._rawText || res.statusText || 'Request failed';
     const normalizedMessage = normalizeErrorMessage(message, res.status);
+
+    // Extra diagnostics in dev when server returns non-JSON error bodies
+    if (isDev && json?._rawText && res.status >= 500) {
+      // eslint-disable-next-line no-console
+      console.error('[API Error - Non-JSON Body]:', {
+        url,
+        status: res.status,
+        contentType: res.headers.get('content-type'),
+        body: json._rawText.slice(0, 2000),
+      });
+    }
+
+    // Extra diagnostics in dev when server returns empty body or JSON error payload
+    if (isDev && res.status >= 500) {
+      // eslint-disable-next-line no-console
+      console.error('[API Error - Debug]:', {
+        url,
+        status: res.status,
+        statusText: res.statusText,
+        contentType: res.headers.get('content-type'),
+        hasBody: Boolean(json),
+        serverMessage: json?.error?.message || json?.message,
+        serverCode: json?.error?.code || json?.code,
+        serverStack: json?.error?.stack,
+      });
+    }
     throw new ApiError({ status: res.status, message: normalizedMessage, details: json?.error?.details || json?.details });
   }
 
@@ -172,22 +267,18 @@ export async function apiFetch(path, options = {}) {
 
 // FUNGSI HELPER CRUD
 
-/** Request POST */
 export async function apiPost(path, body, options = {}) {
   return apiFetch(path, { ...options, method: 'POST', body });
 }
 
-/** Request PATCH */
 export async function apiPatch(path, body, options = {}) {
   return apiFetch(path, { ...options, method: 'PATCH', body });
 }
 
-/** Request PUT */
 export async function apiPut(path, body, options = {}) {
   return apiFetch(path, { ...options, method: 'PUT', body });
 }
 
-/** Request DELETE */
 export async function apiDelete(path, options = {}) {
   return apiFetch(path, { ...options, method: 'DELETE' });
 }

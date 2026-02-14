@@ -1,29 +1,29 @@
-"use client"
+'use client';
 
-import { useState } from "react"
+import { useState } from 'react';
 
 const TwoFactorAuthPage = ({ onNavigate }) => {
-  const [code, setCode] = useState(["", "", "", "", "", ""])
+  const [code, setCode] = useState(['', '', '', '', '', '']);
 
   const handleInputChange = (index, value) => {
     if (value.length <= 1) {
-      const newCode = [...code]
-      newCode[index] = value
-      setCode(newCode)
+      const newCode = [...code];
+      newCode[index] = value;
+      setCode(newCode);
 
       // Auto focus next input
       if (value && index < 5) {
-        const nextInput = document.getElementById(`code-${index + 1}`)
-        if (nextInput) nextInput.focus()
+        const nextInput = document.getElementById(`code-${index + 1}`);
+        if (nextInput) nextInput.focus();
       }
     }
-  }
+  };
 
   const handleSubmit = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     // Simulate 2FA verification
-    onNavigate("home")
-  }
+    onNavigate('home');
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
@@ -39,8 +39,8 @@ const TwoFactorAuthPage = ({ onNavigate }) => {
               />
             </svg>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Verifikasi Dua Faktor</h1>
-          <p className="text-gray-600">Masukkan kode 6 digit yang dikirim ke email Anda</p>
+          <h1 className="text-h2 font-bold text-gray-900 mb-2">Verifikasi Dua Faktor</h1>
+          <p className="text-body text-gray-600">Masukkan kode 6 digit yang dikirim ke email Anda</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -58,10 +58,7 @@ const TwoFactorAuthPage = ({ onNavigate }) => {
             ))}
           </div>
 
-          <button
-            type="submit"
-            className="w-full bg-primary-600 text-white py-3 px-4 rounded-lg hover:bg-primary-700 transition-colors font-medium"
-          >
+          <button type="submit" className="w-full bg-primary-600 text-white py-3 px-4 rounded-lg hover:bg-primary-700 transition-colors font-medium">
             Verifikasi
           </button>
 
@@ -74,7 +71,7 @@ const TwoFactorAuthPage = ({ onNavigate }) => {
         </form>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default TwoFactorAuthPage
+export default TwoFactorAuthPage;
