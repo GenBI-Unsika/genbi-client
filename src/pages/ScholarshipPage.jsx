@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { apiFetch } from '../services/api.js';
+import { Lock } from 'lucide-react';
 
 const defaultScholarshipPage = {
   title: 'Tertarik Untuk Daftar Beasiswa Bank Indonesia?',
@@ -54,15 +55,32 @@ const ScholarshipPage = () => {
   return (
     <div className="min-h-screen bg-white">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        {/* Banner ketika pendaftaran ditutup */}
+        {!isOpen && (
+          <div className="mb-10">
+            <div className="mx-auto w-full max-w-4xl rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-left">
+              <div className="flex items-start gap-3">
+                <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-red-200 bg-white">
+                  <Lock className="h-4 w-4 text-red-700" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-red-900">Pendaftaran sedang ditutup</p>
+                  <p className="mt-1 text-sm text-red-800">{content.closedMessage}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Header */}
         <div className="mb-12">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">{content.title}</h1>
-          <p className="text-gray-600 text-lg">{content.subtitle}</p>
+          <h1 className="page-title mb-4">{content.title}</h1>
+          <p className="section-subtitle">{content.subtitle}</p>
         </div>
 
         {/* Persyaratan */}
         <div className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Persyaratan</h2>
+          <h2 className="section-title mb-6">Persyaratan</h2>
           <ul className="space-y-3 text-gray-700 leading-relaxed">
             {content.requirements?.map((item, index) => (
               <li key={index}>• {item}</li>
@@ -72,7 +90,7 @@ const ScholarshipPage = () => {
 
         {/* Dokumen */}
         <div className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Dokumen Yang Dibutuhkan</h2>
+          <h2 className="section-title mb-6">Dokumen Yang Dibutuhkan</h2>
           <ul className="space-y-3 text-gray-700 leading-relaxed">
             {content.documents?.map((item, index) => (
               <li key={index}>• {item}</li>
@@ -85,9 +103,6 @@ const ScholarshipPage = () => {
           <button type="button" aria-disabled={!isOpen} disabled={!isOpen} onClick={() => isOpen && navigate('/scholarship/register')} className={`px-8 py-3 rounded-lg font-medium transition-colors ${btnClasses}`}>
             {content.buttonText}
           </button>
-
-          {/* helper text ketika tutup */}
-          {!isOpen && <p className="mt-3 text-sm italic text-secondary-600">{content.closedMessage}</p>}
         </div>
       </div>
     </div>

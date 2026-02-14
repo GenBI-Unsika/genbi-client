@@ -95,7 +95,7 @@ const RegistrationPage = ({ eventId }) => {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center bg-white p-8 rounded-xl shadow-sm max-w-md">
           <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Pendaftaran Berhasil!</h2>
+          <h2 className="text-h2 font-bold text-gray-900 mb-2">Pendaftaran Berhasil!</h2>
           <p className="text-gray-600 mb-6">
             Terima kasih telah mendaftar untuk event <strong>{event?.title}</strong>. Kami akan mengirimkan informasi lebih lanjut ke email Anda.
           </p>
@@ -116,8 +116,8 @@ const RegistrationPage = ({ eventId }) => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6 lg:p-8 transform hover:shadow-lg transition-shadow duration-300">
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">Detail Pendaftaran</h1>
-              <p className="text-gray-600 mb-8">
+              <h1 className="text-h2 font-bold text-gray-900 mb-4">Detail Pendaftaran</h1>
+              <p className="text-body text-gray-600 mb-8">
                 Lengkapi form berikut untuk mengikuti event <strong>{event?.title}</strong>
               </p>
 
