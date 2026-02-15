@@ -39,7 +39,7 @@ const FAQSection = () => {
         if (alive) setFaqs(Array.isArray(items) ? items : []);
       } catch (e) {
         if (!alive) return;
-        if (e?.status !== 404) console.error('Failed to load FAQs:', e);
+        if (e?.status !== 404) { /* Error loading FAQs */ }
         setFaqs([]);
       } finally {
         if (alive) setLoading(false);

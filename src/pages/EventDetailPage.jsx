@@ -28,7 +28,7 @@ const EventDetailPage = ({ onNavigate, eventId }) => {
         setError(null);
       })
       .catch((err) => {
-        console.error('Failed to load event:', err);
+        // Error loading event
         setError(err.message || 'Gagal memuat event');
       })
       .finally(() => setLoading(false));
@@ -137,9 +137,8 @@ const EventDetailPage = ({ onNavigate, eventId }) => {
           {event.status && (
             <div className="mb-8">
               <span
-                className={`inline-flex px-3 py-1 rounded-full text-sm font-medium ${
-                  event.status === 'COMPLETED' ? 'bg-green-100 text-green-800' : event.status === 'ONGOING' ? 'bg-blue-100 text-blue-800' : event.status === 'PLANNED' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800'
-                }`}
+                className={`inline-flex px-3 py-1 rounded-full text-sm font-medium ${event.status === 'COMPLETED' ? 'bg-green-100 text-green-800' : event.status === 'ONGOING' ? 'bg-blue-100 text-blue-800' : event.status === 'PLANNED' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800'
+                  }`}
               >
                 {event.status === 'COMPLETED' ? 'Selesai' : event.status === 'ONGOING' ? 'Sedang Berlangsung' : event.status === 'PLANNED' ? 'Akan Datang' : event.status}
               </span>

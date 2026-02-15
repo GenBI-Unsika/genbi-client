@@ -94,68 +94,76 @@ const ScholarshipSelectionAdmin = () => {
       const hasCelebrated = localStorage.getItem(celebrationKey);
 
       if (!hasCelebrated) {
+        setShowCelebration(true);
+        localStorage.setItem(celebrationKey, 'true');
+      } else {
+        // Jika sudah pernah merayakan, langsung pindah ke tahap wawancara (seleksi otomatis diarahkan)
+        // navigate('/scholarship/selection/interview', { replace: true });
       }
-      setShowCelebration(false);
+    }
+  }, [loading, isLolos, app, navigate]);
 
-      // Navigate to interview page after celebration
-      navigate('/scholarship/selection/interview', { replace: true });
-    };
-
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-primary-50/20">
-        <CelebrationModal isOpen={showCelebration} onClose={handleCloseCelebration} name={app?.name} />
-        <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 px-4 py-10 md:grid-cols-3">
-          <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
-            <h3 className="mb-6 text-xl font-semibold text-body">Tahap Seleksi</h3>
-            <StepperVertical current={stepCurrent} items={['Seleksi Administrasi', 'Seleksi Wawancara', 'Pengumuman']} heightClass="h-72" />
-          </div>
-
-          <div className="md:col-span-2 space-y-6">
-            <div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-primary-700 to-primary-500 bg-clip-text text-transparent">Proses Seleksi</h1>
-              <p className="mt-1 text-sm text-neutral-600">Pantau perkembangan tahap seleksi beasiswa Anda</p>
-            </div>
-
-            {loading && <div className="rounded-xl border border-neutral-200 bg-white p-6 text-sm text-neutral-600 shadow-sm">Memuat status seleksi...</div>}
-
-            {!loading && !app && (
-              <Card title="Status" badge="Belum Daftar" badgeIntent="warn" tone="warn">
-                Anda belum memiliki pengajuan beasiswa. Silakan isi formulir pendaftaran ketika dibuka.
-              </Card>
-            )}
-
-            {!loading && app && (
-              <Card title="Seleksi Administrasi" badge={badgeLabel} badgeIntent={badgeIntent} tone={cardTone}>
-                {isMenunggu && (
-                  <>
-                    Dokumen Anda sedang dalam proses verifikasi oleh panitia. Mohon menunggu hasil seleksi administrasi.
-                    <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800">
-                      <strong className="font-semibold">Catatan:</strong> Proses verifikasi memerlukan waktu. Pantau halaman ini secara berkala untuk mengetahui hasilnya.
-                    </div>
-                  </>
-                )}
-                {isLolos && (
-                  <>
-                    Selamat dokumen Anda telah kami terima. Anda dinyatakan lulus seleksi administrasi.
-                    <div className="mt-3 rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-xs text-emerald-800">
-                      <strong className="font-semibold">✅ Selanjutnya:</strong> Tahap selanjutnya akan terbuka otomatis. Sistem akan mengarahkan kamu ke tahap wawancara.
-                    </div>
-                  </>
-                )}
-                {isDitolak && (
-                  <>
-                    Mohon maaf, dokumen Anda tidak memenuhi persyaratan seleksi administrasi. Anda dinyatakan tidak lolos seleksi administrasi.
-                    <div className="mt-3 rounded-lg border border-red-200 bg-red-50 p-3 text-xs text-red-800">
-                      <strong className="font-semibold">ℹ️ Bantuan:</strong> Jika Anda merasa ada kekeliruan, silakan hubungi panitia melalui kontak yang tersedia.
-                    </div>
-                  </>
-                )}
-              </Card>
-            )}
-          </div>
-        </div>
-      </div>
-    );
+  const handleCloseCelebration = () => {
+    setShowCelebration(false);
+    navigate('/scholarship/selection/interview', { replace: true });
   };
 
-  export default ScholarshipSelectionAdmin;
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-primary-50/20">
+      <CelebrationModal isOpen={showCelebration} onClose={handleCloseCelebration} name={app?.name} />
+      <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 px-4 py-10 md:grid-cols-3">
+        <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
+          <h3 className="mb-6 text-xl font-semibold text-body">Tahap Seleksi</h3>
+          <StepperVertical current={stepCurrent} items={['Seleksi Administrasi', 'Seleksi Wawancara', 'Pengumuman']} heightClass="h-72" />
+        </div>
+
+        <div className="md:col-span-2 space-y-6">
+          <div>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary-700 to-primary-500 bg-clip-text text-transparent">Proses Seleksi</h1>
+            <p className="mt-1 text-sm text-neutral-600">Pantau perkembangan tahap seleksi beasiswa Anda</p>
+          </div>
+
+          {loading && <div className="rounded-xl border border-neutral-200 bg-white p-6 text-sm text-neutral-600 shadow-sm">Memuat status seleksi...</div>}
+
+          {!loading && !app && (
+            <Card title="Status" badge="Belum Daftar" badgeIntent="warn" tone="warn">
+              Anda belum memiliki pengajuan beasiswa. Silakan isi formulir pendaftaran ketika dibuka.
+            </Card>
+          )}
+
+          {!loading && app && (
+            <Card title="Seleksi Administrasi" badge={badgeLabel} badgeIntent={badgeIntent} tone={cardTone}>
+              {isMenunggu && (
+                <>
+                  Dokumen Anda sedang dalam proses verifikasi oleh panitia. Mohon menunggu hasil seleksi administrasi.
+                  <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800">
+                    <strong className="font-semibold">Catatan:</strong> Proses verifikasi memerlukan waktu. Pantau halaman ini secara berkala untuk mengetahui hasilnya.
+                  </div>
+                </>
+              )}
+              {isLolos && (
+                <>
+                  Selamat dokumen Anda telah kami terima. Anda dinyatakan lulus seleksi administrasi.
+                  <div className="mt-3 rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-xs text-emerald-800">
+                    <strong className="font-semibold">✅ Selanjutnya:</strong> Tahap selanjutnya akan terbuka otomatis. Sistem akan mengarahkan kamu ke tahap wawancara.
+                  </div>
+                </>
+              )}
+              {isDitolak && (
+                <>
+                  Mohon maaf, dokumen Anda tidak memenuhi persyaratan seleksi administrasi. Anda dinyatakan tidak lolos seleksi administrasi.
+                  <div className="mt-3 rounded-lg border border-red-200 bg-red-50 p-3 text-xs text-red-800">
+                    <strong className="font-semibold">ℹ️ Bantuan:</strong> Jika Anda merasa ada kekeliruan, silakan hubungi panitia melalui kontak yang tersedia.
+                  </div>
+                </>
+              )}
+            </Card>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ScholarshipSelectionAdmin;
+

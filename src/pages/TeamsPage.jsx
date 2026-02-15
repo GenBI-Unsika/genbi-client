@@ -44,7 +44,7 @@ const TeamsPage = () => {
     const seen = new Set();
     members.forEach((m) => {
       const k = (m.name || '').trim().toLowerCase();
-      if (seen.has(k)) console.warn('[TeamsPage] Duplikat nama:', m.name);
+      if (seen.has(k)) { /* skip */ }
       seen.add(k);
     });
   }, [members]);

@@ -170,7 +170,7 @@ const ScholarshipRegister = () => {
         if (!alive) return;
         setStudyPrograms(data || []);
       } catch (err) {
-        console.error('Error fetching study programs:', err);
+        // Error fetching study programs
         if (!alive) return;
         setStudyPrograms([]);
       } finally {
@@ -265,7 +265,6 @@ const ScholarshipRegister = () => {
         }
       } else {
         // No draft -> Initialize with profile data
-        console.log('Initializing with profile data:', profileData);
         setForm((prev) => ({ ...prev, ...profileData }));
       }
     }
@@ -1017,9 +1016,8 @@ const ScholarshipRegister = () => {
                   ) : (
                     <label className="block cursor-pointer">
                       <div
-                        className={`rounded-lg border-2 border-dashed bg-neutral-50 p-5 text-center transition-colors ${
-                          stagingFile !== null ? 'border-neutral/30 opacity-70' : dragOverKey === d.key ? 'border-neutral/80' : 'border-neutral/40 hover:border-neutral/60'
-                        }`}
+                        className={`rounded-lg border-2 border-dashed bg-neutral-50 p-5 text-center transition-colors ${stagingFile !== null ? 'border-neutral/30 opacity-70' : dragOverKey === d.key ? 'border-neutral/80' : 'border-neutral/40 hover:border-neutral/60'
+                          }`}
                         onDragEnter={(e) => {
                           if (stagingFile !== null) return;
                           preventDnDDefault(e);

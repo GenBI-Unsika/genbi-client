@@ -122,7 +122,7 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
         });
         setSearchResults(json?.data || []);
       } catch (err) {
-        console.error('Search failed:', err);
+        // Search failed
         setSearchResults([]);
       } finally {
         setIsSearching(false);

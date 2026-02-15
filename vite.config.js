@@ -61,13 +61,11 @@ export default defineConfig({
           });
 
           proxy.on('proxyReq', (proxyReq, req) => {
-            // eslint-disable-next-line no-console
-            console.debug('[Vite Proxy Req]', req.method, req.url, '->', proxyReq?.getHeader?.('host'));
+            // silent
           });
 
           proxy.on('proxyRes', (proxyRes, req) => {
-            // eslint-disable-next-line no-console
-            console.debug('[Vite Proxy Res]', req.method, req.url, proxyRes.statusCode);
+            // silent
           });
         },
       },

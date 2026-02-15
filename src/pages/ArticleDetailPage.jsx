@@ -29,7 +29,7 @@ const ArticleDetailPage = () => {
         setError(null);
       })
       .catch((err) => {
-        console.error('Failed to load article:', err);
+        // Error loading article
         setError(err.message || 'Gagal memuat artikel');
       })
       .finally(() => setLoading(false));

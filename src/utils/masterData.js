@@ -10,7 +10,7 @@ export async function fetchFaculties() {
     facultiesCache = response.data || [];
     return facultiesCache;
   } catch (error) {
-    console.error('Failed to fetch faculties:', error);
+    // Error fetching faculties
     return [];
   }
 }
@@ -25,7 +25,7 @@ export async function fetchStudyProgramsByFaculty(facultyId) {
     const response = await apiFetch(`/master-data/study-programs?facultyId=${facultyId}`);
     return response.data || [];
   } catch (error) {
-    console.error('Failed to fetch study programs:', error);
+    // Error fetching study programs
     return [];
   }
 }
@@ -40,7 +40,7 @@ export async function fetchDivisions() {
     divisionsCache = response.data || [];
     return divisionsCache;
   } catch (error) {
-    console.error('Failed to fetch divisions:', error);
+    // Error fetching divisions
     return [];
   }
 }

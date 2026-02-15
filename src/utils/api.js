@@ -27,7 +27,7 @@ export function getApiInFlightCount() {
  * @returns {() => void} unsubscribe
  */
 export function subscribeApiInFlight(listener) {
-  if (typeof listener !== 'function') return () => {};
+  if (typeof listener !== 'function') return () => { };
   inFlightListeners.add(listener);
   try {
     listener(inFlightCount);
@@ -81,12 +81,12 @@ function normalizeErrorMessage(message, status) {
     lower.includes('network error');
 
   if (isInternalError) {
-    if (isDev) console.error('[API Error - Hidden from UI]:', raw);
+    if (isDev) { /* API Error - Hidden */ }
     return 'Terjadi gangguan pada sistem. Tim kami sedang menangani masalah ini.';
   }
 
   if (status === 500) {
-    if (isDev) console.error('[500 Error]:', raw);
+    if (isDev) { /* 500 Error */ }
     return 'Terjadi kesalahan pada server. Silakan coba lagi nanti.';
   }
 
@@ -236,28 +236,12 @@ export async function apiFetch(path, options = {}) {
 
     // Extra diagnostics in dev when server returns non-JSON error bodies
     if (isDev && json?._rawText && res.status >= 500) {
-      // eslint-disable-next-line no-console
-      console.error('[API Error - Non-JSON Body]:', {
-        url,
-        status: res.status,
-        contentType: res.headers.get('content-type'),
-        body: json._rawText.slice(0, 2000),
-      });
+      // API Error - Non-JSON Body
     }
 
     // Extra diagnostics in dev when server returns empty body or JSON error payload
     if (isDev && res.status >= 500) {
-      // eslint-disable-next-line no-console
-      console.error('[API Error - Debug]:', {
-        url,
-        status: res.status,
-        statusText: res.statusText,
-        contentType: res.headers.get('content-type'),
-        hasBody: Boolean(json),
-        serverMessage: json?.error?.message || json?.message,
-        serverCode: json?.error?.code || json?.code,
-        serverStack: json?.error?.stack,
-      });
+      // API Error - Debug
     }
     throw new ApiError({ status: res.status, message: normalizedMessage, details: json?.error?.details || json?.details });
   }

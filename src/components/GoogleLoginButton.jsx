@@ -8,13 +8,7 @@ export default function GoogleLoginButton({ onIdToken, onError }) {
 
   const reportError = (userMessage, error) => {
     if (import.meta.env.DEV) {
-      // Helpful context for local dev (avoid showing technical details to end users)
-      console.error('[Google Sign-In]', userMessage, {
-        origin: window.location.origin,
-        clientId,
-        error,
-      });
-      console.info('[Google Sign-In] If you see “origin not allowed”, add this origin to Google Cloud Console → OAuth Client → Authorized JavaScript origins:', window.location.origin);
+      // Helpful context for local dev (silent)
     }
     onError?.(userMessage);
   };

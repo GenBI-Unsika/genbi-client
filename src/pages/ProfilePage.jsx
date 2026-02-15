@@ -37,7 +37,7 @@ const ProfilePage = () => {
           setFaculties(facultiesData);
         }
       } catch (error) {
-        console.error('Failed to load master data:', error);
+        // Error loading master data
       }
     })();
 
@@ -356,9 +356,8 @@ const ProfilePage = () => {
             value={formData.studyProgramId}
             onChange={handleInputChange}
             disabled={!formData.facultyId}
-            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${
-              errors.studyProgramId ? 'border-red-500' : 'border-gray-300'
-            } ${!formData.facultyId ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${errors.studyProgramId ? 'border-red-500' : 'border-gray-300'
+              } ${!formData.facultyId ? 'bg-gray-100 cursor-not-allowed' : ''}`}
           >
             <option value="">{formData.facultyId ? 'Pilih Program Studi' : 'Pilih Fakultas terlebih dahulu'}</option>
             {availablePrograms.map((program) => (

@@ -33,7 +33,7 @@ export default function TestimonialsSection() {
         if (alive) setTestimonials(Array.isArray(items) ? items : []);
       } catch (e) {
         if (!alive) return;
-        if (e?.status !== 404) console.error('Failed to load testimonials:', e);
+        if (e?.status !== 404) { /* Error loading testimonials */ }
         setTestimonials([]);
       } finally {
         if (alive) setLoading(false);

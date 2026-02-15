@@ -280,7 +280,7 @@ function App() {
           );
         }
       } catch (error) {
-        console.error('Error checking profile:', error);
+        // Error checking profile
       }
     },
     [navigate, profileReminderKeyForUser],
@@ -297,7 +297,6 @@ function App() {
           if (alive && user) checkProfileCompletion(user, { reason: 'session' });
         } catch (e) {
           // Gagal diam-diam - user masih bisa menggunakan aplikasi dengan data cache
-          console.debug('Failed to sync user profile:', e?.message);
         }
         return;
       }
@@ -310,7 +309,6 @@ function App() {
         }
       } catch (e) {
         // Gagal diam-diam - user hanya belum login
-        console.debug('Auth refresh failed:', e?.message);
         if (alive) setIsLoggedIn(false);
       }
     })();
