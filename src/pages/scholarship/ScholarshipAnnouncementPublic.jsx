@@ -168,13 +168,16 @@ export default function ScholarshipAnnouncementPublic() {
                 </div>
               </div>
 
-              <div className="text-left self-end">
-                <h1 className="text-white text-[13px] sm:text-xl lg:text-2xl font-black uppercase tracking-tight leading-tight">
-                  {theme.label} {data?.year || new Date().getFullYear()}
-                </h1>
-              </div>
-              <div className="text-left self-start">
-                <p className="text-white/90 text-[9px] sm:text-xs font-bold uppercase tracking-[0.2em]">{periodLabel}</p>
+              {/* Title & Period Wrapper - 'contents' on mobile to be direct grid children, 'flex-col' on desktop */}
+              <div className="contents sm:flex sm:flex-col sm:items-start sm:gap-1">
+                <div className="text-left self-end sm:self-auto">
+                  <h1 className="text-white text-[13px] sm:text-xl lg:text-2xl font-black uppercase tracking-tight leading-tight">
+                    {theme.label} {data?.year || new Date().getFullYear()}
+                  </h1>
+                </div>
+                <div className="text-left self-start sm:self-auto">
+                  <p className="text-white/90 text-[9px] sm:text-xs font-bold uppercase tracking-[0.2em]">{periodLabel}</p>
+                </div>
               </div>
             </div>
           </div>
