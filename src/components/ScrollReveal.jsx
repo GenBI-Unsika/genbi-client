@@ -13,10 +13,11 @@ export default function ScrollReveal({
   duration = 0.5,
   once = true,
   variants, // custom variants if needed
+  delayMs, // extract explicitly to avoid leakage via ...rest
   ...rest
 }) {
   // Translate delayMs (if passed from old code) to seconds
-  const finalDelay = rest.delayMs ? rest.delayMs / 1000 : delay;
+  const finalDelay = delayMs ? delayMs / 1000 : delay;
 
   const defaultVariants = {
     hidden: { opacity: 0, y: 30 },

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { QRCodeCanvas } from 'qrcode.react';
+import { GraduationCap, Building2, AlertCircle } from 'lucide-react';
 import { apiFetch } from '../../services/api.js';
 
 function periodLabelFrom({ year, batch }) {
@@ -28,6 +29,7 @@ export default function ScholarshipAnnouncementPublic() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [data, setData] = useState(null);
+  const [qrSize, setQrSize] = useState(110);
 
   const publicUrl = typeof window !== 'undefined' ? window.location.href : '';
 
@@ -64,6 +66,22 @@ export default function ScholarshipAnnouncementPublic() {
     };
   }, [token]);
 
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) { // lg breakpoint
+        setQrSize(220);
+      } else if (window.innerWidth >= 640) { // sm breakpoint
+        setQrSize(180);
+      } else {
+        setQrSize(145);
+      }
+    };
+
+    handleResize(); // Set initial size
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const periodLabel = useMemo(() => periodLabelFrom({ year: data?.year, batch: data?.batch }), [data?.year, data?.batch]);
   const state = useMemo(() => announcementState({ administrasiStatus: data?.administrasiStatus, interviewStatus: data?.interviewStatus }), [data?.administrasiStatus, data?.interviewStatus]);
 
@@ -91,6 +109,8 @@ export default function ScholarshipAnnouncementPublic() {
     };
   }, [state]);
 
+
+
   if (loading) return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
       <div className="text-center">
@@ -113,111 +133,115 @@ export default function ScholarshipAnnouncementPublic() {
     </div>
   );
 
+
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-0 sm:p-6 lg:p-8">
+    <div className="h-screen h-[100dvh] relative flex items-center justify-center p-3 sm:p-4 lg:p-8 font-sans antialiased selection:bg-primary-100 selection:text-primary-900 overflow-hidden">
+      {/* Full Image Background with Dark Filter */}
+      <div className="fixed inset-0 bg-slate-950">
+        <div
+          className="absolute inset-0 bg-center bg-no-repeat bg-cover filter grayscale brightness-[0.6] contrast-[1.1]"
+          style={{ backgroundImage: 'url(/unsika.jpg)' }}
+        />
+        {/* Dark Overlay for Depth */}
+        <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px]"></div>
+      </div>
 
       {/* Main Container */}
-      <div className="w-full max-w-6xl flex flex-col items-center">
+      <div className="w-full max-w-5xl flex flex-col items-center relative z-10 lg:h-full lg:justify-center">
 
-        {/* The Card */}
-        <div className="w-full bg-white rounded-none sm:rounded-xl overflow-hidden shadow-none sm:shadow-xl flex flex-col border-x-0 sm:border border-slate-200">
+        {/* The Announcement Card */}
+        <div className="w-full bg-white/90 backdrop-blur-xl rounded-2xl sm:rounded-[2.5rem] border-0 sm:border border-white overflow-hidden flex flex-col max-h-full lg:max-h-[85vh]">
 
-          {/* Header Section: Banner with Logo */}
-          <div className={`${theme.banner} px-6 py-6 sm:px-10 flex flex-col sm:flex-row items-center justify-between gap-6 relative overflow-hidden`}>
-            {/* Background Decorative Gradient */}
-            <div className="absolute inset-0 bg-gradient-to-r from-black/10 to-transparent pointer-events-none" />
+          {/* Top Banner Section (Restored) */}
+          <div className={`${theme.banner} px-5 py-3 sm:px-12 sm:py-8 relative overflow-hidden shrink-0`}>
+            {/* Premium Background Overlays */}
+            <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-black/5 to-transparent pointer-events-none" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(255,255,255,0.1)_0%,transparent_50%)]" />
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+            <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
 
-            <div className="relative z-10 text-center sm:text-left flex-1">
-              <h1 className="text-white text-xl sm:text-2xl lg:text-3xl font-black leading-tight max-w-4xl uppercase">
-                {theme.label} {data?.year || new Date().getFullYear()}
-              </h1>
-              <p className="text-white/80 text-[10px] sm:text-xs font-bold mt-1 uppercase">{periodLabel}</p>
-            </div>
-
-            {/* Logo Integration */}
-            <div className="relative z-10 bg-white p-2 rounded-xl shadow-lg border border-white/20">
-              <img
-                src="/genbi-unsika.webp"
-                alt="GenBI Unsika Logo"
-                className="w-10 h-10 sm:w-14 sm:h-14 object-contain"
-                onError={(e) => { e.target.style.display = 'none'; }}
-              />
-            </div>
-          </div>
-
-          {/* Body Section: Identification */}
-          <div className="px-6 py-8 sm:px-10 sm:py-10 flex flex-col lg:flex-row gap-8 items-center lg:items-start text-center lg:text-left">
-
-            {/* Left Section: Personal Details */}
-            <div className="flex-1 space-y-6 w-full">
-              {/* Secondary ID Label */}
-              <div className="flex items-center justify-center lg:justify-start gap-2">
-                <div className="bg-slate-100 px-3 py-1 rounded-full text-[10px] font-black text-slate-500 uppercase">
-                  Identitas NPM: {data?.npm}
+            <div className="relative z-10 grid grid-cols-[auto_1fr] sm:flex sm:flex-row items-center justify-between gap-x-3 gap-y-0.5 sm:gap-5">
+              {/* Logo Integration (Rowspan 2 on mobile, Order-last on desktop) */}
+              <div className="row-span-2 sm:order-last bg-white/20 backdrop-blur-md rounded-xl sm:rounded-2xl border border-white/30 p-0.5 sm:p-1 shrink-0 self-center">
+                <div className="bg-white rounded-lg sm:rounded-xl p-0.5 sm:p-1">
+                  <img src="/favicon-genbi.webp" alt="Logo" className="w-8 h-8 sm:w-14 sm:h-14 object-contain" />
                 </div>
               </div>
 
-              {/* Name Section - Extreme Highlight */}
-              <div className="space-y-1">
-                <h2 className={`text-2xl sm:text-3xl lg:text-4xl font-black ${theme.textAccent} leading-tight`}>
+              <div className="text-left self-end">
+                <h1 className="text-white text-[13px] sm:text-xl lg:text-2xl font-black uppercase tracking-tight leading-tight">
+                  {theme.label} {data?.year || new Date().getFullYear()}
+                </h1>
+              </div>
+              <div className="text-left self-start">
+                <p className="text-white/90 text-[9px] sm:text-xs font-bold uppercase tracking-[0.2em]">{periodLabel}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Split Body Content (Side-by-side on mobile) */}
+          <div className="px-5 py-4 sm:px-12 sm:py-8 flex flex-row lg:flex-row gap-4 sm:gap-8 items-center lg:items-center overflow-hidden">
+
+            {/* Left Section: Identification */}
+            <div className="flex-1 min-w-0 space-y-4 sm:space-y-6 flex flex-col items-start text-left">
+              {/* Name & ID Header */}
+              <div className="space-y-1.5 sm:space-y-4 flex flex-col items-start">
+                <div className="inline-flex items-center gap-2 px-2.5 py-0.5 bg-slate-100 rounded-full text-[9px] sm:text-[13px] font-black text-slate-500 uppercase border border-slate-200/50">
+                  NPM: {data?.npm}
+                </div>
+                <h2 className={`text-xl sm:text-4xl lg:text-5xl font-black ${theme.textAccent} leading-tight`}>
                   {data?.name || '-'}
                 </h2>
-                <div className="space-y-0.5">
-                  <p className="text-base sm:text-lg font-bold text-slate-700 uppercase">
-                    {data?.studyProgram?.name || '-'}
-                  </p>
-                  <p className="text-sm sm:text-base font-bold text-slate-400 uppercase">
-                    {data?.faculty?.name || '-'}
-                  </p>
-                </div>
               </div>
 
-              {/* Data Grid for secondary info */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-6 border-t border-slate-100">
-                <div className="space-y-1">
-                  <label className="text-slate-400 font-black text-[10px] uppercase block">Status Kelulusan</label>
-                  <div className="flex items-center justify-center lg:justify-start gap-3">
-                    <div className={`w-3 h-3 rounded-full ${theme.badge} animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.3)]`}></div>
-                    <span className="text-base font-black text-slate-900">
-                      {state.passed ? 'Lolos Seleksi' : state.failed ? 'Tidak Lolos' : 'Pending'}
-                    </span>
+              {/* Data Dashboard Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4 w-full">
+                {[
+                  { label: 'Program Studi', value: data?.studyProgram?.name || '-', icon: GraduationCap },
+                  { label: 'Fakultas', value: data?.faculty?.name || '-', icon: Building2 },
+                ].map((item, idx) => (
+                  <div key={idx} className="bg-slate-50/50 border border-slate-100 p-2 sm:p-5 rounded-lg sm:rounded-3xl flex items-center gap-2 sm:gap-4 transition-all hover:bg-white hover:border-slate-200 group">
+                    <div className="hidden sm:flex w-8 h-8 bg-white rounded-full items-center justify-center text-slate-400 border border-slate-100 group-hover:text-primary-500 group-hover:border-primary-100 transition-colors">
+                      <item.icon size={16} className="stroke-[2.5]" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <span className="block text-[8px] font-black text-slate-400 uppercase tracking-widest mb-0.5">
+                        {item.label}
+                      </span>
+                      <span className="block text-[10px] sm:text-sm font-bold text-slate-900 truncate leading-tight">{item.value}</span>
+                    </div>
                   </div>
-                </div>
-                <div className="space-y-1">
-                  <label className="text-slate-400 font-black text-[10px] uppercase block">Tanggal Pengumuman</label>
-                  <p className="text-base font-black text-slate-900">
-                    {new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}
-                  </p>
-                </div>
+                ))}
               </div>
             </div>
 
-            {/* Right Section: QR Security Box */}
-            <div className="w-fit flex flex-col items-center">
-              <div className="bg-white p-4 rounded-xl border border-slate-100 flex flex-col items-center">
-                <div className="bg-white p-2 border border-slate-100 rounded-lg shadow-sm">
-                  <QRCodeCanvas
-                    value={publicUrl}
-                    size={140}
-                    level="H"
-                    includeMargin={false}
-                    bgColor="#ffffff"
-                    fgColor="#0f172a"
-                  />
-                </div>
+            <div className="shrink-0 flex flex-col items-center gap-3">
+              <div className="relative group p-1.5 sm:p-2.5 bg-white rounded-xl sm:rounded-[1.5rem] border border-slate-100/80 transition-all">
+                <QRCodeCanvas
+                  value={publicUrl}
+                  size={qrSize}
+                  level="M"
+                  includeMargin={true}
+                  bgColor="#ffffff"
+                  fgColor="#0f172a"
+                />
               </div>
             </div>
           </div>
 
-          {/* Bottom Alert Text */}
-          <div className="bg-slate-50/50 px-8 py-4 border-t border-slate-100">
-            <p className="text-[10px] text-slate-400 font-bold leading-relaxed max-w-4xl">
-              Status penerimaan Anda sebagai penerima beasiswa akan ditetapkan setelah pihak penyelenggara melakukan verifikasi data akademik dan berkas fisik. Segala bentuk pemalsuan data akan ditindak tegas sesuai hukum yang berlaku. Keep your digital pass secure.
+
+
+          {/* Verification Warning Footer (Side-by-side on mobile) */}
+          <div className="bg-slate-50/50 px-5 py-3 sm:px-12 sm:py-6 border-t border-slate-100 flex flex-row sm:flex-row items-center sm:items-start gap-3 sm:gap-4 shrink-0 shadow-[inset_0_1px_0_white]">
+            <div className="p-2 rounded-xl bg-yellow-50 border border-amber-100 text-amber-600 shrink-0">
+              <AlertCircle size={14} className="stroke-[2.5]" />
+            </div>
+            <p className="text-[9px] sm:text-xs text-slate-500 font-medium leading-relaxed">
+              Data yang tertera adalah hasil keputusan final. Segala bentuk manipulasi data akan ditindak tegas.
             </p>
           </div>
         </div>
       </div>
     </div>
-
   );
 }

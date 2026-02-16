@@ -59,7 +59,7 @@ const ActivitiesSection = () => {
               </div>
             ) : null}
             {activities.map((a, idx) => (
-              <ScrollReveal key={a.id || a.slug || a.title} as="div" once className="h-full" delayMs={idx * 70}>
+              <ScrollReveal key={a.id || a.slug || a.title} as="div" once className="h-full" delay={(idx * 70) / 1000}>
                 <EventCard title={a.title} {...a} to={a.href || (a.id ? `/events/${a.id}` : '/events')} />
               </ScrollReveal>
             ))}
@@ -83,7 +83,7 @@ const ActivitiesSection = () => {
               </div>
             ) : null}
             {projects.map((p, idx) => (
-              <ScrollReveal key={p.id || p.slug || p.title} as="div" once className="h-full" delayMs={idx * 70}>
+              <ScrollReveal key={p.id || p.slug || p.title} as="div" once className="h-full" delay={(idx * 70) / 1000}>
                 <ProkerCard title={p.title} {...p} to={p.href || (p.id ? `/proker/${p.id}` : '/proker')} />
               </ScrollReveal>
             ))}

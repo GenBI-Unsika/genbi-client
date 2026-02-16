@@ -52,7 +52,7 @@ const ArticlesSection = () => {
               </div>
             ) : null}
             {articles.map((a, idx) => (
-              <ScrollReveal key={a.id || a.slug || a.title} as="div" once className="h-full" delayMs={idx * 70}>
+              <ScrollReveal key={a.id || a.slug || a.title} as="div" once className="h-full" delay={(idx * 70) / 1000}>
                 <ArticleCard {...a} to={a.href || (a.slug ? `/articles/${a.slug}` : '/articles')} />
               </ScrollReveal>
             ))}

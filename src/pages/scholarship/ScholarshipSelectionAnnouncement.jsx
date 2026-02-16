@@ -69,7 +69,7 @@ const normalizeExternalHref = (value) => {
   return null;
 };
 
-const LocationOrLink = ({ value, className }) => {
+const LocationOrLink = ({ value, className, linkClassName }) => {
   const raw = String(value || '').trim();
   if (!raw) return <span className={className}>-</span>;
 
@@ -77,7 +77,7 @@ const LocationOrLink = ({ value, className }) => {
   if (!href) return <span className={className}>{raw}</span>;
 
   return (
-    <a href={href} target="_blank" rel="noopener noreferrer" className={className}>
+    <a href={href} target="_blank" rel="noopener noreferrer" className={`${className} ${linkClassName || ''}`}>
       {raw}
     </a>
   );
@@ -172,9 +172,8 @@ const AnnouncementDetailModal = ({ open, onClose, app, userData, registration, s
         <div
           role="status"
           aria-live="polite"
-          className={`pointer-events-none flex items-center gap-2 rounded-xl border px-3 py-2 text-sm shadow-sm transition-all duration-200 ${
-            toast.open ? 'translate-y-0 opacity-100' : '-translate-y-2 opacity-0'
-          } ${toast.intent === 'error' ? 'border-red-200 bg-red-50 text-red-800' : 'border-green-200 bg-green-50 text-green-800'}`}
+          className={`pointer-events-none flex items-center gap-2 rounded-xl border px-3 py-2 text-sm shadow-sm transition-all duration-200 ${toast.open ? 'translate-y-0 opacity-100' : '-translate-y-2 opacity-0'
+            } ${toast.intent === 'error' ? 'border-red-200 bg-red-50 text-red-800' : 'border-green-200 bg-green-50 text-green-800'}`}
         >
           {toast.intent === 'error' ? (
             <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -225,7 +224,7 @@ const AnnouncementDetailModal = ({ open, onClose, app, userData, registration, s
             </div>
             <div>
               <p className="font-semibold text-gray-900">Lokasi / Link</p>
-              <LocationOrLink value={data.interviewLocation} className="break-all text-gray-700" />
+              <LocationOrLink value={data.interviewLocation} className="break-all text-gray-700" linkClassName="text-blue-600 underline" />
             </div>
           </div>
 
@@ -464,7 +463,7 @@ const ScholarshipSelectionAnnouncement = () => {
                   <Field label="Jadwal Wawancara">{fmtDate(app.interviewDate)}</Field>
                   <Field label="Waktu Wawancara">{app.interviewTime || '-'}</Field>
                   <Field label="Room Wawancara">
-                    <LocationOrLink value={app.interviewLocation} className="break-all text-blue-600 underline" />
+                    <LocationOrLink value={app.interviewLocation} className="break-all" linkClassName="text-blue-600 underline" />
                   </Field>
                 </div>
                 {app.interviewNotes && (
