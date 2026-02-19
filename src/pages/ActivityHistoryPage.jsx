@@ -134,7 +134,18 @@ const ActivitiesPage = () => {
       <div className="space-y-6">
         {activeTab === 'beasiswa' && (
           <>
-            {loading ? <div className="text-gray-500">Memuat...</div> : null}
+            {loading ? (
+              Array.from({ length: 2 }).map((_, i) => (
+                <div key={i} className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 p-4 sm:p-6 border border-gray-200 rounded-lg animate-pulse">
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gray-200 rounded-lg shrink-0" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 w-48 bg-gray-200 rounded" />
+                    <div className="h-3 w-32 bg-gray-100 rounded" />
+                  </div>
+                  <div className="h-6 w-20 bg-gray-200 rounded-full" />
+                </div>
+              ))
+            ) : null}
             {!loading && !error && scholarshipData.length === 0 ? <EmptyState icon="files" title="Belum ada riwayat beasiswa" description="Riwayat beasiswa Anda akan muncul di sini" variant="primary" /> : null}
             {scholarshipData.map((item) => (
               <Link
@@ -160,7 +171,18 @@ const ActivitiesPage = () => {
 
         {activeTab === 'event' && (
           <>
-            {loading ? <div className="text-gray-500">Memuat...</div> : null}
+            {loading ? (
+              Array.from({ length: 2 }).map((_, i) => (
+                <div key={i} className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 p-4 sm:p-6 border border-gray-200 rounded-lg animate-pulse">
+                  <div className="w-full sm:w-20 h-20 sm:h-16 bg-gray-200 rounded-lg shrink-0" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 w-48 bg-gray-200 rounded" />
+                    <div className="h-3 w-40 bg-gray-100 rounded" />
+                  </div>
+                  <div className="h-6 w-20 bg-gray-200 rounded-full" />
+                </div>
+              ))
+            ) : null}
             {!loading && !error && eventData.length === 0 ? <EmptyState icon="calendar" title="Belum ada riwayat event" description="Riwayat event Anda akan muncul di sini" variant="primary" /> : null}
             {eventData.map((item) => (
               <div key={item.id} className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 p-4 sm:p-6 border border-gray-200 rounded-lg">

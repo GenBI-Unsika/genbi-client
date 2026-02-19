@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Calendar, User, ChevronLeft, Loader2, ChevronRight } from 'lucide-react';
+import { Calendar, User, ChevronLeft, ChevronRight } from 'lucide-react';
+import DOMPurify from 'dompurify';
+import { DetailSkeleton } from '../components/shared/PageSkeleton';
 import ScrollReveal from '../components/ScrollReveal';
 import { apiFetch, normalizeFileUrl } from '../services/api.js';
 import EmptyState from '../components/EmptyState';
@@ -36,11 +38,7 @@ const ArticleDetailPage = () => {
   }, [slug]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-primary-600" />
-      </div>
-    );
+    return <DetailSkeleton />;
   }
 
   if (error || !article) {
@@ -83,7 +81,6 @@ const ArticleDetailPage = () => {
           <h1 className="text-h1 font-bold text-gray-900 mb-4">{article.title}</h1>
           {article.excerpt && <p className="text-body-lg text-gray-600 mb-4">{article.excerpt}</p>}
           <div className="date-text">Dipublikasikan pada {publishedDate}</div>
-          {/* {article.author?.profile?.name && <div className="date-text mt-1">Oleh: {article.author.profile.name}</div>} */}
 
           {/* Share Buttons */}
           <ShareButtons title={article.title} className="mt-4" />
@@ -98,7 +95,7 @@ const ArticleDetailPage = () => {
 
         {/* Article Content */}
         <article className="mb-12 max-w-none animate-in fade-in slide-in-from-bottom-2 duration-700 delay-300">
-          <div className="article-content" dangerouslySetInnerHTML={{ __html: article.content || '' }} />
+          <div className="article-content" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(article.content || '') }} />
         </article>
 
         {/* Newsletter Subscription */}

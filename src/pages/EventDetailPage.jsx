@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Calendar, Clock, MapPin, Users, ChevronLeft, Loader2 } from 'lucide-react';
+import { Clock, MapPin, Users, ChevronLeft } from 'lucide-react';
+import { CalendarIcon } from '../components/icons/CustomIcons.jsx';
+import toast from 'react-hot-toast';
+import { DetailSkeleton } from '../components/shared/PageSkeleton';
 import MediaPlaceholder from '../components/shared/MediaPlaceholder';
 import ScrollReveal from '../components/ScrollReveal';
 import { apiFetch } from '../services/api.js';
@@ -35,11 +38,7 @@ const EventDetailPage = ({ onNavigate, eventId }) => {
   }, [eventId]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-primary-600" />
-      </div>
-    );
+    return <DetailSkeleton />;
   }
 
   if (error || !event) {
@@ -96,7 +95,7 @@ const EventDetailPage = ({ onNavigate, eventId }) => {
             </div>
 
             <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
-              <Calendar className="w-5 h-5 text-primary-600" />
+              <CalendarIcon className="w-5 h-5 text-primary-600" />
               <div>
                 <p className="text-sm text-gray-500">Tanggal</p>
                 <p className="font-medium text-gray-900">{dateStr}</p>
@@ -148,7 +147,10 @@ const EventDetailPage = ({ onNavigate, eventId }) => {
           {/* CTA Button */}
           {event.status !== 'COMPLETED' && (
             <div className="text-center">
-              <button onClick={() => onNavigate('event-registration')} className="bg-primary-500 hover:bg-primary-600 text-white px-8 py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105 hover:shadow-lg">
+              <button
+                onClick={() => toast.success('Fitur pendaftaran event akan segera hadir!')}
+                className="bg-primary-500 hover:bg-primary-600 text-white px-8 py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105 hover:shadow-lg"
+              >
                 Daftar Event
               </button>
             </div>

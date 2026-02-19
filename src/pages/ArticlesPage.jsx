@@ -1,10 +1,12 @@
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { ChevronLeft } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import ArticleCard from '../components/cards/ArticleCard';
+import Pagination from '../components/shared/Pagination';
 import { apiFetch } from '../services/api.js';
 import EmptyState from '../components/EmptyState';
+import { FireIcon } from '../components/icons/CustomIcons.jsx';
 
 const LIMIT = 21;
 
@@ -12,26 +14,6 @@ function clampPage(value) {
   const num = Number(value);
   if (!Number.isFinite(num) || num < 1) return 1;
   return Math.floor(num);
-}
-
-function buildPageItems(currentPage, totalPages) {
-  const safeTotal = Math.max(1, Number(totalPages) || 1);
-  const safeCurrent = Math.min(Math.max(1, Number(currentPage) || 1), safeTotal);
-
-  // Windowed pagination: show [1] … [p-2 p-1 p p+1 p+2] … [total]
-  const windowSize = 2;
-  const start = Math.max(2, safeCurrent - windowSize);
-  const end = Math.min(safeTotal - 1, safeCurrent + windowSize);
-
-  const items = [1];
-
-  if (start > 2) items.push('ellipsis-left');
-  for (let p = start; p <= end; p += 1) items.push(p);
-  if (end < safeTotal - 1) items.push('ellipsis-right');
-
-  if (safeTotal > 1) items.push(safeTotal);
-
-  return { safeCurrent, safeTotal, items };
 }
 
 const ArticlesPage = () => {
@@ -108,16 +90,12 @@ const ArticlesPage = () => {
     };
   }, [page, sortBy, sortOrder]);
 
+  const totalPages = Math.max(1, Number(meta.totalPages) || 1);
+
   // Clamp page if server reports fewer pages (prevents dead-end pages).
   useEffect(() => {
-    const totalPages = Math.max(1, Number(meta.totalPages) || 1);
     if (page > totalPages) goToPage(totalPages);
-  }, [meta.totalPages]);
-
-  const canPrev = page > 1;
-  const canNext = page < (meta.totalPages || 1);
-
-  const pagination = useMemo(() => buildPageItems(page, meta.totalPages), [page, meta.totalPages]);
+  }, [page, totalPages]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -157,7 +135,24 @@ const ArticlesPage = () => {
 
         {/* Articles Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-          {loading ? <div className="text-gray-500">Memuat...</div> : null}
+          {loading
+            ? Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="rounded-2xl overflow-hidden border border-gray-100 bg-white shadow-sm animate-pulse">
+                <div className="h-44 w-full bg-gray-200" />
+                <div className="p-4 space-y-2.5">
+                  <div className="h-5 w-16 bg-gray-200 rounded-full" />
+                  <div className="h-5 w-4/5 bg-gray-200 rounded" />
+                  <div className="h-3.5 w-full bg-gray-100 rounded" />
+                  <div className="h-3.5 w-5/6 bg-gray-100 rounded" />
+                  <div className="flex items-center gap-2 pt-1">
+                    <div className="h-6 w-6 rounded-full bg-gray-200" />
+                    <div className="h-3 w-24 bg-gray-200 rounded" />
+                    <div className="h-3 w-16 bg-gray-100 rounded ml-auto" />
+                  </div>
+                </div>
+              </div>
+            ))
+            : null}
           {!loading && !error && articles.length === 0 ? (
             <div className="col-span-full">
               <EmptyState icon="files" title="Belum ada artikel" description="Artikel akan muncul di sini setelah dipublikasikan" variant="primary" />
@@ -175,7 +170,12 @@ const ArticlesPage = () => {
               badge = 'Terbaru';
               badgeColor = '#10B981';
             } else if (isPopular) {
-              badge = 'Populer';
+              badge = (
+                <span className="flex items-center gap-1">
+                  <FireIcon className="w-3 h-3 text-red-500" />
+                  Populer
+                </span>
+              );
               badgeColor = '#F59E0B';
             }
 
@@ -184,72 +184,8 @@ const ArticlesPage = () => {
         </div>
 
         {/* Pagination */}
-        <div className="flex justify-center items-center gap-2 flex-wrap">
-          <button
-            type="button"
-            onClick={() => (canPrev ? goToPage(1) : null)}
-            disabled={!canPrev || loading}
-            className="p-2.5 rounded-full border border-gray-300 text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed min-w-[44px] min-h-[44px] flex items-center justify-center"
-            aria-label="Halaman pertama"
-            title="Halaman pertama"
-          >
-            <ChevronsLeft className="w-5 h-5" />
-          </button>
-
-          <button
-            type="button"
-            onClick={() => (canPrev ? goToPage(page - 1) : null)}
-            disabled={!canPrev || loading}
-            className="p-2.5 rounded-full border border-gray-300 text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed min-w-[44px] min-h-[44px] flex items-center justify-center"
-            aria-label="Sebelumnya"
-          >
-            <ChevronLeft className="w-5 h-5" />
-          </button>
-
-          {pagination.items.map((it) => {
-            if (typeof it !== 'number') {
-              return (
-                <span key={it} className="px-1 text-gray-500 select-none">
-                  …
-                </span>
-              );
-            }
-
-            const active = it === pagination.safeCurrent;
-            return (
-              <button
-                key={it}
-                type="button"
-                onClick={() => goToPage(it)}
-                disabled={loading}
-                aria-current={active ? 'page' : undefined}
-                className={active ? 'min-w-[44px] min-h-[44px] px-3 rounded-full bg-gray-900 text-white font-medium' : 'min-w-[44px] min-h-[44px] px-3 rounded-full border border-gray-300 text-gray-700 hover:bg-gray-50'}
-              >
-                {it}
-              </button>
-            );
-          })}
-
-          <button
-            type="button"
-            onClick={() => (canNext ? goToPage(page + 1) : null)}
-            disabled={!canNext || loading}
-            className="p-2.5 rounded-full border border-gray-300 text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed min-w-[44px] min-h-[44px] flex items-center justify-center"
-            aria-label="Berikutnya"
-          >
-            <ChevronRight className="w-5 h-5" />
-          </button>
-
-          <button
-            type="button"
-            onClick={() => (canNext ? goToPage(pagination.safeTotal) : null)}
-            disabled={!canNext || loading}
-            className="p-2.5 rounded-full border border-gray-300 text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed min-w-[44px] min-h-[44px] flex items-center justify-center"
-            aria-label="Halaman terakhir"
-            title="Halaman terakhir"
-          >
-            <ChevronsRight className="w-5 h-5" />
-          </button>
+        <div className="mt-8">
+          <Pagination currentPage={page} totalPages={totalPages} onPageChange={goToPage} disabled={loading} />
         </div>
       </div>
     </div>

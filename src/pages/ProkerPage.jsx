@@ -1,16 +1,47 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import ProkerCard from '../components/cards/ProkerCard';
 import { apiFetch } from '../services/api.js';
 import EmptyState from '../components/EmptyState';
+import Pagination from '../components/shared/Pagination';
+
+const LIMIT = 9;
 
 const ProkerPage = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialPage = Number(searchParams.get('page')) || 1;
+  const initialSortBy = searchParams.get('sortBy') || 'startDate';
+  const initialSortOrder = searchParams.get('sortOrder') || 'desc';
+
   const [programs, setPrograms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [sortBy, setSortBy] = useState('startDate');
-  const [sortOrder, setSortOrder] = useState('desc');
+  const [page, setPage] = useState(initialPage);
+  const [totalPages, setTotalPages] = useState(1);
+  const [sortBy, setSortBy] = useState(initialSortBy);
+  const [sortOrder, setSortOrder] = useState(initialSortOrder);
+
+  useEffect(() => {
+    // Sync state with URL if URL changes externally (e.g. back button)
+    const p = Number(searchParams.get('page')) || 1;
+    if (p !== page) setPage(p);
+  }, [searchParams]);
+
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+    setSearchParams({ page: String(newPage), sortBy, sortOrder });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleSortChange = (e) => {
+    const [newSort, newOrder] = e.target.value.split('-');
+    setSortBy(newSort);
+    setSortOrder(newOrder);
+    setPage(1);
+    setSearchParams({ page: '1', sortBy: newSort, sortOrder: newOrder });
+  };
 
   useEffect(() => {
     let alive = true;
@@ -19,11 +50,19 @@ const ProkerPage = () => {
         setError('');
         setLoading(true);
         const params = new URLSearchParams();
+        params.set('page', String(page));
+        params.set('limit', String(LIMIT));
         params.set('sortBy', sortBy);
         params.set('sortOrder', sortOrder);
+
         const json = await apiFetch(`/public/programs?${params.toString()}`, { method: 'GET', skipAuth: true });
         const items = json?.data?.items || json?.data || [];
-        if (alive) setPrograms(Array.isArray(items) ? items : []);
+        const meta = json?.data?.meta || json?.meta;
+
+        if (alive) {
+          setPrograms(Array.isArray(items) ? items : []);
+          setTotalPages(meta?.totalPages ? Number(meta.totalPages) : 1);
+        }
       } catch (e) {
         if (!alive) return;
         if (e?.status === 404) {
@@ -40,7 +79,7 @@ const ProkerPage = () => {
     return () => {
       alive = false;
     };
-  }, [sortBy, sortOrder]);
+  }, [page, sortBy, sortOrder]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -54,11 +93,7 @@ const ProkerPage = () => {
           <div className="flex gap-3">
             <select
               value={`${sortBy}-${sortOrder}`}
-              onChange={(e) => {
-                const [newSort, newOrder] = e.target.value.split('-');
-                setSortBy(newSort);
-                setSortOrder(newOrder);
-              }}
+              onChange={handleSortChange}
               className="px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-700 text-sm focus:ring-2 focus:ring-primary-500 outline-none"
             >
               <option value="startDate-desc">Terbaru</option>
@@ -69,7 +104,23 @@ const ProkerPage = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-          {loading ? <div className="text-gray-500">Memuat...</div> : null}
+          {loading ? (
+            Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="rounded-2xl overflow-hidden border border-gray-100 bg-white shadow-sm animate-pulse">
+                <div className="h-44 w-full bg-gray-200" />
+                <div className="p-4 space-y-2.5">
+                  <div className="h-5 w-20 bg-gray-200 rounded-full" />
+                  <div className="h-5 w-4/5 bg-gray-200 rounded" />
+                  <div className="h-3.5 w-full bg-gray-100 rounded" />
+                  <div className="h-3.5 w-3/4 bg-gray-100 rounded" />
+                  <div className="flex items-center gap-2 pt-1">
+                    <div className="h-6 w-6 rounded-full bg-gray-200" />
+                    <div className="h-3 w-24 bg-gray-200 rounded" />
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : null}
           {!loading && !error && programs.length === 0 ? (
             <div className="col-span-full">
               <EmptyState icon="clipboard" title="Belum ada proker" description="Program kerja akan muncul di sini setelah dipublikasikan" variant="default" />
@@ -80,13 +131,13 @@ const ProkerPage = () => {
           ))}
         </div>
 
-        <div className="flex justify-center items-center gap-2">
-          <button className="p-2.5 rounded-full border border-gray-300 text-gray-600 hover:bg-gray-50 min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="Sebelumnya">
-            <ChevronLeft className="w-5 h-5" />
-          </button>
-          <button className="p-2.5 rounded-full border border-gray-300 text-gray-600 hover:bg-gray-50 min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="Berikutnya">
-            <ChevronRight className="w-5 h-5" />
-          </button>
+        <div className="mt-8">
+          <Pagination
+            currentPage={page}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+            disabled={loading}
+          />
         </div>
       </div>
     </div>

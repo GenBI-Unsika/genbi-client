@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import EmptyState from '../components/EmptyState';
+import { HistorySkeleton } from '../components/shared/PageSkeleton';
 import { apiFetch, normalizeFileUrl } from '../services/api.js';
 
 const defaultHistoryContent = {
@@ -31,6 +32,8 @@ const HistoryPage = () => {
     };
   }, []);
 
+  if (loading) return <HistorySkeleton />;
+
   const imageSrc = normalizeFileUrl(content.image);
   const paragraphs = String(content.body || '')
     .split(/\n\s*\n/g)
@@ -49,18 +52,12 @@ const HistoryPage = () => {
         {/* Image Placeholder */}
         {imageSrc ? (
           <div className="mb-8">
-            <img src={imageSrc} alt={content.title || 'Sejarah GenBI'} className="w-full h-80 object-cover rounded-lg" loading="lazy" decoding="async" />
+            <img src={imageSrc} alt={content.title || 'Sejarah GenBI'} className="w-full aspect-video object-cover rounded-lg" loading="lazy" decoding="async" />
           </div>
         ) : null}
 
         {/* Content */}
-        {loading ? (
-          <div className="animate-pulse space-y-3">
-            <div className="h-4 bg-gray-200 rounded w-full"></div>
-            <div className="h-4 bg-gray-200 rounded w-11/12"></div>
-            <div className="h-4 bg-gray-200 rounded w-10/12"></div>
-          </div>
-        ) : !content.body ? (
+        {!content.body ? (
           <div className="py-8">
             <EmptyState icon="box" title="Konten belum tersedia" description="Silakan coba lagi nanti." variant="default" />
           </div>

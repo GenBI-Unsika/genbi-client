@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import MemberCard from '../components/cards/MemberCard';
 import EmptyState from '../components/EmptyState';
-import LoadingSpinner from '../components/shared/LoadingSpinner';
 import { apiFetch } from '../services/api.js';
 
 const TeamsPage = () => {
@@ -72,7 +71,24 @@ const TeamsPage = () => {
           <p className="section-subtitle">Yuk, kenal lebih dekat dengan kami</p>
         </div>
 
-        {loading ? <LoadingSpinner text="Memuat anggota..." /> : null}
+        {loading ? (
+          <>
+            {Array.from({ length: 2 }).map((_, divIdx) => (
+              <section key={divIdx} className="mb-16 animate-pulse">
+                <div className="h-7 w-40 bg-gray-200 rounded mb-8" />
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <div key={i} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex flex-col items-center gap-3">
+                      <div className="h-20 w-20 rounded-full bg-gray-200" />
+                      <div className="h-4 w-28 bg-gray-200 rounded" />
+                      <div className="h-3 w-20 bg-gray-100 rounded" />
+                    </div>
+                  ))}
+                </div>
+              </section>
+            ))}
+          </>
+        ) : null}
         {!loading && error ? <EmptyState icon="error" title="Gagal memuat anggota" description={error} variant="warning" /> : null}
 
         {/* Divisions (hasil grup otomatis) */}
@@ -86,7 +102,7 @@ const TeamsPage = () => {
               <section key={title} className="mb-16">
                 <h2 className="section-title mb-8">{title}</h2>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                   {list.map((m, i) => (
                     <MemberCard key={`${title}-${i}`} member={m} />
                   ))}
