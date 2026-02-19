@@ -65,23 +65,39 @@ export default function TestimonialsSection() {
   const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
 
   return (
-    <ScrollReveal as="section" className="py-16 lg:py-24 bg-white">
+    <ScrollReveal as="section" className="py-14 sm:py-16 lg:py-20 bg-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mb-12 lg:mb-16">
-          <h2 className="section-title text-[#003D7A]">Pengalaman Alumni</h2>
+        <div className="mb-10 lg:mb-12">
+          <p className="text-xs font-semibold uppercase tracking-widest text-primary-500 mb-2">Cerita Mereka</p>
+          <h2 className="text-2xl sm:text-3xl font-bold text-neutral-900">Pengalaman Alumni</h2>
+          <div className="w-12 h-1 rounded-full bg-primary-300 mt-3" />
         </div>
 
-        <div className="flex flex-col lg:flex-row lg:items-center gap-12 lg:gap-16">
+        <div className="flex flex-col lg:flex-row lg:items-center gap-8 lg:gap-16">
           <div className="lg:w-[40%] flex-shrink-0">
-            <div className="space-y-4">
-              <h3 className="text-h3 text-gray-900 font-bold">Bagaimana Pendapat Alumni GenBI Unsika</h3>
-              <p className="text-body text-gray-700 leading-relaxed">Yukk, cari tahu bagaimana pengalaman alumni selama menjadi anggota GenBI Unsika</p>
+            <div className="space-y-3 text-center lg:text-left">
+              <h3 className="text-xl sm:text-2xl font-bold text-gray-900">Bagaimana Pendapat Alumni GenBI Unsika</h3>
+              <p className="text-sm sm:text-base text-gray-600 leading-relaxed">Yuk, cari tahu bagaimana pengalaman alumni selama menjadi anggota GenBI Unsika</p>
             </div>
           </div>
 
-          <div className="lg:w-[60%] relative">
+          <div className="lg:w-[60%] relative px-8 sm:px-10">
             {loading ? (
-              <div className="text-gray-500 py-24 text-center">Memuat testimoni...</div>
+              <div className="flex gap-4 overflow-hidden">
+                {Array.from({ length: 2 }).map((_, i) => (
+                  <div key={i} className="flex-[0_0_100%] sm:flex-[0_0_50%] rounded-2xl bg-blue-50 animate-pulse p-8">
+                    <div className="flex flex-col items-center gap-4">
+                      <div className="w-20 h-20 rounded-full bg-gray-200" />
+                      <div className="h-4 bg-gray-200 rounded w-32" />
+                      <div className="h-3 bg-gray-100 rounded w-24" />
+                      <div className="space-y-2 w-full">
+                        <div className="h-3 bg-gray-200 rounded w-full" />
+                        <div className="h-3 bg-gray-200 rounded w-5/6 mx-auto" />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             ) : testimonials.length === 0 ? (
               <div className="py-16">
                 {(() => {
@@ -143,10 +159,10 @@ export default function TestimonialsSection() {
                 </button>
 
                 {/* Carousel */}
-                <div ref={emblaRef} className="overflow-hidden">
-                  <div className="flex">
+                <div ref={emblaRef} className="overflow-hidden px-2 md:px-3">
+                  <div className="flex gap-4">
                     {testimonials.map((item, idx) => (
-                      <div className="flex-[0_0_100%] min-w-0 pl-3" key={idx}>
+                      <div className="flex-[0_0_100%] min-w-0" key={idx}>
                         <div className="relative bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-2xl px-5 py-8 shadow-lg max-w-sm mx-auto">
                           {/* Quote Icon Top Left */}
                           <div className="absolute top-4 left-4">

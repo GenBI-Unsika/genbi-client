@@ -14,6 +14,53 @@ const defaultFooterContent = {
   ],
 };
 
+const navAbout = [
+  { label: 'Tentang Kami', href: '/#about' },
+  { label: 'Sejarah', href: '/history' },
+  { label: 'Tim Kami', href: '/teams' },
+  { label: 'Visi & Misi', href: '/#vision-mission' },
+];
+
+const navProgram = [
+  { label: 'Beasiswa', href: '/scholarship' },
+  { label: 'Event', href: '/events' },
+  { label: 'Program Kerja', href: '/proker' },
+  { label: 'Artikel', href: '/articles' },
+];
+
+/* ── helpers ── */
+const NavList = ({ title, items, isMobile = false }) => (
+  <nav className="space-y-3">
+    <h6 className={`font-semibold text-gray-900 ${isMobile ? 'text-sm' : 'text-base'}`}>{title}</h6>
+    <ul className="space-y-2">
+      {items.map(({ label, href }) => (
+        <li key={href}>
+          <a
+            href={href}
+            className={`block text-sm text-gray-600 transition-colors ${isMobile ? 'active:text-primary-700' : 'hover:text-primary-600'}`}
+          >
+            {label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+);
+
+const SocialIcon = ({ link }) => (
+  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary-600 text-white group-hover:bg-primary-700 transition-colors flex-shrink-0">
+    <Icon icon={link.icon || 'tabler:link'} className="w-4 h-4" />
+  </div>
+);
+
+const Brand = ({ size = 'md' }) => (
+  <div className={`flex items-center gap-2 font-semibold text-primary-600 ${size === 'sm' ? 'text-base' : 'text-xl'}`}>
+    <img src="/genbi-unsika.webp" alt="Logo GenBI Unsika" className={`${size === 'sm' ? 'h-7' : 'h-8'} w-auto flex-shrink-0`} loading="lazy" decoding="async" />
+    <span>GenBI Unsika</span>
+  </div>
+);
+
+/* ── main component ── */
 const Footer = ({ ctaOverlap = false }) => {
   const year = new Date().getFullYear();
   const [content, setContent] = useState(defaultFooterContent);
@@ -24,192 +71,84 @@ const Footer = ({ ctaOverlap = false }) => {
       try {
         const json = await apiFetch('/site-settings/cms_footer', { method: 'GET', skipAuth: true });
         const value = json?.data?.value;
-        if (alive && value) {
-          setContent({ ...defaultFooterContent, ...value });
-        }
+        if (alive && value) setContent({ ...defaultFooterContent, ...value });
       } catch {
-        // Use defaults on error
+        // use defaults
       }
     })();
-    return () => {
-      alive = false;
-    };
+    return () => { alive = false; };
   }, []);
+
+  const ptClass = ctaOverlap ? 'pt-32 sm:pt-40 md:pt-48' : 'pt-8 sm:pt-12 md:pt-16';
 
   return (
     <footer className="w-full bg-blue-50">
-      <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ${ctaOverlap ? 'pt-32 sm:pt-40 md:pt-48' : 'pt-8 sm:pt-12 md:pt-16'} pb-6 sm:pb-8`}>
-        {/* MOBILE LAYOUT (< 768px) */}
-        <div className="md:hidden">
-          {/* Brand */}
-          <div className="mb-6">
-            <div className="flex items-center gap-2 text-body-lg font-semibold text-primary-600 mb-3">
-              <img src="/genbi-unsika.webp" alt="Logo GenBI Unsika" className="h-7 w-auto flex-shrink-0" loading="lazy" decoding="async" />
-              <span>GenBI Unsika</span>
-            </div>
-            <p className="text-body-sm text-gray-700 leading-relaxed mb-2">{content.description}</p>
-            <p className="text-caption text-gray-600 leading-relaxed">{content.address}</p>
+      <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ${ptClass} pb-6 sm:pb-8`}>
+
+        {/* ── Mobile (< md) ── */}
+        <div className="md:hidden space-y-6 pb-6">
+          <div className="space-y-2">
+            <Brand size="sm" />
+            <p className="text-sm text-gray-700 leading-relaxed">{content.description}</p>
+            <p className="text-xs text-gray-600 leading-relaxed">{content.address}</p>
           </div>
 
-          {/* Mobile nav: side-by-side (no dropdown) */}
-          <div className="grid grid-cols-2 gap-6 mb-6">
-            <nav className="space-y-2">
-              <h6 className="text-label font-semibold text-gray-900">Tentang</h6>
-              <ul className="space-y-2">
-                <li>
-                  <a href="/#about" className="block text-sm text-gray-600 active:text-primary-700">
-                    Tentang Kami
-                  </a>
-                </li>
-                <li>
-                  <a href="/history" className="block text-sm text-gray-600 active:text-primary-700">
-                    Sejarah
-                  </a>
-                </li>
-                <li>
-                  <a href="/teams" className="block text-sm text-gray-600 active:text-primary-700">
-                    Tim Kami
-                  </a>
-                </li>
-                <li>
-                  <a href="/#vision-mission" className="block text-sm text-gray-600 active:text-primary-700">
-                    Visi & Misi
-                  </a>
-                </li>
-              </ul>
-            </nav>
-
-            <nav className="space-y-2">
-              <h6 className="font-semibold text-gray-900 text-sm">Program</h6>
-              <ul className="space-y-2">
-                <li>
-                  <a href="/scholarship" className="block text-sm text-gray-600 active:text-primary-700">
-                    Beasiswa
-                  </a>
-                </li>
-                <li>
-                  <a href="/events" className="block text-sm text-gray-600 active:text-primary-700">
-                    Event
-                  </a>
-                </li>
-                <li>
-                  <a href="/proker" className="block text-sm text-gray-600 active:text-primary-700">
-                    Program Kerja
-                  </a>
-                </li>
-                <li>
-                  <a href="/articles" className="block text-sm text-gray-600 active:text-primary-700">
-                    Artikel
-                  </a>
-                </li>
-              </ul>
-            </nav>
+          <div className="grid grid-cols-2 gap-6">
+            <NavList title="Tentang" items={navAbout} isMobile />
+            <NavList title="Program" items={navProgram} isMobile />
           </div>
 
-          {/* Social: professional icon buttons (mobile) */}
-          <div className="mb-6">
-            <h6 className="font-semibold text-gray-900 text-sm mb-3">Kontak</h6>
-            <div className="flex flex-wrap gap-4">
-              {content.socialLinks.map((link, index) => (
+          <div className="space-y-3">
+            <h6 className="text-sm font-semibold text-gray-900">Kontak</h6>
+            <div className="flex flex-wrap gap-3">
+              {content.socialLinks.map((link, i) => (
                 <a
-                  key={index}
+                  key={i}
                   href={link.url}
                   target={link.type !== 'email' ? '_blank' : undefined}
                   rel={link.type !== 'email' ? 'noopener noreferrer' : undefined}
-                  className="inline-flex items-center gap-2 text-gray-700 hover:text-primary-600 transition-colors hover-animate group"
                   aria-label={link.label}
+                  className="inline-flex items-center gap-2 text-gray-700 hover:text-primary-600 transition-colors group"
                 >
-                  <span className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-primary-600 text-white hover:bg-primary-700 transition-colors">
-                    <Icon icon={link.icon || 'tabler:link'} className="w-4 h-4" />
+                  <SocialIcon link={link} />
+                  <span className="text-xs font-medium group-hover:underline">
+                    {link.type === 'email' ? 'Email' : link.type.charAt(0).toUpperCase() + link.type.slice(1)}
                   </span>
-                  <span className="text-xs font-medium group-hover:underline">{link.type === 'email' ? 'Email' : link.type.charAt(0).toUpperCase() + link.type.slice(1)}</span>
                 </a>
               ))}
             </div>
           </div>
         </div>
 
-        {/* DESKTOP LAYOUT (>= 768px) */}
-        <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-12 pb-8">
-          {/* Brand Section */}
-          <div className="md:col-span-2 lg:col-span-5 space-y-4">
-            <div className="flex items-center gap-2 text-xl font-semibold text-primary-600">
-              <img src="/genbi-unsika.webp" alt="Logo GenBI Unsika" className="h-8 w-auto flex-shrink-0" loading="lazy" decoding="async" />
-              <span>GenBI Unsika</span>
-            </div>
+        {/* ── Desktop (>= md) ── */}
+        <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-12 pb-10">
+          <div className="md:col-span-2 lg:col-span-5 space-y-3">
+            <Brand />
             <p className="text-sm text-gray-700 leading-relaxed">{content.description}</p>
             <p className="text-xs text-gray-600 leading-relaxed">{content.address}</p>
           </div>
 
-          {/* Navigation - Desktop */}
-          <nav className="lg:col-span-2 space-y-3">
-            <h6 className="font-semibold text-gray-900 text-base mb-4">Tentang</h6>
-            <ul className="space-y-2">
-              <li>
-                <a href="/#about" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
-                  Tentang Kami
-                </a>
-              </li>
-              <li>
-                <a href="/history" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
-                  Sejarah
-                </a>
-              </li>
-              <li>
-                <a href="/teams" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
-                  Tim Kami
-                </a>
-              </li>
-              <li>
-                <a href="/#vision-mission" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
-                  Visi & Misi
-                </a>
-              </li>
-            </ul>
-          </nav>
+          <div className="lg:col-span-2">
+            <NavList title="Tentang" items={navAbout} />
+          </div>
 
-          <nav className="lg:col-span-2 space-y-3">
-            <h6 className="font-semibold text-gray-900 text-base mb-4">Program</h6>
-            <ul className="space-y-2">
-              <li>
-                <a href="/scholarship" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
-                  Beasiswa
-                </a>
-              </li>
-              <li>
-                <a href="/events" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
-                  Event
-                </a>
-              </li>
-              <li>
-                <a href="/proker" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
-                  Program Kerja
-                </a>
-              </li>
-              <li>
-                <a href="/articles" className="block text-sm text-gray-600 hover:text-primary-600 transition-colors">
-                  Artikel
-                </a>
-              </li>
-            </ul>
-          </nav>
+          <div className="lg:col-span-2">
+            <NavList title="Program" items={navProgram} />
+          </div>
 
-          {/* Contact - Desktop */}
           <nav className="md:col-span-2 lg:col-span-3 space-y-3">
-            <h6 className="font-semibold text-gray-900 text-base mb-4">Hubungi Kami</h6>
+            <h6 className="font-semibold text-gray-900 text-base">Hubungi Kami</h6>
             <ul className="space-y-3">
-              {content.socialLinks.map((link, index) => (
-                <li key={index}>
+              {content.socialLinks.map((link, i) => (
+                <li key={i}>
                   <a
                     href={link.url}
                     target={link.type !== 'email' ? '_blank' : undefined}
                     rel={link.type !== 'email' ? 'noopener noreferrer' : undefined}
                     className="flex items-center gap-3 text-sm text-gray-600 hover:text-primary-600 transition-colors group"
                   >
-                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary-600 text-white group-hover:bg-primary-700 transition-colors flex-shrink-0">
-                      <Icon icon={link.icon || 'tabler:link'} className="w-4 h-4" />
-                    </div>
-                    <span className="truncate text-sm">{link.label}</span>
+                    <SocialIcon link={link} />
+                    <span className="truncate">{link.label}</span>
                   </a>
                 </li>
               ))}
@@ -217,10 +156,11 @@ const Footer = ({ ctaOverlap = false }) => {
           </nav>
         </div>
 
-        {/* Bottom Bar */}
+        {/* ── Bottom bar ── */}
         <div className="border-t border-gray-200 pt-4">
-          <p className="text-center text-caption text-gray-600">© {year} GenBI Unsika. All Rights Reserved.</p>
+          <p className="text-center text-xs text-gray-600">© {year} GenBI Unsika. All Rights Reserved.</p>
         </div>
+
       </div>
     </footer>
   );

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Play, X } from 'lucide-react';
+import { X } from 'lucide-react';
+import { PlayIcon } from './icons/CustomIcons.jsx';
 import EmptyState from './EmptyState';
 import ScrollReveal from './ScrollReveal';
 import { apiFetch, normalizeFileUrl } from '../services/api.js';
@@ -71,7 +72,7 @@ const AboutSection = ({ imageSrc: propImageSrc, videoUrl: propVideoUrl }) => {
   }, [open, closePlayer]);
 
   return (
-    <ScrollReveal as="section" aria-labelledby="about-heading" className="py-16 bg-white">
+    <ScrollReveal as="section" aria-labelledby="about-heading" className="py-14 sm:py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {loading ? (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center animate-pulse">
@@ -92,11 +93,15 @@ const AboutSection = ({ imageSrc: propImageSrc, videoUrl: propVideoUrl }) => {
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Left content */}
-            <div className="space-y-6">
-              <h2 id="about-heading" className="font-semibold text-primary-500">
-                {content.title}
-              </h2>
-              <p className="text-gray-600 leading-relaxed">{content.description}</p>
+            <div className="space-y-5">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-widest text-primary-500 mb-2">Tentang Kami</p>
+                <h2 id="about-heading" className="text-2xl sm:text-3xl font-bold text-neutral-900">
+                  {content.title}
+                </h2>
+              </div>
+              <div className="w-12 h-1 rounded-full bg-primary-300" />
+              <p className="text-gray-600 leading-relaxed text-base">{content.description}</p>
             </div>
 
             {/* Right video/image */}
@@ -132,17 +137,17 @@ const AboutSection = ({ imageSrc: propImageSrc, videoUrl: propVideoUrl }) => {
                     onClick={openPlayer}
                     className={
                       hasVideo
-                        ? 'cursor-pointer bg-white/90 backdrop-blur rounded-full p-4 ring-1 ring-black/5 transition-all duration-300 hover:bg-white hover:scale-110 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 shadow-lg'
-                        : 'cursor-pointer bg-white/95 backdrop-blur rounded-full p-4 ring-1 ring-black/5 transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 shadow-lg'
+                        ? 'cursor-pointer bg-white/90 backdrop-blur-sm rounded-full p-4 transition-all duration-300 hover:bg-white hover:scale-110 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 shadow-lg'
+                        : 'cursor-pointer bg-white/95 backdrop-blur-sm rounded-full p-4 transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 shadow-lg'
                     }
                     aria-label={hasVideo ? 'Putar video profil GenBI UNSIKA' : 'Video profil belum tersedia (klik untuk info)'}
                     title={hasVideo ? 'Putar video' : 'Video belum tersedia'}
                   >
-                    <Play className="w-8 h-8 text-primary-500" aria-hidden="true" />
+                    <PlayIcon className="w-8 h-8 text-primary-500" aria-hidden="true" />
                     <span className="sr-only">Putar video</span>
                   </button>
 
-                  {!hasVideo ? <div className="rounded-full bg-white/90 backdrop-blur px-4 py-1.5 text-xs font-medium text-gray-700 ring-1 ring-black/5">Video segera hadir</div> : null}
+                  {!hasVideo ? <div className="rounded-full bg-white/90 backdrop-blur-sm px-4 py-1.5 text-xs font-medium text-gray-700 shadow-sm">Video segera hadir</div> : null}
                 </div>
               ) : null}
             </div>

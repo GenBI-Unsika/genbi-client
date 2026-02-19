@@ -45,11 +45,15 @@ const ScholarshipSection = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             {/* Left content */}
-            <div className="order-2 lg:order-1 lg:col-span-6 space-y-4 sm:space-y-6 max-w-2xl">
-              <h2 className="section-title text-primary-600">{content.title}</h2>
+            <div className="order-2 lg:order-1 lg:col-span-6 space-y-4 sm:space-y-5 max-w-2xl">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-widest text-primary-500 mb-2">Beasiswa</p>
+                <h2 className="section-title text-primary-600">{content.title}</h2>
+                <div className="w-10 h-1 rounded-full bg-primary-300 mt-3" />
+              </div>
               <p className="section-subtitle text-gray-600">{content.description}</p>
               <div className="flex flex-col sm:flex-row gap-3">
-                <button onClick={handleButtonClick} className="w-full sm:w-auto bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition-all duration-300 hover:scale-105 active:scale-95 shadow-md hover:shadow-lg">
+                <button onClick={handleButtonClick} className="w-full sm:w-auto bg-primary-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-700 transition-all duration-300 hover:scale-105 active:scale-95 shadow-md hover:shadow-lg">
                   {content.buttonText}
                 </button>
               </div>
@@ -57,13 +61,13 @@ const ScholarshipSection = () => {
 
             {/* Right image */}
             <div className="order-1 lg:order-2 lg:col-span-6">
-              <div className="relative w-full overflow-hidden rounded-xl shadow-sm bg-white">
+              <div className="relative w-full overflow-hidden rounded-2xl shadow-md bg-white group">
                 {/* Aspect ratios per breakpoint to avoid layout shift */}
                 <div className="aspect-[4/3] sm:aspect-[16/10] lg:aspect-[3/2]">
                   <img
                     src={content.image || './read-book.webp'}
                     alt="Mahasiswa penerima beasiswa Bank Indonesia"
-                    className="absolute inset-0 w-full h-full object-cover"
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.02]"
                     loading="lazy"
                     decoding="async"
                     onError={(e) => {

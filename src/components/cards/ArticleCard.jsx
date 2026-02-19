@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
-import { Calendar, Clock, ArrowRight } from 'lucide-react';
+import { Clock } from 'lucide-react';
+import { CalendarIcon, ArrowRightIcon } from '../icons/CustomIcons.jsx';
 import { Link } from 'react-router-dom';
 import MediaPlaceholder from '../shared/MediaPlaceholder';
 import { normalizeFileUrl } from '../../utils/api';
@@ -16,7 +17,7 @@ const ArticleCard = ({ title, excerpt, image, coverImage, date, readTime, badge,
 
   const Card = (
     <article
-      className={`group bg-white rounded-xl overflow-hidden border border-[#F3F5F9] shadow-sm h-full flex flex-col transform-gpu transition-all duration-300 ease-in-out cursor-pointer hover:scale-[1.02] hover:-rotate-1 hover:shadow-xl-primary-500/30 ${className}`}
+      className={`group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm h-full flex flex-col transform-gpu transition-all duration-300 ease-out cursor-pointer hover:-translate-y-1 hover:shadow-lg ${className}`}
     >
       <div className="relative">
         <div className="w-full aspect-[16/10] bg-gray-100 overflow-hidden">
@@ -57,7 +58,7 @@ const ArticleCard = ({ title, excerpt, image, coverImage, date, readTime, badge,
         <div className="mt-0.5 flex items-center gap-3 meta-text">
           {date && (
             <span className="inline-flex items-center gap-1">
-              <Calendar className="w-3.5 h-3.5" />
+              <CalendarIcon className="w-3.5 h-3.5" />
               {formatDateID(date)}
             </span>
           )}
@@ -72,7 +73,7 @@ const ArticleCard = ({ title, excerpt, image, coverImage, date, readTime, badge,
         <div className="mt-auto pt-3">
           <span className="w-full inline-flex items-center justify-center bg-[#F3F5F9] text-[#01319F] text-btn rounded-lg px-3 py-2 group">
             <span className="group-hover:underline">Baca selengkapnya</span>
-            <ArrowRight className="w-4 h-4 ml-1" />
+            <ArrowRightIcon className="w-4 h-4 ml-1" />
           </span>
         </div>
       </div>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { DropdownIcon } from './icons/CustomIcons.jsx';
 import { motion } from 'framer-motion';
 import { apiFetch } from '../services/api.js';
 import EmptyState from './EmptyState';
@@ -51,14 +52,23 @@ const FAQSection = () => {
   }, []);
 
   return (
-    <section className="bg-white py-8 sm:py-12 lg:py-16">
+    <section className="bg-white py-12 sm:py-14 lg:py-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <ScrollReveal as="div" className="mb-8 sm:mb-10 lg:mb-12">
-          <h2 className="section-title text-[#003D7A]">Pertanyaan Umum</h2>
+        <ScrollReveal as="div" className="mb-8 sm:mb-10">
+          <p className="text-xs font-semibold uppercase tracking-widest text-primary-500 mb-2">Informasi</p>
+          <h2 className="text-2xl sm:text-3xl font-bold text-neutral-900">Pertanyaan Umum</h2>
+          <div className="w-12 h-1 rounded-full bg-primary-300 mt-3" />
         </ScrollReveal>
 
         {loading ? (
-          <div className="text-center text-gray-500 py-8">Memuat FAQ...</div>
+          <div className="divide-y divide-gray-100">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="py-5 animate-pulse flex items-center justify-between gap-4">
+                <div className={`h-4 bg-gray-200 rounded ${i % 2 === 0 ? 'w-3/4' : 'w-2/3'}`} />
+                <div className="w-6 h-6 rounded-full bg-gray-200 flex-shrink-0" />
+              </div>
+            ))}
+          </div>
         ) : faqs.length === 0 ? (
           <div className="py-8">
             <EmptyState icon="files" title="Belum ada FAQ" description="Pertanyaan yang sering diajukan akan muncul di sini" variant="primary" />
@@ -80,8 +90,8 @@ const FAQSection = () => {
                     onClick={() => setOpenIndex((prev) => (prev === index ? -1 : index))}
                   >
                     <span className="text-base font-medium leading-relaxed pr-4">{faq.question}</span>
-                    <span className={`flex-shrink-0 w-6 h-6 rounded-full bg-[#0066CC] flex items-center justify-center transition-transform ${isOpen ? 'rotate-45' : ''}`}>
-                      <span className="icon-[tabler--plus] text-white size-4"></span>
+                    <span className={`flex-shrink-0 w-8 h-8 rounded-full bg-[#0066CC] flex items-center justify-center transition-transform ${isOpen ? 'rotate-180' : ''}`}>
+                      <DropdownIcon className="w-4 h-4 text-white" />
                     </span>
                   </button>
 

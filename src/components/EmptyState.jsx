@@ -1,4 +1,5 @@
-import { FileQuestion, Inbox, Search, AlertCircle, UserX, FileX, Calendar, ClipboardList, PackageOpen } from 'lucide-react';
+import { FileQuestion, Inbox, Search, AlertCircle, UserX, FileX, ClipboardList, PackageOpen } from 'lucide-react';
+import { CalendarIcon } from './icons/CustomIcons.jsx';
 
 const icons = {
   inbox: Inbox,
@@ -8,7 +9,7 @@ const icons = {
   error: AlertCircle,
   users: UserX,
   files: FileX,
-  calendar: Calendar,
+  calendar: CalendarIcon,
   clipboard: ClipboardList,
   default: FileQuestion,
 };

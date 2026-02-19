@@ -16,6 +16,18 @@ import CTASection from './components/CTASection';
 import Footer from './components/Footer';
 import PageTransition from './components/PageTransition';
 import TopLoadingBar from './components/TopLoadingBar';
+import PageSkeleton, {
+  CardGridSkeleton,
+  TeamsSkeleton,
+  HistorySkeleton,
+  ScholarshipInfoSkeleton,
+  ScholarshipSelectionSkeleton,
+  AnnouncementSkeleton,
+  AuthSkeleton,
+  ProfileSkeleton,
+  FormSkeleton,
+  DetailSkeleton,
+} from './components/shared/PageSkeleton';
 
 // Halaman detail/baru (wrapper yang sudah kamu punya)
 import EventDetailRoute from './router/EventDetailRoute';
@@ -37,7 +49,6 @@ const VerifyEmailPage = React.lazy(() => import('./pages/VerifyEmailPage'));
 
 const ProfilePage = React.lazy(() => import('./pages/ProfilePage'));
 const ActivityHistoryPage = React.lazy(() => import('./pages/ActivityHistoryPage'));
-const TransactionPage = React.lazy(() => import('./pages/TransactionsPage'));
 const SettingsPage = React.lazy(() => import('./pages/SettingsPage'));
 
 const HistoryPage = React.lazy(() => import('./pages/HistoryPage'));
@@ -89,8 +100,6 @@ const pathForKey = (key) => {
       return '/profile';
     case 'activity-history':
       return '/profile/activity-history';
-    case 'transactions':
-      return '/profile/transactions';
     case 'settings':
       return '/profile/settings';
 
@@ -119,11 +128,9 @@ const ProfileRoutesLayout = ({ onNavigate, onLogout }) => {
   // tentukan currentKey buat highlight di sidebar ProfileLayout
   const currentKey = location.pathname.startsWith('/profile/activity-history')
     ? 'activity-history'
-    : location.pathname.startsWith('/profile/transactions')
-      ? 'transactions'
-      : location.pathname.startsWith('/profile/settings')
-        ? 'settings'
-        : 'profile';
+    : location.pathname.startsWith('/profile/settings')
+      ? 'settings'
+      : 'profile';
 
   return (
     <ProfileLayout currentPage={currentKey} onNavigate={onNavigate} onLogout={onLogout}>
@@ -223,7 +230,7 @@ function App() {
 
           toast.custom(
             (t) => (
-              <div className={`${t.visible ? 'animate-enter' : 'animate-leave'} max-w-xl w-full bg-white shadow-lg rounded-xl pointer-events-auto border border-gray-200 mx-3 sm:mx-0`}>
+              <div className={`${t.visible ? 'animate-enter' : 'animate-leave'} max-w-xl w-full bg-white/90 backdrop-blur-md shadow-md rounded-xl pointer-events-auto border border-gray-100/80 mx-3 sm:mx-0`}>
                 <div className="p-3 sm:p-4">
                   <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                     <div className="flex gap-2.5 items-start flex-1">
@@ -377,217 +384,270 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white pt-[56px] md:pt-[68px]">
       <TopLoadingBar />
       {!location.pathname.startsWith('/scholarship/announcement') && (
         <Header isLoggedIn={isLoggedIn} onNavigate={onNavigate} onLogout={handleLogout} />
       )}
 
-      <React.Suspense fallback={<div className="py-16 text-center text-gray-500">Memuat...</div>}>
-        <AnimatePresence mode="wait">
-          <Routes location={location} key={location.pathname}>
-            {/* Beranda */}
-            <Route path="/" element={<HomePage isLoggedIn={isLoggedIn} />} />
+      <AnimatePresence mode="wait">
+        <Routes location={location} key={location.pathname}>
+          {/* Beranda */}
+          <Route path="/" element={<HomePage isLoggedIn={isLoggedIn} />} />
 
-            {/* Halaman publik */}
-            <Route
-              path="/history"
-              element={
+          {/* Sejarah GenBI */}
+          <Route
+            path="/history"
+            element={
+              <React.Suspense fallback={<HistorySkeleton />}>
                 <PageTransition>
                   <HistoryPage />
                   <Footer />
                 </PageTransition>
-              }
-            />
-            <Route
-              path="/teams"
-              element={
+              </React.Suspense>
+            }
+          />
+          <Route
+            path="/teams"
+            element={
+              <React.Suspense fallback={<TeamsSkeleton />}>
                 <PageTransition>
                   <TeamsPage />
                   <Footer />
                 </PageTransition>
-              }
-            />
-            <Route
-              path="/events"
-              element={
+              </React.Suspense>
+            }
+          />
+          <Route
+            path="/events"
+            element={
+              <React.Suspense fallback={<CardGridSkeleton />}>
                 <PageTransition>
                   <EventsPage />
                   <Footer />
                 </PageTransition>
-              }
-            />
-            <Route
-              path="/proker"
-              element={
+              </React.Suspense>
+            }
+          />
+          <Route
+            path="/proker"
+            element={
+              <React.Suspense fallback={<CardGridSkeleton />}>
                 <PageTransition>
                   <ProkerPage />
                   <Footer />
                 </PageTransition>
-              }
-            />
-            <Route
-              path="/scholarship"
-              element={
+              </React.Suspense>
+            }
+          />
+          <Route
+            path="/scholarship"
+            element={
+              <React.Suspense fallback={<ScholarshipInfoSkeleton />}>
                 <PageTransition>
                   <ScholarshipPageDetailed />
                   <Footer />
                 </PageTransition>
-              }
-            />
-            <Route
-              path="/scholarship/register"
-              element={
+              </React.Suspense>
+            }
+          />
+
+          {/* Form beasiswa — skeleton: form panjang */}
+          <Route
+            path="/scholarship/register"
+            element={
+              <React.Suspense fallback={<FormSkeleton />}>
                 <PageTransition>
                   <ScholarshipRegister />
                   <Footer />
                 </PageTransition>
-              }
-            />
-            <Route
-              path="/scholarship/success"
-              element={
+              </React.Suspense>
+            }
+          />
+          <Route
+            path="/scholarship/success"
+            element={
+              <React.Suspense fallback={<FormSkeleton />}>
                 <PageTransition>
                   <ScholarshipRegisterSuccess />
                   <Footer />
                 </PageTransition>
-              }
-            />
-            <Route
-              path="/scholarship/selection/admin"
-              element={
+              </React.Suspense>
+            }
+          />
+          <Route
+            path="/scholarship/selection/admin"
+            element={
+              <React.Suspense fallback={<ScholarshipSelectionSkeleton />}>
                 <PageTransition>
                   <ScholarshipSelectionAdmin />
                   <Footer />
                 </PageTransition>
-              }
-            />
-            <Route
-              path="/scholarship/selection/interview"
-              element={
+              </React.Suspense>
+            }
+          />
+          <Route
+            path="/scholarship/selection/interview"
+            element={
+              <React.Suspense fallback={<ScholarshipSelectionSkeleton />}>
                 <PageTransition>
                   <ScholarshipSelectionInterview />
                   <Footer />
                 </PageTransition>
-              }
-            />
-            <Route
-              path="/scholarship/selection/announcement"
-              element={
+              </React.Suspense>
+            }
+          />
+          <Route
+            path="/scholarship/selection/announcement"
+            element={
+              <React.Suspense fallback={<ScholarshipSelectionSkeleton />}>
                 <PageTransition>
                   <ScholarshipSelectionAnnouncement />
                   <Footer />
                 </PageTransition>
-              }
-            />
-
-            <Route
-              path="/scholarship/announcement"
-              element={
+              </React.Suspense>
+            }
+          />
+          <Route
+            path="/scholarship/announcement"
+            element={
+              <React.Suspense fallback={<AnnouncementSkeleton />}>
                 <PageTransition>
                   <ScholarshipAnnouncementPublic />
                 </PageTransition>
-              }
-            />
-            <Route
-              path="/articles"
-              element={
+              </React.Suspense>
+            }
+          />
+
+          {/* Artikel — list: card grid, detail: artikel */}
+          <Route
+            path="/articles"
+            element={
+              <React.Suspense fallback={<CardGridSkeleton />}>
                 <PageTransition>
                   <ArticlesPage />
                   <Footer />
                 </PageTransition>
-              }
-            />
+              </React.Suspense>
+            }
+          />
 
-            {/* Detail / konten */}
-            <Route path="/events/:eventId" element={<EventDetailRoute />} />
-            <Route path="/events/:eventId/register" element={<RegistrationRoute />} />
-            <Route
-              path="/articles/:slug"
-              element={
+          {/* Detail / konten — skeleton: detail artikel */}
+          <Route
+            path="/events/:eventId"
+            element={
+              <React.Suspense fallback={<DetailSkeleton />}>
+                <EventDetailRoute />
+              </React.Suspense>
+            }
+          />
+          <Route
+            path="/events/:eventId/register"
+            element={
+              <React.Suspense fallback={<FormSkeleton />}>
+                <RegistrationRoute />
+              </React.Suspense>
+            }
+          />
+          <Route
+            path="/articles/:slug"
+            element={
+              <React.Suspense fallback={<DetailSkeleton />}>
                 <PageTransition>
                   <ArticleDetailPage />
                   <Footer />
                 </PageTransition>
-              }
-            />
-            <Route
-              path="/proker/:eventId"
-              element={
+              </React.Suspense>
+            }
+          />
+          <Route
+            path="/proker/:eventId"
+            element={
+              <React.Suspense fallback={<DetailSkeleton />}>
                 <PageTransition>
                   <EventDetailRoute />
                   <Footer />
                 </PageTransition>
-              }
-            />
+              </React.Suspense>
+            }
+          />
 
-            {/* Otentikasi */}
-            <Route
-              path="/signin"
-              element={
+          {/* Otentikasi — skeleton: form auth 2 kolom */}
+          <Route
+            path="/signin"
+            element={
+              <React.Suspense fallback={<AuthSkeleton />}>
                 <PageTransition>
                   <SignInPage onNavigate={onNavigate} onLogin={handleLoginSuccess} />
                 </PageTransition>
-              }
-            />
-            <Route
-              path="/signup"
-              element={
+              </React.Suspense>
+            }
+          />
+          <Route
+            path="/signup"
+            element={
+              <React.Suspense fallback={<AuthSkeleton />}>
                 <PageTransition>
                   <SignUpPage onNavigate={onNavigate} onLogin={handleLoginSuccess} />
                 </PageTransition>
-              }
-            />
-            <Route
-              path="/forgot-password"
-              element={
+              </React.Suspense>
+            }
+          />
+          <Route
+            path="/forgot-password"
+            element={
+              <React.Suspense fallback={<AuthSkeleton />}>
                 <PageTransition>
                   <ForgotPasswordPage onNavigate={onNavigate} />
                 </PageTransition>
-              }
-            />
-            <Route
-              path="/two-factor"
-              element={
+              </React.Suspense>
+            }
+          />
+          <Route
+            path="/two-factor"
+            element={
+              <React.Suspense fallback={<AuthSkeleton />}>
                 <PageTransition>
                   <TwoFactorAuthPage onNavigate={onNavigate} />
                 </PageTransition>
-              }
-            />
-            <Route
-              path="/verify-email"
-              element={
+              </React.Suspense>
+            }
+          />
+          <Route
+            path="/verify-email"
+            element={
+              <React.Suspense fallback={<AuthSkeleton />}>
                 <PageTransition>
                   <VerifyEmailPage onNavigate={onNavigate} />
                 </PageTransition>
-              }
-            />
+              </React.Suspense>
+            }
+          />
 
-            {/* Profil (terlindungi) */}
-            <Route
-              path="/profile"
-              element={
+          {/* Profil (terlindungi) — skeleton: sidebar + konten */}
+          <Route
+            path="/profile"
+            element={
+              <React.Suspense fallback={<ProfileSkeleton />}>
                 <RequireAuth>
                   <ProfileRoutesLayout onNavigate={onNavigate} onLogout={handleLogout} />
                 </RequireAuth>
-              }
-            >
-              <Route index element={<ProfilePage />} />
-              <Route path="activity-history" element={<ActivityHistoryPage />} />
-              <Route path="transactions" element={<TransactionPage />} />
-              <Route path="settings" element={<SettingsPage />} />
-            </Route>
+              </React.Suspense>
+            }
+          >
+            <Route index element={<ProfilePage />} />
+            <Route path="activity-history" element={<ActivityHistoryPage />} />
+            <Route path="settings" element={<SettingsPage />} />
+          </Route>
 
-            {/* Legacy profile paths (compatibility redirects) */}
-            <Route path="/riwayat-aktivitas" element={<Navigate to="/profile/activity-history" replace />} />
-            <Route path="/transaksi" element={<Navigate to="/profile/transactions" replace />} />
-            <Route path="/pengaturan" element={<Navigate to="/profile/settings" replace />} />
+          {/* Legacy profile paths (compatibility redirects) */}
+          <Route path="/riwayat-aktivitas" element={<Navigate to="/profile/activity-history" replace />} />
+          <Route path="/pengaturan" element={<Navigate to="/profile/settings" replace />} />
 
-            {/* 404 (opsional) */}
-            {/* <Route path="*" element={<NotFoundPage />} /> */}
-          </Routes>
-        </AnimatePresence>
-      </React.Suspense>
+          {/* 404 (opsional) */}
+          {/* <Route path="*" element={<NotFoundPage />} /> */}
+        </Routes>
+      </AnimatePresence>
     </div>
   );
 }

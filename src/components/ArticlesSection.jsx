@@ -37,15 +37,29 @@ const ArticlesSection = () => {
     <ScrollReveal as="section" className="bg-white">
       <div className="py-12 sm:py-16 bg-primary-50 rounded-none md:rounded-tl-[72px] xl:rounded-tl-[100px] md:rounded-br-[72px] xl:rounded-br-[100px]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center mb-8">
-            <h2 className="font-semibold text-primary-600">Artikel</h2>
-            <Link to="/articles" className="text-primary-600 hover:text-primary-700 font-medium">
-              Lihat Lainnya →
+          <div className="flex justify-between items-end mb-8">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-widest text-primary-500 mb-1">Publikasi</p>
+              <h2 className="text-xl sm:text-2xl font-bold text-neutral-900">Artikel Terbaru</h2>
+            </div>
+            <Link to="/articles" className="text-sm text-primary-600 hover:text-primary-700 font-medium flex items-center gap-1 transition-colors duration-150 shrink-0">
+              Lihat Lainnya <span aria-hidden="true">→</span>
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {loading ? <div className="text-gray-500">Memuat...</div> : null}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {loading ? (
+              Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="rounded-xl overflow-hidden border border-gray-100 bg-white animate-pulse">
+                  <div className="h-44 bg-gray-200" />
+                  <div className="p-4 space-y-2">
+                    <div className="h-4 bg-gray-200 rounded w-3/4" />
+                    <div className="h-3 bg-gray-100 rounded w-full" />
+                    <div className="h-3 bg-gray-100 rounded w-5/6" />
+                  </div>
+                </div>
+              ))
+            ) : null}
             {!loading && articles.length === 0 ? (
               <div className="col-span-full">
                 <EmptyState icon="files" title="Belum ada artikel" description="Artikel terbaru akan muncul di sini" variant="primary" />

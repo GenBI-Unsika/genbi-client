@@ -66,13 +66,13 @@ const itemVariants = {
 function MissionItem({ item }) {
   const Icon = iconMap[item.iconName] || iconMap.Brain;
   return (
-    <motion.li variants={itemVariants} className="flex items-start gap-4 group transition-transform duration-300 hover:-translate-y-1 hover:shadow-sm p-3 rounded-xl hover:bg-gray-50/50">
-      <div className={`flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center ring-1 ring-black/5 ${item.accentBg} transition-transform duration-300 group-hover:scale-110`}>
-        <Icon className="w-6 h-6" aria-hidden="true" />
+    <motion.li variants={itemVariants} className="flex items-start gap-4 group p-3 rounded-xl transition-colors duration-200 hover:bg-primary-50/40">
+      <div className={`flex-shrink-0 w-11 h-11 rounded-xl flex items-center justify-center ${item.accentBg} transition-transform duration-300 group-hover:scale-110`}>
+        <Icon className={`w-5 h-5 ${item.accentText}`} aria-hidden="true" />
       </div>
-      <div className="flex-1">
-        {item.subtitle && <h4 className={`text-lg font-semibold mb-2 ${item.accentText}`}>{item.subtitle}</h4>}
-        <p className="text-gray-600 leading-relaxed">{item.description}</p>
+      <div className="flex-1 min-w-0">
+        {item.subtitle && <h4 className={`text-base font-semibold mb-1 ${item.accentText}`}>{item.subtitle}</h4>}
+        <p className="text-sm text-gray-600 leading-relaxed">{item.description}</p>
       </div>
     </motion.li>
   );
@@ -104,12 +104,14 @@ const VisionMissionSection = () => {
   }, []);
 
   return (
-    <ScrollReveal as="section" aria-labelledby="vision-mission-heading" className="py-8 bg-white">
+    <ScrollReveal as="section" aria-labelledby="vision-mission-heading" className="py-14 sm:py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <header className="mb-8">
-          <h2 id="vision-mission-heading" className="font-heading font-semibold text-primary-500">
-            Visi Misi GenBI Unsika
+        <header className="mb-10">
+          <p className="text-xs font-semibold uppercase tracking-widest text-primary-500 mb-2">Organisasi</p>
+          <h2 id="vision-mission-heading" className="text-2xl sm:text-3xl font-bold text-neutral-900">
+            Visi &amp; Misi GenBI Unsika
           </h2>
+          <div className="w-12 h-1 rounded-full bg-primary-300 mt-3" />
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
@@ -117,7 +119,7 @@ const VisionMissionSection = () => {
             <img
               src={image}
               alt="Ilustrasi kolaborasi tim"
-              className="w-full max-w-[500px] h-auto object-cover"
+              className="w-full max-w-[500px] h-auto object-cover rounded-2xl shadow-sm"
               loading="lazy"
               decoding="async"
               width={800}
@@ -128,18 +130,20 @@ const VisionMissionSection = () => {
             />
           </figure>
 
-          <div className="space-y-8">
-            <div className="flex flex-col items-start space-y-4 mb-6">
-              <h3 className="font-semibold text-primary-900">Visi</h3>
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-lg font-bold text-primary-900 mb-2">Visi</h3>
               <p className="text-gray-600 leading-relaxed">{visionText}</p>
             </div>
 
-            <h3 className="font-semibold text-primary-900 mb-6">Misi</h3>
-            <ScrollReveal as="ul" variants={containerVariants} className="space-y-6">
-              {missions.map((item, idx) => (
-                <MissionItem key={item.id || item.subtitle || idx} item={item} />
-              ))}
-            </ScrollReveal>
+            <div>
+              <h3 className="text-lg font-bold text-primary-900 mb-4">Misi</h3>
+              <ScrollReveal as="ul" variants={containerVariants} className="space-y-6">
+                {missions.map((item, idx) => (
+                  <MissionItem key={item.id || item.subtitle || idx} item={item} />
+                ))}
+              </ScrollReveal>
+            </div>
           </div>
         </div>
       </div>

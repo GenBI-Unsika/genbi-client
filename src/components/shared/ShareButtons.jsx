@@ -1,4 +1,5 @@
-import { Share2, Copy, Check } from 'lucide-react';
+import { Share2, Check } from 'lucide-react';
+import { CopyLinkIcon } from '../icons/CustomIcons.jsx';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 
@@ -78,7 +79,7 @@ const ShareButtons = ({ title, url, className = '' }) => {
         </a>
       ))}
       <button onClick={copyToClipboard} title="Salin Link" className="p-2 rounded-full bg-gray-200 text-gray-700 hover:bg-black hover:text-white hover:scale-110 transition-all duration-300 ease-out">
-        {copied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
+        {copied ? <Check className="w-5 h-5" /> : <CopyLinkIcon className="w-5 h-5" />}
       </button>
     </div>
   );
