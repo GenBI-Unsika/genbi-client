@@ -417,7 +417,41 @@ const ScholarshipSelectionAnnouncement = () => {
             <p className="mt-1 text-sm text-neutral-600">Pantau perkembangan tahap seleksi beasiswa Anda</p>
           </div>
 
-          {loading && <div className="rounded-xl border border-neutral-200 bg-white p-6 text-sm text-neutral-600 shadow-sm">Memuat...</div>}
+          {loading && (
+            <>
+              {/* Skeleton card — Pengumuman */}
+              <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm animate-pulse space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="h-4 bg-gray-200 rounded w-28" />
+                  <div className="h-5 bg-gray-200 rounded-full w-20" />
+                </div>
+                <div className="h-16 bg-gray-100 rounded-lg w-full" />
+              </div>
+              {/* Skeleton card — Wawancara */}
+              <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm animate-pulse space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="h-4 bg-gray-200 rounded w-36" />
+                  <div className="h-5 bg-gray-200 rounded-full w-20" />
+                </div>
+                <div className="grid grid-cols-2 gap-3 pt-1">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <div key={i} className="space-y-1">
+                      <div className="h-3 bg-gray-200 rounded w-20" />
+                      <div className="h-4 bg-gray-200 rounded w-28" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+              {/* Skeleton card — Administrasi */}
+              <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm animate-pulse space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="h-4 bg-gray-200 rounded w-40" />
+                  <div className="h-5 bg-gray-200 rounded-full w-20" />
+                </div>
+                <div className="h-4 bg-gray-200 rounded w-3/4" />
+              </div>
+            </>
+          )}
 
           {!loading && !error && !app && (
             <Card title="Status" badge="Belum Daftar" badgeIntent="warn" tone="warn">
