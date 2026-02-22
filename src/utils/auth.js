@@ -80,12 +80,8 @@ export async function logout() {
 export async function ensureAuthed() {
   if (getAccessToken()) return true;
 
-  // If the user never had a session in this browser, don't call refresh.
-  // This prevents a noisy 401 on first-time visitors.
   if (!getHasSessionFlag()) return false;
 
-  // Avoid spamming refresh when the user is clearly logged out.
-  // Still allows session restore when a refresh cookie exists.
   if (Date.now() - lastRefreshFailureAt < REFRESH_RETRY_COOLDOWN_MS) return false;
 
   if (refreshInFlight) return refreshInFlight;

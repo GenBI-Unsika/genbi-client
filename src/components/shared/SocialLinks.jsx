@@ -48,7 +48,7 @@ const SocialLinks = ({ links = {}, size = 'md', variant = 'icons' }) => {
 
   const items = [
     { key: 'instagram', url: getInstagramUrl(safeLinks.instagram), Icon: InstagramColorIcon, label: 'Instagram' },
-  ].filter((i) => !!safeLinks.instagram); // Filter check original input to avoid empty links for empty strings
+  ].filter((i) => !!safeLinks.instagram);
 
   if (!items.length) return null;
 
@@ -64,7 +64,7 @@ const SocialLinks = ({ links = {}, size = 'md', variant = 'icons' }) => {
             rel={url?.startsWith('mailto:') ? undefined : 'noopener noreferrer'}
             className={[
               'inline-flex items-center justify-center rounded-md transition-colors',
-              'hover:bg-gray-100', // Subtle hover
+              'hover:bg-gray-100',
               size === 'sm' ? 'p-1.5' : size === 'lg' ? 'p-2.5' : 'p-2'
             ].join(' ')}
             aria-label={label}

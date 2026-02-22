@@ -12,7 +12,6 @@ const ArticleCard = ({ title, excerpt, image, coverImage, date, readTime, badge,
 
   const badgeLabel = typeof badge === 'string' ? badge : badge && typeof badge === 'object' ? badge.name || badge.title || badge.label || '' : '';
 
-  // Support both image and coverImage props, normalize URLs
   const imageUrl = normalizeFileUrl(image || coverImage);
 
   const Card = (

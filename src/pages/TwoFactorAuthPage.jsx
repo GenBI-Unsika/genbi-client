@@ -11,7 +11,6 @@ const TwoFactorAuthPage = ({ onNavigate }) => {
       newCode[index] = value;
       setCode(newCode);
 
-      // Auto focus next input
       if (value && index < 5) {
         const nextInput = document.getElementById(`code-${index + 1}`);
         if (nextInput) nextInput.focus();
@@ -21,7 +20,6 @@ const TwoFactorAuthPage = ({ onNavigate }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Simulate 2FA verification
     onNavigate('home');
   };
 

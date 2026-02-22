@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import { apiFetch } from "../services/api.js";
 import LoadableImage from "./shared/LoadableImage";
 
-// Default CMS content (fallback if API fails or returns null)
 const defaultHeroContent = {
   headline: "Tumbuh dan Berdampak Bagi Sesama Bersama GenBI Unsika",
   subheadline:
@@ -20,7 +19,6 @@ function AvatarStack({ size = "md" }) {
 
   const isServerPlaceholderAvatar = (url) => {
     if (!url || typeof url !== "string") return false;
-    // The backend fallback for hero avatars uses ui-avatars with names like "User 1", "User 2", ...
     // Example: https://ui-avatars.com/api/?name=User+1&background=random
     if (!url.includes("ui-avatars.com/api/")) return false;
     return /[?&]name=User(?:\+|%20)\d+\b/i.test(url);
@@ -39,7 +37,7 @@ function AvatarStack({ size = "md" }) {
           const processedAvatars = items.map((src) => {
             const url = typeof src === "string" ? src : src?.url || src?.image;
             if (!url || isServerPlaceholderAvatar(url)) {
-              return null; // Treat as placeholder
+              return null;
             }
             return url;
           });
@@ -112,7 +110,6 @@ const HeroSection = () => {
           setContent({ ...defaultHeroContent, ...value });
         }
       } catch {
-        // Use defaults on error
       }
     })();
     return () => {
@@ -120,7 +117,6 @@ const HeroSection = () => {
     };
   }, []);
 
-  // Determine hero image source: CMS value or fallback
   const heroImgSrc = content.heroImage || "./women-graduation.webp";
 
   return (
@@ -163,7 +159,6 @@ const HeroSection = () => {
               {content.subheadline}
             </p>
 
-            {/* CTA + AvatarStack */}
             <div className="flex w-full flex-col sm:flex-row sm:items-center sm:justify-center lg:justify-start gap-4 sm:gap-5 motion-preset-fade motion-duration-1000 motion-delay-700">
               <button
                 className="bg-primary-600 text-white font-semibold w-full sm:w-auto px-6 py-3 md:px-8 md:py-3 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 shrink-0 transition-all duration-300 ease-in-out hover:bg-primary-700 hover:scale-105 hover:-rotate-1"
@@ -173,7 +168,6 @@ const HeroSection = () => {
                 {content.ctaText}
               </button>
 
-              {/* Divider hanya di sm+ */}
               <span
                 className="hidden sm:block h-6 w-px bg-gray-300"
                 aria-hidden="true"
@@ -193,7 +187,6 @@ const HeroSection = () => {
             </div>
           </div>
 
-          {/* Hero Image Section */}
           <div className="relative flex h-full items-center justify-center lg:items-end lg:justify-end order-1 lg:order-2 min-h-[300px] sm:min-h-[400px] lg:min-h-0">
             <div className="relative w-full max-w-[400px] sm:max-w-[500px] lg:max-w-[600px] motion-preset-blur-right motion-duration-1000">
               <LoadableImage

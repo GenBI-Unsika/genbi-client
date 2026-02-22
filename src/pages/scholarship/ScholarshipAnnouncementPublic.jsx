@@ -68,16 +68,16 @@ export default function ScholarshipAnnouncementPublic() {
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth >= 1024) { // lg breakpoint
+      if (window.innerWidth >= 1024) {
         setQrSize(220);
-      } else if (window.innerWidth >= 640) { // sm breakpoint
+      } else if (window.innerWidth >= 640) {
         setQrSize(180);
       } else {
         setQrSize(145);
       }
     };
 
-    handleResize(); // Set initial size
+    handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -109,8 +109,6 @@ export default function ScholarshipAnnouncementPublic() {
     };
   }, [state]);
 
-
-
   if (loading) return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
       <div className="text-center">
@@ -133,42 +131,37 @@ export default function ScholarshipAnnouncementPublic() {
     </div>
   );
 
-
   return (
     <div className="h-screen h-[100dvh] relative flex items-center justify-center p-3 sm:p-4 lg:p-8 font-sans antialiased selection:bg-primary-100 selection:text-primary-900 overflow-hidden">
-      {/* Full Image Background with Dark Filter */}
+
       <div className="fixed inset-0 bg-slate-950">
         <div
           className="absolute inset-0 bg-center bg-no-repeat bg-cover filter grayscale brightness-[0.6] contrast-[1.1]"
           style={{ backgroundImage: 'url(/unsika.jpg)' }}
         />
-        {/* Dark Overlay for Depth */}
+
         <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px]"></div>
       </div>
 
-      {/* Main Container */}
       <div className="w-full max-w-5xl flex flex-col items-center relative z-10 lg:h-full lg:justify-center">
 
-        {/* The Announcement Card */}
         <div className="w-full bg-white/90 backdrop-blur-xl rounded-2xl sm:rounded-[2.5rem] border-0 sm:border border-white overflow-hidden flex flex-col max-h-full lg:max-h-[85vh]">
 
-          {/* Top Banner Section (Restored) */}
           <div className={`${theme.banner} px-5 py-3 sm:px-12 sm:py-8 relative overflow-hidden shrink-0`}>
-            {/* Premium Background Overlays */}
+
             <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-black/5 to-transparent pointer-events-none" />
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(255,255,255,0.1)_0%,transparent_50%)]" />
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
             <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
 
             <div className="relative z-10 grid grid-cols-[auto_1fr] sm:flex sm:flex-row items-center justify-between gap-x-3 gap-y-0.5 sm:gap-5">
-              {/* Logo Integration (Rowspan 2 on mobile, Order-last on desktop) */}
+
               <div className="row-span-2 sm:order-last bg-white/20 backdrop-blur-md rounded-xl sm:rounded-2xl border border-white/30 p-0.5 sm:p-1 shrink-0 self-center">
                 <div className="bg-white rounded-lg sm:rounded-xl p-0.5 sm:p-1">
                   <img src="/favicon-genbi.webp" alt="Logo" className="w-8 h-8 sm:w-14 sm:h-14 object-contain" />
                 </div>
               </div>
 
-              {/* Title & Period Wrapper - 'contents' on mobile to be direct grid children, 'flex-col' on desktop */}
               <div className="contents sm:flex sm:flex-col sm:items-start sm:gap-1">
                 <div className="text-left self-end sm:self-auto">
                   <h1 className="text-white text-[13px] sm:text-xl lg:text-2xl font-black uppercase tracking-tight leading-tight">
@@ -182,12 +175,10 @@ export default function ScholarshipAnnouncementPublic() {
             </div>
           </div>
 
-          {/* Split Body Content (Side-by-side on mobile) */}
           <div className="px-5 py-4 sm:px-12 sm:py-8 flex flex-row lg:flex-row gap-4 sm:gap-8 items-center lg:items-center overflow-hidden">
 
-            {/* Left Section: Identification */}
             <div className="flex-1 min-w-0 space-y-4 sm:space-y-6 flex flex-col items-start text-left">
-              {/* Name & ID Header */}
+
               <div className="space-y-1.5 sm:space-y-4 flex flex-col items-start">
                 <div className="inline-flex items-center gap-2 px-2.5 py-0.5 bg-slate-100 rounded-full text-[9px] sm:text-[13px] font-black text-slate-500 uppercase border border-slate-200/50">
                   NPM: {data?.npm}
@@ -197,7 +188,6 @@ export default function ScholarshipAnnouncementPublic() {
                 </h2>
               </div>
 
-              {/* Data Dashboard Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4 w-full">
                 {[
                   { label: 'Program Studi', value: data?.studyProgram?.name || '-', icon: GraduationCap },
@@ -232,9 +222,6 @@ export default function ScholarshipAnnouncementPublic() {
             </div>
           </div>
 
-
-
-          {/* Verification Warning Footer (Side-by-side on mobile) */}
           <div className="bg-slate-50/50 px-5 py-3 sm:px-12 sm:py-6 border-t border-slate-100 flex flex-row sm:flex-row items-center sm:items-start gap-3 sm:gap-4 shrink-0 shadow-[inset_0_1px_0_white]">
             <div className="p-2 rounded-xl bg-yellow-50 border border-amber-100 text-amber-600 shrink-0">
               <AlertCircle size={14} className="stroke-[2.5]" />

@@ -58,7 +58,6 @@ const ScholarshipSelectionInterview = () => {
 
   const { loading, app } = useScholarshipSelectionGate();
 
-  // Guard: must have passed administrasi
   const administrasiLolos = app?.administrasiStatus === 'LOLOS_ADMINISTRASI';
   const administrasiDitolak = app?.administrasiStatus === 'ADMINISTRASI_DITOLAK';
 
@@ -82,13 +81,12 @@ const ScholarshipSelectionInterview = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-primary-50/20">
       <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 px-4 py-10 md:grid-cols-3">
-        {/* Left: Vertical stepper */}
+
         <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
           <h3 className="mb-6 text-xl font-semibold text-body">Tahap Seleksi</h3>
           <StepperVertical current={stepCurrent} items={['Seleksi Administrasi', 'Seleksi Wawancara', 'Pengumuman']} />
         </div>
 
-        {/* Right: Content */}
         <div className="md:col-span-2 space-y-6">
           <div>
             <h1 className="text-3xl font-bold bg-gradient-to-r from-primary-700 to-primary-500 bg-clip-text text-transparent">Proses Seleksi</h1>

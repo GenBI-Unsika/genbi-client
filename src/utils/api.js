@@ -1,9 +1,7 @@
 const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api/v1';
 
-// Environment check - only show technical errors in development
 const isDev = import.meta.env.DEV || import.meta.env.MODE === 'development';
 
-// === Global loading tracker (used for TopLoadingBar) ===
 let inFlightCount = 0;
 const inFlightListeners = new Set();
 
@@ -21,11 +19,6 @@ export function getApiInFlightCount() {
   return inFlightCount;
 }
 
-/**
- * Subscribe to API loading state changes.
- * @param {(count:number)=>void} listener
- * @returns {() => void} unsubscribe
- */
 export function subscribeApiInFlight(listener) {
   if (typeof listener !== 'function') return () => { };
   inFlightListeners.add(listener);
@@ -49,18 +42,12 @@ function endRequest() {
   notifyInFlight();
 }
 
-/**
- * Normalize error messages for user display
- * Technical errors are hidden from users in production
- */
 function normalizeErrorMessage(message, status) {
   if (!message) return 'Terjadi kesalahan. Silakan coba lagi.';
   const raw = String(message);
   const lower = raw.toLowerCase();
 
-  // === INTERNAL/TECHNICAL ERRORS - Never show to users ===
   const isInternalError =
-    // Database errors
     lower.includes("can't reach database server") ||
     lower.includes('p1001') ||
     lower.includes('localhost:3306') ||
@@ -69,24 +56,22 @@ function normalizeErrorMessage(message, status) {
     lower.includes('prisma') ||
     lower.includes('mysql') ||
     lower.includes('mariadb') ||
-    // Server errors
     lower.includes('internal server error') ||
     lower.includes('syntax error') ||
     lower.includes('undefined') ||
     lower.includes('null pointer') ||
     lower.includes('stack trace') ||
     lower.includes('at line') ||
-    // Network errors
     lower.includes('fetch failed') ||
     lower.includes('network error');
 
   if (isInternalError) {
-    if (isDev) { /* API Error - Hidden */ }
+    if (isDev) {  }
     return 'Terjadi gangguan pada sistem. Tim kami sedang menangani masalah ini.';
   }
 
   if (status === 500) {
-    if (isDev) { /* 500 Error */ }
+    if (isDev) {  }
     return 'Terjadi kesalahan pada server. Silakan coba lagi nanti.';
   }
 
@@ -107,8 +92,6 @@ function normalizeErrorMessage(message, status) {
   }
 
   if (status === 400) {
-    // Bad request might have user-relevant validation messages
-    // But filter out technical ones
     if (lower.includes('validation') || lower.includes('wajib') || lower.includes('harus') || lower.includes('tidak valid')) {
       return raw;
     }
@@ -121,12 +104,11 @@ function normalizeErrorMessage(message, status) {
     return raw;
   }
 
-  // Default fallback
   return 'Terjadi kesalahan. Silakan coba lagi.';
 }
 
 export class ApiError extends Error {
-  /** @param {{ status:number, message:string, details?:any }} params */
+  
   constructor({ status, message, details }) {
     super(message);
     this.name = 'ApiError';
@@ -149,7 +131,6 @@ export function setAccessToken(token) {
 
 async function readJsonSafe(res) {
   try {
-    // If it's JSON, parse it.
     return await res.json();
   } catch {
     return null;
@@ -157,7 +138,6 @@ async function readJsonSafe(res) {
 }
 
 async function readBodySafe(res) {
-  // Note: response bodies can only be read once, so always use clone().
   try {
     const json = await readJsonSafe(res.clone());
     if (json) return json;
@@ -174,10 +154,6 @@ async function readBodySafe(res) {
   }
 }
 
-/**
- * @param {string} path
- * @param {RequestInit & { body?: any, skipAuth?: boolean }} options
- */
 export async function apiFetch(path, options = {}) {
   const url = `${API_BASE}${path.startsWith('/') ? '' : '/'}${path}`;
 
@@ -234,22 +210,16 @@ export async function apiFetch(path, options = {}) {
     const message = json?.error?.message || json?.message || json?._rawText || res.statusText || 'Request failed';
     const normalizedMessage = normalizeErrorMessage(message, res.status);
 
-    // Extra diagnostics in dev when server returns non-JSON error bodies
     if (isDev && json?._rawText && res.status >= 500) {
-      // API Error - Non-JSON Body
     }
 
-    // Extra diagnostics in dev when server returns empty body or JSON error payload
     if (isDev && res.status >= 500) {
-      // API Error - Debug
     }
     throw new ApiError({ status: res.status, message: normalizedMessage, details: json?.error?.details || json?.details });
   }
 
   return json;
 }
-
-// FUNGSI HELPER CRUD
 
 export async function apiPost(path, body, options = {}) {
   return apiFetch(path, { ...options, method: 'POST', body });
@@ -266,8 +236,6 @@ export async function apiPut(path, body, options = {}) {
 export async function apiDelete(path, options = {}) {
   return apiFetch(path, { ...options, method: 'DELETE' });
 }
-
-// FUNGSI AUTH
 
 export async function authLogin(email, password) {
   const json = await apiFetch('/auth/login', {
@@ -362,19 +330,10 @@ export async function uploadFile(file) {
   return json?.data;
 }
 
-/**
- * Dapatkan URL API untuk path tertentu
- */
 export function apiUrl(path) {
   return `${API_BASE}${path.startsWith('/') ? '' : '/'}${path}`;
 }
 
-/**
- * Upload file ke staging/temporary storage untuk preview
- * File akan expired setelah 30 menit jika tidak di-finalize
- * @param {File} file - File object dari input
- * @returns {Promise<Object>} - { tempId, name, mimeType, size, previewUrl, expiresAt, isStaged }
- */
 export async function uploadFileStaging(file) {
   const form = new FormData();
   form.append('file', file);
@@ -385,12 +344,6 @@ export async function uploadFileStaging(file) {
   return json?.data;
 }
 
-/**
- * Finalisasi file staged - upload ke Google Drive
- * @param {string} tempId - ID file temp dari upload staging
- * @param {string} [folder] - Nama folder opsional
- * @returns {Promise<Object>} - Object file final dengan URL
- */
 export async function finalizeUpload(tempId, folder) {
   const json = await apiFetch('/files/finalize', {
     method: 'POST',
@@ -399,11 +352,6 @@ export async function finalizeUpload(tempId, folder) {
   return json?.data;
 }
 
-/**
- * Finalisasi banyak file staged sekaligus
- * @param {Array<{tempId: string, folder?: string}>} files
- * @returns {Promise<Object>} - { uploaded: [], errors: [], totalSuccess, totalErrors }
- */
 export async function finalizeBulkUpload(files) {
   const json = await apiFetch('/files/finalize-bulk', {
     method: 'POST',
@@ -412,10 +360,6 @@ export async function finalizeBulkUpload(files) {
   return json?.data;
 }
 
-/**
- * Hapus file staged
- * @param {string} tempId
- */
 export async function deleteStagingFile(tempId) {
   const json = await apiFetch(`/files/temp/${tempId}`, {
     method: 'DELETE',
@@ -423,67 +367,38 @@ export async function deleteStagingFile(tempId) {
   return json?.data;
 }
 
-/**
- * Dapatkan URL preview file temp
- * @param {string} tempId
- * @returns {string}
- */
 export function getTempPreviewUrl(tempId) {
   return apiUrl(`/files/temp/${tempId}`);
 }
 
-/**
- * Get the public proxy URL for a permanent file
- * This URL does not expire and works for public viewing
- * @param {number|string} fileId - The FileObject ID
- * @returns {string} The public proxy URL
- */
 export function getPublicFileUrl(fileId) {
   if (!fileId) return '';
   return apiUrl(`/files/${fileId}/public`);
 }
 
-/**
- * Check if a URL is a public file proxy URL
- * @param {string} url - The URL to check
- * @returns {boolean}
- */
 export function isPublicFileUrl(url) {
   if (!url || typeof url !== 'string') return false;
   return /\/api\/v1\/files\/\d+\/public/.test(url);
 }
 
-/**
- * Convert various file URL formats to the best displayable URL
- * Handles relative URLs from server and converts them to absolute URLs
- * Prioritizes public proxy URLs over direct Drive URLs
- * @param {string} url - The original URL
- * @returns {string} The best URL for display
- */
 export function normalizeFileUrl(url) {
   if (!url) return '';
 
-  // If already an absolute URL (http/https), return as-is
   if (url.startsWith('http://') || url.startsWith('https://')) {
     return url;
   }
 
-  // If it's a relative public proxy URL from the server, convert to absolute
-  // Pattern: /api/v1/files/{id}/public
   if (url.startsWith('/api/v1/files/') && url.includes('/public')) {
     return apiUrl(url.replace('/api/v1', ''));
   }
 
-  // If it's another API path (like /api/v1/files/temp/xxx), convert to absolute
   if (url.startsWith('/api/v1/')) {
     return apiUrl(url.replace('/api/v1', ''));
   }
 
-  // If it's a temp preview URL without prefix, build full URL
   if (url.includes('/files/temp/')) {
     return apiUrl(url.startsWith('/') ? url : `/${url}`);
   }
 
-  // Return other URLs as-is (legacy support, external URLs, etc.)
   return url;
 }

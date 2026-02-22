@@ -24,14 +24,12 @@ const EventDetailPage = ({ onNavigate, eventId }) => {
     }
 
     setLoading(true);
-    // Try activities endpoint first (activities are used for events/proker)
     apiFetch(`/activities/${eventId}`)
       .then((res) => {
         setEvent(res.data);
         setError(null);
       })
       .catch((err) => {
-        // Error loading event
         setError(err.message || 'Gagal memuat event');
       })
       .finally(() => setLoading(false));
@@ -54,11 +52,9 @@ const EventDetailPage = ({ onNavigate, eventId }) => {
     );
   }
 
-  // Format date and time
   const dateStr = event.startDate ? formatDateWithWeekday(event.startDate) : '-';
   const timeStr = event.startDate ? formatDateTime(event.startDate).split(', ')[1] : '-';
 
-  // Parse benefits if stored as JSON
   const benefits = event.benefits ? (typeof event.benefits === 'string' ? JSON.parse(event.benefits) : event.benefits) : [];
 
   const divisionLabel = typeof event.division === 'string' ? event.division : event.division && typeof event.division === 'object' ? event.division.name : '';
@@ -66,7 +62,7 @@ const EventDetailPage = ({ onNavigate, eventId }) => {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Hero Image */}
+
         <div className="mb-8">
           {event.coverImage ? (
             <img src={normalizeFileUrl(event.coverImage)} alt={event.title} className="w-full h-auto rounded-lg object-cover max-h-96" />
@@ -75,16 +71,13 @@ const EventDetailPage = ({ onNavigate, eventId }) => {
           )}
         </div>
 
-        {/* Event Content */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6 lg:p-8 mb-8 transform hover:shadow-lg transition-shadow duration-300">
           <h1 className="text-h2 font-bold text-gray-900 mb-4">{event.title}</h1>
 
-          {/* Share Buttons */}
           <ShareButtons title={event.title} className="mb-6" />
 
           <p className="text-body text-gray-700 leading-relaxed mb-8">{event.description || 'Deskripsi event akan ditampilkan di sini.'}</p>
 
-          {/* Event Details */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
               <MapPin className="w-5 h-5 text-primary-600" />
@@ -111,7 +104,6 @@ const EventDetailPage = ({ onNavigate, eventId }) => {
             </div>
           </div>
 
-          {/* Benefits */}
           {benefits.length > 0 && (
             <div className="mb-8">
               <h3 className="text-lg font-bold text-gray-900 mb-4">Benefit :</h3>
@@ -123,7 +115,6 @@ const EventDetailPage = ({ onNavigate, eventId }) => {
             </div>
           )}
 
-          {/* Division info */}
           {divisionLabel && (
             <div className="mb-8">
               <p className="text-sm text-gray-500">
@@ -132,7 +123,6 @@ const EventDetailPage = ({ onNavigate, eventId }) => {
             </div>
           )}
 
-          {/* Status badge */}
           {event.status && (
             <div className="mb-8">
               <span
@@ -144,7 +134,6 @@ const EventDetailPage = ({ onNavigate, eventId }) => {
             </div>
           )}
 
-          {/* CTA Button */}
           {event.status !== 'COMPLETED' && (
             <div className="text-center">
               <button

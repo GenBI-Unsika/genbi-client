@@ -1,22 +1,18 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-/**
- * ScrollReveal - wrapper untuk animasi masuk saat scroll menggunakan Framer Motion.
- */
 export default function ScrollReveal({
   as = 'div',
   className = '',
   children,
   width = '100%',
-  delay = 0, // delay in seconds (framer-motion uses seconds)
+  delay = 0,
   duration = 0.5,
   once = true,
-  variants, // custom variants if needed
-  delayMs, // extract explicitly to avoid leakage via ...rest
+  variants,
+  delayMs,
   ...rest
 }) {
-  // Translate delayMs (if passed from old code) to seconds
   const finalDelay = delayMs ? delayMs / 1000 : delay;
 
   const defaultVariants = {
@@ -27,7 +23,7 @@ export default function ScrollReveal({
       transition: {
         duration: duration,
         delay: finalDelay,
-        ease: [0.25, 0.46, 0.45, 0.94], // Smooth easeOutQuad-ish
+        ease: [0.25, 0.46, 0.45, 0.94],
       }
     },
   };

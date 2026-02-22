@@ -98,7 +98,6 @@ const ScholarshipSelectionAdmin = () => {
         localStorage.setItem(celebrationKey, 'true');
       } else {
         // Jika sudah pernah merayakan, langsung pindah ke tahap wawancara (seleksi otomatis diarahkan)
-        // navigate('/scholarship/selection/interview', { replace: true });
       }
     }
   }, [loading, isLolos, app, navigate]);

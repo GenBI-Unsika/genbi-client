@@ -8,7 +8,6 @@ export default function GoogleLoginButton({ onIdToken, onError }) {
 
   const reportError = (userMessage, error) => {
     if (import.meta.env.DEV) {
-      // Helpful context for local dev (silent)
     }
     onError?.(userMessage);
   };
@@ -20,7 +19,6 @@ export default function GoogleLoginButton({ onIdToken, onError }) {
     const existingScript = document.querySelector('script[src="https://accounts.google.com/gsi/client"]');
 
     if (existingScript) {
-      // Script sudah dimuat
       if (window.google?.accounts?.id) {
         initializeGoogle();
         setIsInitialized(true);
@@ -33,7 +31,6 @@ export default function GoogleLoginButton({ onIdToken, onError }) {
       return;
     }
 
-    // Muat script Google Identity Services
     const script = document.createElement('script');
     script.src = 'https://accounts.google.com/gsi/client';
     script.async = true;
@@ -57,11 +54,9 @@ export default function GoogleLoginButton({ onIdToken, onError }) {
       }
 
       try {
-        // Inisialisasi Google Sign-In
         window.google.accounts.id.initialize({
           client_id: clientId,
           callback: (response) => {
-            // response.credential berisi ID token (JWT)
             if (response.credential) {
               onIdToken?.(response.credential);
             } else {
@@ -95,7 +90,6 @@ export default function GoogleLoginButton({ onIdToken, onError }) {
     }
 
     try {
-      // Klik tombol Google tersembunyi
       const googleButton = hiddenButtonRef.current.querySelector('div[role="button"]');
       if (googleButton) {
         googleButton.click();
@@ -122,10 +116,9 @@ export default function GoogleLoginButton({ onIdToken, onError }) {
 
   return (
     <>
-      {/* Tombol Google tersembunyi untuk pemicu */}
+
       <div ref={hiddenButtonRef} className="hidden" />
 
-      {/* Tombol kustom dengan styling kita */}
       <button
         type="button"
         onClick={handleClick}

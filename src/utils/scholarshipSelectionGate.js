@@ -12,7 +12,6 @@ function isReasonableYear(n) {
 }
 
 export function resolveScholarshipSelectionPath({ app, registration }) {
-  // If user has no application, send them to register (if open) or scholarship info.
   if (!app) {
     if (registration?.open) return '/scholarship/register';
     return '/scholarship';
@@ -86,12 +85,10 @@ export function useScholarshipSelectionGate() {
 
     const here = location.pathname;
     if (here !== resolvedPath) {
-      // If transitioning from admin to interview (meaning LOLOS_ADMINISTRASI), check celebration flag
       if (here === '/scholarship/selection/admin' && resolvedPath === '/scholarship/selection/interview' && app?.id) {
         const celebrationKey = `scholarship_admin_celebrated_${app.id}`;
         const hasCelebrated = localStorage.getItem(celebrationKey);
 
-        // Delay navigation if celebration hasn't been shown yet
         if (!hasCelebrated) {
           return;
         }

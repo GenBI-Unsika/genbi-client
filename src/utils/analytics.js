@@ -19,10 +19,6 @@ export function getVisitorId() {
   return next;
 }
 
-/**
- * Track a page view to the backend analytics endpoint.
- * This is intentionally best-effort: failures should not affect UX.
- */
 export async function trackPageView({ path, referrer } = {}) {
   const visitorId = getVisitorId();
   const payload = {
@@ -35,7 +31,6 @@ export async function trackPageView({ path, referrer } = {}) {
     method: 'POST',
     skipAuth: true,
     body: payload,
-    // allow sending during page unload (browser-dependent)
     keepalive: true,
   });
 

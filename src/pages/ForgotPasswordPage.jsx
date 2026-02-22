@@ -8,7 +8,6 @@ const ForgotPasswordPage = ({ onNavigate }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Simulate sending reset link
     toast.success('Link reset password telah dikirim ke email Anda');
     onNavigate('signin');
   };

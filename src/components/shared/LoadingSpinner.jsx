@@ -1,10 +1,4 @@
-/**
- * Loading Spinner Component
- * @param {Object} props
- * @param {string} props.size - Size variant: 'sm', 'md', 'lg'
- * @param {string} props.text - Optional loading text
- * @param {string} props.className - Additional CSS classes
- */
+
 const LoadingSpinner = ({ size = 'md', text = '', className = '' }) => {
   const sizeClasses = {
     sm: 'w-4 h-4',

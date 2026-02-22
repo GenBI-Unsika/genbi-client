@@ -23,7 +23,6 @@ const EventsPage = () => {
   const [sortOrder, setSortOrder] = useState(initialSortOrder);
 
   useEffect(() => {
-    // Sync state with URL if URL changes externally (e.g. back button)
     const p = Number(searchParams.get('page')) || 1;
     if (p !== page) setPage(p);
   }, [searchParams]);

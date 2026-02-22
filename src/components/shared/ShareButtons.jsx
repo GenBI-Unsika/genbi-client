@@ -3,13 +3,6 @@ import { CopyLinkIcon } from '../icons/CustomIcons.jsx';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 
-/**
- * Social share buttons for articles, events, etc.
- * @param {object} props
- * @param {string} props.title - Title to share
- * @param {string} [props.url] - URL to share (defaults to current page URL)
- * @param {string} [props.className] - Additional wrapper classes
- */
 const ShareButtons = ({ title, url, className = '' }) => {
   const [copied, setCopied] = useState(false);
   const shareUrl = url || (typeof window !== 'undefined' ? window.location.href : '');

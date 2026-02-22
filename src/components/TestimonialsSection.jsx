@@ -10,7 +10,6 @@ export default function TestimonialsSection() {
 
   const isAvatarPlaceholder = (url) => {
     if (!url || typeof url !== 'string') return true;
-    // The project previously used ui-avatars as placeholders; prefer neutral icon placeholders instead.
     if (url.includes('ui-avatars.com/api/')) return true;
     return false;
   };
@@ -33,7 +32,7 @@ export default function TestimonialsSection() {
         if (alive) setTestimonials(Array.isArray(items) ? items : []);
       } catch (e) {
         if (!alive) return;
-        if (e?.status !== 404) { /* Error loading testimonials */ }
+        if (e?.status !== 404) {  }
         setTestimonials([]);
       } finally {
         if (alive) setLoading(false);
@@ -119,7 +118,7 @@ export default function TestimonialsSection() {
               </div>
             ) : (
               <>
-                {/* Navigation Buttons */}
+
                 <button
                   type="button"
                   aria-label="Sebelumnya"
@@ -158,13 +157,12 @@ export default function TestimonialsSection() {
                   <ChevronRight className="w-5 h-5" strokeWidth={3} />
                 </button>
 
-                {/* Carousel */}
                 <div ref={emblaRef} className="overflow-hidden px-2 md:px-3">
                   <div className="flex gap-4">
                     {testimonials.map((item, idx) => (
                       <div className="flex-[0_0_100%] min-w-0" key={idx}>
                         <div className="relative bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-2xl px-5 py-8 shadow-lg max-w-sm mx-auto">
-                          {/* Quote Icon Top Left */}
+
                           <div className="absolute top-4 left-4">
                             <svg width="28" height="28" viewBox="0 0 40 40" fill="none">
                               <text x="0" y="30" fontSize="32" fontWeight="bold" fill="#1E40AF" fontFamily="Georgia, serif">
@@ -173,9 +171,8 @@ export default function TestimonialsSection() {
                             </svg>
                           </div>
 
-                          {/* Content */}
                           <div className="flex flex-col items-center gap-4 pt-2">
-                            {/* Profile Photo */}
+
                             <div className="w-20 h-20 rounded-full overflow-hidden bg-pink-300 ring-2 ring-white shadow-md">
                               {(() => {
                                 const photoUrl = normalizeFileUrl(item.photo_profile);
@@ -193,17 +190,13 @@ export default function TestimonialsSection() {
                               })()}
                             </div>
 
-                            {/* Name */}
                             <h4 className="text-gray-900 font-bold text-lg">{item.name}</h4>
 
-                            {/* Role */}
                             <p className="text-gray-600 text-sm -mt-3">{item.role}</p>
 
-                            {/* Quote */}
                             <p className="text-gray-800 text-center text-sm leading-relaxed max-w-sm px-2">"{item.quote}"</p>
                           </div>
 
-                          {/* Quote Icon Bottom Right */}
                           <div className="absolute bottom-4 right-4">
                             <svg width="28" height="28" viewBox="0 0 40 40" fill="none">
                               <rect x="4" y="4" width="12" height="12" rx="2" stroke="#EF4444" strokeWidth="2" fill="none" />

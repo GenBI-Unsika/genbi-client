@@ -33,7 +33,7 @@ const MemberCard = ({ member = {}, onClick, showStudyInfo = true }) => {
           : '',
       ].join(' ')}
     >
-      {/* Media */}
+
       <div className="relative w-full h-48 bg-gray-100 overflow-hidden">
         {displayPhoto ? (
           <img
@@ -52,22 +52,16 @@ const MemberCard = ({ member = {}, onClick, showStudyInfo = true }) => {
           </div>
         )}
 
-        {/* {badgeText && <span className="absolute top-3 left-3 bg-white/90 text-gray-800 text-xs font-medium px-2 py-1 rounded-md">{badgeText}</span>} */}
       </div>
 
       <div className="flex justify-between">
-        {/* Content */}
+
         <div className="p-4">
           <h3 className="card-title text-sm mb-1 line-clamp-1">{name}</h3>
           <p className="text-body-sm text-gray-600 line-clamp-1">{displayJabatan}</p>
-          {/* {showStudyInfo && (major || faculty) && (
-            <div className="mt-2 pt-2 border-t border-gray-100">
-              {major && <p className="text-caption text-primary-600 font-medium line-clamp-1">{major}</p>}
-              {faculty && <p className="text-overline text-gray-500 line-clamp-1">{faculty}</p>}
-            </div>
-          )} */}
+
         </div>
-        {/* Socials */}
+
         <div className="mt-3 pr-4 opacity-100 sm:opacity-90 sm:group-hover:opacity-100 transition-opacity">
           <SocialLinks links={displaySocials} size="sm" />
         </div>

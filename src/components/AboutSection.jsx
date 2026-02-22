@@ -45,7 +45,6 @@ const AboutSection = ({ imageSrc: propImageSrc, videoUrl: propVideoUrl }) => {
           setContent(value);
         }
       } catch {
-        // Keep empty/default on error
       } finally {
         if (alive) setLoading(false);
       }
@@ -92,7 +91,7 @@ const AboutSection = ({ imageSrc: propImageSrc, videoUrl: propVideoUrl }) => {
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Left content */}
+
             <div className="space-y-5">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-widest text-primary-500 mb-2">Tentang Kami</p>
@@ -104,7 +103,6 @@ const AboutSection = ({ imageSrc: propImageSrc, videoUrl: propVideoUrl }) => {
               <p className="text-gray-600 leading-relaxed text-base">{content.description}</p>
             </div>
 
-            {/* Right video/image */}
             <div className="relative">
               <figure className="bg-gray-200 rounded-2xl overflow-hidden">
                 {hasCover ? (
@@ -129,7 +127,6 @@ const AboutSection = ({ imageSrc: propImageSrc, videoUrl: propVideoUrl }) => {
                 )}
               </figure>
 
-              {/* Play button overlay (only when there is a cover image) */}
               {hasCover ? (
                 <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
                   <button
@@ -155,7 +152,6 @@ const AboutSection = ({ imageSrc: propImageSrc, videoUrl: propVideoUrl }) => {
         )}
       </div>
 
-      {/* Modal / tempat video */}
       {open && (
         <div
           role="dialog"
@@ -166,7 +162,7 @@ const AboutSection = ({ imageSrc: propImageSrc, videoUrl: propVideoUrl }) => {
         >
           <div
             className="relative w-full max-w-4xl"
-            onClick={(e) => e.stopPropagation()} // biar klik konten nggak nutup
+            onClick={(e) => e.stopPropagation()}
           >
             <button
               type="button"

@@ -29,7 +29,6 @@ import PageSkeleton, {
   DetailSkeleton,
 } from './components/shared/PageSkeleton';
 
-// Halaman detail/baru (wrapper yang sudah kamu punya)
 import EventDetailRoute from './router/EventDetailRoute';
 import RegistrationRoute from './router/RegistrationRoute';
 
@@ -40,7 +39,6 @@ import { trackPageView } from './utils/analytics.js';
 
 import './App.css';
 
-// Route-level code splitting (lazy load halaman).
 const SignInPage = React.lazy(() => import('./pages/SignInPage'));
 const SignUpPage = React.lazy(() => import('./pages/SignUpPage'));
 const ForgotPasswordPage = React.lazy(() => import('./pages/ForgotPasswordPage'));
@@ -83,7 +81,6 @@ const pathForKey = (key) => {
     case 'articles':
       return '/articles';
 
-    // otentikasi
     case 'signin':
       return '/signin';
     case 'signup':
@@ -95,7 +92,6 @@ const pathForKey = (key) => {
     case 'verify-email':
       return '/verify-email';
 
-    // profil (sidebar)
     case 'profile':
       return '/profile';
     case 'activity-history':
@@ -125,7 +121,6 @@ const HomePage = ({ isLoggedIn }) => (
 
 const ProfileRoutesLayout = ({ onNavigate, onLogout }) => {
   const location = useLocation();
-  // tentukan currentKey buat highlight di sidebar ProfileLayout
   const currentKey = location.pathname.startsWith('/profile/activity-history')
     ? 'activity-history'
     : location.pathname.startsWith('/profile/settings')
@@ -174,7 +169,7 @@ function App() {
   const location = useLocation();
   const forcedLogoutToastShown = useRef(false);
   const lastTrackedRef = useRef({ key: '', at: 0 });
-  const profileNotificationShown = useRef(false); // Track per session
+  const profileNotificationShown = useRef(false);
 
   const profileReminderKeyForUser = useCallback((user) => {
     const raw = user?.id ?? user?.userId ?? user?.uuid ?? user?.email ?? 'anon';
@@ -195,9 +190,6 @@ function App() {
         if (!npm || !facultyId || !studyProgramId || !birthDate || !gender) {
           const now = Date.now();
 
-          // Throttle per user supaya tidak muncul tiap refresh.
-          // - reason: 'login'   => boleh tampil (kecuali di-dismiss)
-          // - reason: 'session' => maksimal 1x per 7 hari
           const userKey = profileReminderKeyForUser(user);
           const dismissedUntilKey = `profile-reminder-dismissed-until:${userKey}`;
           const lastShownAtKey = `profile-reminder-last-shown-at:${userKey}`;
@@ -219,7 +211,6 @@ function App() {
           const lastShownAtMs = Number.parseInt(lastShownAt || '', 10);
           if (throttleMs > 0 && Number.isFinite(lastShownAtMs) && now - lastShownAtMs < throttleMs) return;
 
-          // Tandai bahwa notifikasi sudah ditampilkan di session ini
           profileNotificationShown.current = true;
 
           try {
@@ -264,7 +255,6 @@ function App() {
                           try {
                             localStorage.setItem(dismissedUntilKey, sevenDaysLater.toString());
                             localStorage.setItem(lastShownAtKey, String(Date.now()));
-                            // legacy key (backward compatibility)
                             localStorage.setItem('profile-reminder-dismissed-until', sevenDaysLater.toString());
                           } catch {
                             // ignore
@@ -287,7 +277,6 @@ function App() {
           );
         }
       } catch (error) {
-        // Error checking profile
       }
     },
     [navigate, profileReminderKeyForUser],
@@ -298,12 +287,10 @@ function App() {
     (async () => {
       if (isAuthed()) {
         if (alive) setIsLoggedIn(true);
-        // Sinkronisasi data profil (termasuk avatar) saat aplikasi dimuat
         try {
           const user = await syncMe();
           if (alive && user) checkProfileCompletion(user, { reason: 'session' });
         } catch (e) {
-          // Gagal diam-diam - user masih bisa menggunakan aplikasi dengan data cache
         }
         return;
       }
@@ -315,7 +302,6 @@ function App() {
           if (user) checkProfileCompletion(user, { reason: 'session' });
         }
       } catch (e) {
-        // Gagal diam-diam - user hanya belum login
         if (alive) setIsLoggedIn(false);
       }
     })();
@@ -324,16 +310,13 @@ function App() {
     };
   }, [checkProfileCompletion]);
 
-  // Lacak tampilan halaman (analitik website publik)
   useEffect(() => {
     const key = `${location.pathname}`;
     const now = Date.now();
-    // React 18 StrictMode menjalankan effect dua kali di dev; dedupe dalam jendela waktu singkat.
     if (lastTrackedRef.current.key === key && now - lastTrackedRef.current.at < 1500) return;
     lastTrackedRef.current = { key, at: now };
 
     trackPageView({ path: location.pathname, referrer: document.referrer }).catch(() => {
-      // abaikan error tracking
     });
   }, [location.pathname]);
 
@@ -365,7 +348,6 @@ function App() {
   const handleLoginSuccess = () => {
     setIsLoggedIn(true);
 
-    // Cek kelengkapan profil setelah login
     setTimeout(async () => {
       const user = await syncMe();
       checkProfileCompletion(user, { reason: 'login' });
@@ -392,10 +374,9 @@ function App() {
 
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
-          {/* Beranda */}
+
           <Route path="/" element={<HomePage isLoggedIn={isLoggedIn} />} />
 
-          {/* Sejarah GenBI */}
           <Route
             path="/history"
             element={
@@ -452,7 +433,6 @@ function App() {
             }
           />
 
-          {/* Form beasiswa — skeleton: form panjang */}
           <Route
             path="/scholarship/register"
             element={
@@ -519,7 +499,6 @@ function App() {
             }
           />
 
-          {/* Artikel — list: card grid, detail: artikel */}
           <Route
             path="/articles"
             element={
@@ -532,7 +511,6 @@ function App() {
             }
           />
 
-          {/* Detail / konten — skeleton: detail artikel */}
           <Route
             path="/events/:eventId"
             element={
@@ -572,7 +550,6 @@ function App() {
             }
           />
 
-          {/* Otentikasi — skeleton: form auth 2 kolom */}
           <Route
             path="/signin"
             element={
@@ -624,7 +601,6 @@ function App() {
             }
           />
 
-          {/* Profil (terlindungi) — skeleton: sidebar + konten */}
           <Route
             path="/profile"
             element={
@@ -640,12 +616,9 @@ function App() {
             <Route path="settings" element={<SettingsPage />} />
           </Route>
 
-          {/* Legacy profile paths (compatibility redirects) */}
           <Route path="/riwayat-aktivitas" element={<Navigate to="/profile/activity-history" replace />} />
           <Route path="/pengaturan" element={<Navigate to="/profile/settings" replace />} />
 
-          {/* 404 (opsional) */}
-          {/* <Route path="*" element={<NotFoundPage />} /> */}
         </Routes>
       </AnimatePresence>
     </div>

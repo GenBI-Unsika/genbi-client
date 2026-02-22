@@ -37,7 +37,6 @@ const ProfilePage = () => {
           setFaculties(facultiesData);
         }
       } catch (error) {
-        // Error loading master data
       }
     })();
 
@@ -234,7 +233,6 @@ const ProfilePage = () => {
       <div className="bg-white rounded-lg p-6 sm:p-8 animate-pulse">
         <div className="h-7 w-36 bg-gray-200 rounded mb-8" />
 
-        {/* Avatar + info header skeleton */}
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 mb-8 pb-8 border-b border-gray-100">
           <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gray-200 shrink-0" />
           <div className="space-y-2 text-center sm:text-left">
@@ -244,19 +242,18 @@ const ProfilePage = () => {
           </div>
         </div>
 
-        {/* Form fields skeleton */}
         <div className="space-y-6">
-          {/* Nama Lengkap */}
+
           <div className="space-y-2">
             <div className="h-4 w-28 bg-gray-200 rounded" />
             <div className="h-11 w-full bg-gray-100 rounded-lg" />
           </div>
-          {/* Email */}
+
           <div className="space-y-2">
             <div className="h-4 w-12 bg-gray-200 rounded" />
             <div className="h-11 w-full bg-gray-100 rounded-lg" />
           </div>
-          {/* Tanggal Lahir + Gender */}
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div className="space-y-2">
               <div className="h-4 w-28 bg-gray-200 rounded" />
@@ -267,22 +264,22 @@ const ProfilePage = () => {
               <div className="h-11 w-full bg-gray-100 rounded-lg" />
             </div>
           </div>
-          {/* NPM */}
+
           <div className="space-y-2">
             <div className="h-4 w-10 bg-gray-200 rounded" />
             <div className="h-11 w-full bg-gray-100 rounded-lg" />
           </div>
-          {/* Fakultas */}
+
           <div className="space-y-2">
             <div className="h-4 w-16 bg-gray-200 rounded" />
             <div className="h-11 w-full bg-gray-100 rounded-lg" />
           </div>
-          {/* Prodi */}
+
           <div className="space-y-2">
             <div className="h-4 w-28 bg-gray-200 rounded" />
             <div className="h-11 w-full bg-gray-100 rounded-lg" />
           </div>
-          {/* Tombol submit */}
+
           <div className="flex justify-end pt-2">
             <div className="h-11 w-40 bg-gray-200 rounded-lg" />
           </div>

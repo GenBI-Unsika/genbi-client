@@ -46,14 +46,13 @@ const SignInPage = ({ onNavigate, onLogin }) => {
 
   return (
     <div className="min-h-screen bg-white flex">
-      {/* Left side - Illustration */}
+
       <div className="hidden lg:flex lg:w-1/2 bg-gray-50 items-center justify-center p-12">
         <div className="max-w-md">
           <img src="https://illustrations.popsy.co/amber/remote-work.svg" alt="Login illustration" className="w-full h-auto" loading="eager" />
         </div>
       </div>
 
-      {/* Right side - Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
         <div className="max-w-md w-full">
           <div className="text-center mb-8">
