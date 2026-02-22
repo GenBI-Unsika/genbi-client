@@ -166,9 +166,9 @@ const ScholarshipPage = () => {
             aria-disabled={!isOpen}
             disabled={!isOpen}
             onClick={() => isOpen && navigate('/scholarship/register')}
-            className={`group relative inline-flex items-center gap-3 px-8 py-4 text-lg font-bold text-white transition-all duration-300 rounded-xl
+            className={`group relative inline-flex items-center gap-3 px-8 py-4 text-lg font-bold text-white transition-all duration-300 rounded-lg
               ${isOpen
-                ? 'bg-gradient-to-r from-primary-600 to-primary-800 hover:from-primary-700 hover:to-primary-900 shadow-lg shadow-primary-500/30 hover:shadow-primary-500/50 hover:-translate-y-1'
+                ? 'bg-primary-600 hover:bg-primary-700 hover:-translate-y-1'
                 : 'bg-neutral-300 cursor-not-allowed'
               }
             `}

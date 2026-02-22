@@ -53,7 +53,7 @@ const ProfileLayout = ({ children, currentPage, onNavigate, onLogout }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Header */}
         <div className="mb-8 flex flex-col sm:flex-row items-center sm:items-center gap-4">
-          <img src={userAvatar} alt={userName} className="w-16 h-16 rounded-full object-cover flex-shrink-0" referrerPolicy="no-referrer" />
+          <img src={userAvatar} alt={userName} className="w-16 h-16 rounded-full object-cover flex-shrink-0 border-2 border-primary-100 bg-primary-50" referrerPolicy="no-referrer" />
           <div className="text-center sm:text-left">
             <h1 className="text-h2 font-bold text-gray-900 mb-1">Halo, {userName}</h1>
             <p className="text-body text-gray-600">Berikut informasi mengenai profil dan aktivitas kamu</p>

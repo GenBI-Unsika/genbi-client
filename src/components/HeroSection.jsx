@@ -166,8 +166,9 @@ const HeroSection = () => {
             {/* CTA + AvatarStack */}
             <div className="flex w-full flex-col sm:flex-row sm:items-center sm:justify-center lg:justify-start gap-4 sm:gap-5 motion-preset-fade motion-duration-1000 motion-delay-700">
               <button
-                className="btn-primary w-full sm:w-auto px-6 py-3 md:px-8 md:py-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 shrink-0 transition-all duration-300 ease-in-out hover:scale-105 hover:-rotate-1"
+                className="bg-primary-600 text-white font-semibold w-full sm:w-auto px-6 py-3 md:px-8 md:py-3 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 shrink-0 transition-all duration-300 ease-in-out hover:bg-primary-700 hover:scale-105 hover:-rotate-1"
                 type="button"
+                onClick={() => window.location.href = '/scholarship'}
               >
                 {content.ctaText}
               </button>
