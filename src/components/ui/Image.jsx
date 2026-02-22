@@ -32,7 +32,7 @@ const Image = ({ src, alt = '', fallback = null, fallbackSrc = '', className = '
       return fallback;
     }
     if (fallbackSrc) {
-      return <img src={fallbackSrc} alt={alt} className={className} loading={loading} {...props} />;
+      return <img src={fallbackSrc} alt={alt} className={className} loading={loading} referrerPolicy="no-referrer" {...props} />;
     }
     // Default empty state
     return (
@@ -42,7 +42,7 @@ const Image = ({ src, alt = '', fallback = null, fallbackSrc = '', className = '
     );
   }
 
-  return <img src={normalizedSrc} alt={alt} className={className} loading={loading} onError={handleError} onLoad={handleLoad} {...props} />;
+  return <img src={normalizedSrc} alt={alt} className={className} loading={loading} onError={handleError} onLoad={handleLoad} referrerPolicy="no-referrer" {...props} />;
 };
 
 Image.propTypes = {
