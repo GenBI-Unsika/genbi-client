@@ -60,9 +60,9 @@ const ArticleDetailPage = React.lazy(() => import('./pages/ArticleDetailPage'));
 const ScholarshipRegister = React.lazy(() => import('./pages/scholarship/ScholarshipRegister'));
 const ScholarshipSelectionAdmin = React.lazy(() => import('./pages/scholarship/ScholarshipSelectionAdmin'));
 const ScholarshipSelectionInterview = React.lazy(() => import('./pages/scholarship/ScholarshipSelectionInterview'));
-const ScholarshipSelectionAnnouncement = React.lazy(() => import('./pages/scholarship/ScholarshipSelectionAnnouncement'));
-const ScholarshipAnnouncementPublic = React.lazy(() => import('./pages/scholarship/ScholarshipAnnouncementPublic'));
+const ScholarshipAnnouncementPublic = React.lazy(() => import('./pages/scholarship/ScholarshipSelectionAnnouncement'));
 const ScholarshipRegisterSuccess = React.lazy(() => import('./pages/scholarship/ScholarshipRegisterSuccess'));
+const InfoCenterPage = React.lazy(() => import('./pages/InfoCenterPage'));
 
 const pathForKey = (key) => {
   switch (key) {
@@ -586,6 +586,16 @@ function App() {
               <React.Suspense fallback={<AuthSkeleton />}>
                 <PageTransition>
                   <TwoFactorAuthPage onNavigate={onNavigate} />
+                </PageTransition>
+              </React.Suspense>
+            }
+          />
+          <Route
+            path="/pusat-informasi"
+            element={
+              <React.Suspense fallback={<DetailSkeleton />}>
+                <PageTransition>
+                  <InfoCenterPage />
                 </PageTransition>
               </React.Suspense>
             }

@@ -18,6 +18,7 @@ const navAbout = [
   { label: 'Sejarah', href: '/history' },
   { label: 'Tim Kami', href: '/teams' },
   { label: 'Visi & Misi', href: '/#vision-mission' },
+  { label: 'Pusat Informasi', href: '/pusat-informasi' },
 ];
 
 const navProgram = [

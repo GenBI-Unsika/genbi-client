@@ -257,7 +257,7 @@ const ScholarshipRegister = () => {
       try {
         saveDraftNow({ form, step, stagedFiles });
       } catch {
-        
+
       }
     };
 
@@ -284,7 +284,7 @@ const ScholarshipRegister = () => {
         try {
           URL.revokeObjectURL(url);
         } catch {
-          
+
         }
       }
       previewUrlsRef.current = {};
@@ -298,7 +298,7 @@ const ScholarshipRegister = () => {
         try {
           URL.revokeObjectURL(existingUrl);
         } catch {
-          
+
         }
         delete previewUrlsRef.current[key];
       }
@@ -309,7 +309,7 @@ const ScholarshipRegister = () => {
           try {
             await deleteStagingFile(prev.tempId);
           } catch {
-            
+
           }
         }
         setStagedFiles((s) => {
@@ -682,8 +682,8 @@ const ScholarshipRegister = () => {
         <div className="mx-auto max-w-4xl px-4 py-10">
           <div className="flex items-center justify-center py-20">
             <div className="text-center">
-              <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-4 border-primary-500 border-t-transparent" />
-              <p className="text-sm text-neutral-500">Memeriksa status pendaftaran...</p>
+              <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-4 border-primary-500 border-t-transparent" />
+              <p className="text-sm font-medium text-neutral-600">Mengecek data pendaftaran...</p>
             </div>
           </div>
         </div>
