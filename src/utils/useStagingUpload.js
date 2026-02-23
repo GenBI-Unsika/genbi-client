@@ -1,11 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { uploadFileStaging, finalizeUpload, finalizeBulkUpload, deleteStagingFile, getTempPreviewUrl } from './api';
 
-/**
- * Hook untuk mengelola staging upload
- * File di-upload ke temporary storage untuk preview,
- * kemudian di-finalize ke Google Drive saat submit
- */
 export function useStagingUpload() {
   const [stagedFiles, setStagedFiles] = useState([]);
   const [uploading, setUploading] = useState(false);
@@ -20,9 +15,6 @@ export function useStagingUpload() {
     };
   }, []);
 
-  /**
-   * Upload satu file ke staging
-   */
   const uploadToStaging = useCallback(async (file, options = {}) => {
     setUploading(true);
     setError(null);
@@ -56,9 +48,6 @@ export function useStagingUpload() {
     }
   }, []);
 
-  /**
-   * Upload banyak file ke staging
-   */
   const uploadMultipleToStaging = useCallback(async (files, options = {}) => {
     setUploading(true);
     setError(null);
@@ -100,9 +89,6 @@ export function useStagingUpload() {
     }
   }, []);
 
-  /**
-   * Hapus file dari staging
-   */
   const removeStagedFile = useCallback(async (tempId) => {
     try {
       await deleteStagingFile(tempId);
@@ -114,9 +100,6 @@ export function useStagingUpload() {
     }
   }, []);
 
-  /**
-   * Finalisasi satu file staging ke Google Drive
-   */
   const finalizeSingle = useCallback(async (tempId, folder) => {
     setFinalizing(true);
     setError(null);
@@ -144,9 +127,6 @@ export function useStagingUpload() {
     }
   }, []);
 
-  /**
-   * Finalisasi semua file staging ke Google Drive
-   */
   const finalizeAll = useCallback(async () => {
     if (stagedFiles.length === 0) return { uploaded: [], errors: [] };
 
@@ -183,9 +163,6 @@ export function useStagingUpload() {
     }
   }, [stagedFiles]);
 
-  /**
-   * Bersihkan semua file staging (tanpa finalisasi)
-   */
   const clearAll = useCallback(async () => {
 
     await Promise.all(stagedFiles.map((f) => deleteStagingFile(f.tempId).catch(() => { })));
@@ -194,9 +171,6 @@ export function useStagingUpload() {
     }
   }, [stagedFiles]);
 
-  /**
-   * Finalisasi file spesifik berdasarkan tempId
-   */
   const finalizeFiles = useCallback(
     async (tempIds, folder) => {
       const files = tempIds.map((tempId) => ({

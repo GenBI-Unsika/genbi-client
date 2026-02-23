@@ -1,11 +1,9 @@
-// components/ui/Modal.jsx
 import React, { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Modal = ({ isOpen, onClose, title, children }) => {
   const dialogRef = useRef(null);
 
-  // close on ESC
   useEffect(() => {
     if (!isOpen) return;
     const onKey = (e) => e.key === 'Escape' && onClose();
@@ -27,18 +25,17 @@ const Modal = ({ isOpen, onClose, title, children }) => {
         role="dialog"
         aria-labelledby="modal-title"
         onMouseDown={(e) => {
-          // close if click backdrop
           if (e.target === e.currentTarget) onClose();
         }}
       >
-        {/* Backdrop */}
+
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           className="absolute inset-0 bg-black/50 backdrop-blur-[1px]"
         />
-        {/* Dialog */}
+
         <motion.div
           ref={dialogRef}
           initial={{ opacity: 0, scale: 0.95, y: 10 }}

@@ -1,4 +1,3 @@
-// src/components/Footer.jsx
 import { useState, useEffect } from 'react';
 import { Icon } from '@iconify/react';
 import { apiFetch } from '../services/api.js';
@@ -19,6 +18,7 @@ const navAbout = [
   { label: 'Sejarah', href: '/history' },
   { label: 'Tim Kami', href: '/teams' },
   { label: 'Visi & Misi', href: '/#vision-mission' },
+  { label: 'Pusat Informasi', href: '/pusat-informasi' },
 ];
 
 const navProgram = [
@@ -28,7 +28,6 @@ const navProgram = [
   { label: 'Artikel', href: '/articles' },
 ];
 
-/* ── helpers ── */
 const NavList = ({ title, items, isMobile = false }) => (
   <nav className="space-y-3">
     <h6 className={`font-semibold text-gray-900 ${isMobile ? 'text-sm' : 'text-base'}`}>{title}</h6>
@@ -60,7 +59,6 @@ const Brand = ({ size = 'md' }) => (
   </div>
 );
 
-/* ── main component ── */
 const Footer = ({ ctaOverlap = false }) => {
   const year = new Date().getFullYear();
   const [content, setContent] = useState(defaultFooterContent);
@@ -73,7 +71,6 @@ const Footer = ({ ctaOverlap = false }) => {
         const value = json?.data?.value;
         if (alive && value) setContent({ ...defaultFooterContent, ...value });
       } catch {
-        // use defaults
       }
     })();
     return () => { alive = false; };
@@ -85,7 +82,6 @@ const Footer = ({ ctaOverlap = false }) => {
     <footer className="w-full bg-blue-50">
       <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ${ptClass} pb-6 sm:pb-8`}>
 
-        {/* ── Mobile (< md) ── */}
         <div className="md:hidden space-y-6 pb-6">
           <div className="space-y-2">
             <Brand size="sm" />
@@ -120,7 +116,6 @@ const Footer = ({ ctaOverlap = false }) => {
           </div>
         </div>
 
-        {/* ── Desktop (>= md) ── */}
         <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-12 pb-10">
           <div className="md:col-span-2 lg:col-span-5 space-y-3">
             <Brand />
@@ -156,7 +151,6 @@ const Footer = ({ ctaOverlap = false }) => {
           </nav>
         </div>
 
-        {/* ── Bottom bar ── */}
         <div className="border-t border-gray-200 pt-4">
           <p className="text-center text-xs text-gray-600">© {year} GenBI Unsika. All Rights Reserved.</p>
         </div>

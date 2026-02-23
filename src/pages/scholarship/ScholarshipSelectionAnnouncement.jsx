@@ -61,7 +61,6 @@ const normalizeExternalHref = (value) => {
 
   if (/^https?:\/\//i.test(raw) || /^mailto:/i.test(raw) || /^tel:/i.test(raw)) return raw;
 
-  // Common links that are often pasted without scheme
   if (/^(wa\.me\/|chat\.whatsapp\.com\/|meet\.google\.com\/|zoom\.us\/|www\.)/i.test(raw)) {
     return `https://${raw}`;
   }
@@ -167,7 +166,6 @@ const AnnouncementDetailModal = ({ open, onClose, app, userData, registration, s
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
 
-      {/* Toast (always mounted) */}
       <div className="fixed right-4 top-4 z-[60]">
         <div
           role="status"
@@ -356,7 +354,6 @@ const ScholarshipSelectionAnnouncement = () => {
     }
   };
 
-  // Derived status
   const administrasiStatus = app?.administrasiStatus;
   const interviewStatus = app?.interviewStatus;
 
@@ -386,7 +383,6 @@ const ScholarshipSelectionAnnouncement = () => {
     return 'warn';
   }, [interviewStatus]);
 
-  // Determine final announcement
   const isStillInProgress = !isFullyPassed && !isFailed;
 
   const announcementBadge = useMemo(() => {
@@ -404,13 +400,12 @@ const ScholarshipSelectionAnnouncement = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-primary-50/20">
       <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 px-4 py-10 md:grid-cols-3">
-        {/* Left: Vertical stepper */}
+
         <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
           <h3 className="mb-6 text-xl font-semibold text-body">Tahap Seleksi</h3>
           <StepperVertical current={stepCurrent} items={['Seleksi Administrasi', 'Seleksi Wawancara', 'Pengumuman']} />
         </div>
 
-        {/* Right */}
         <div className="md:col-span-2 space-y-6">
           <div>
             <h1 className="text-3xl font-bold bg-gradient-to-r from-primary-700 to-primary-500 bg-clip-text text-transparent">Proses Seleksi</h1>
@@ -419,7 +414,7 @@ const ScholarshipSelectionAnnouncement = () => {
 
           {loading && (
             <>
-              {/* Skeleton card — Pengumuman */}
+
               <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm animate-pulse space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="h-4 bg-gray-200 rounded w-28" />
@@ -427,7 +422,7 @@ const ScholarshipSelectionAnnouncement = () => {
                 </div>
                 <div className="h-16 bg-gray-100 rounded-lg w-full" />
               </div>
-              {/* Skeleton card — Wawancara */}
+
               <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm animate-pulse space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="h-4 bg-gray-200 rounded w-36" />
@@ -442,7 +437,7 @@ const ScholarshipSelectionAnnouncement = () => {
                   ))}
                 </div>
               </div>
-              {/* Skeleton card — Administrasi */}
+
               <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm animate-pulse space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="h-4 bg-gray-200 rounded w-40" />
@@ -461,7 +456,7 @@ const ScholarshipSelectionAnnouncement = () => {
 
           {!loading && !error && app && (
             <>
-              {/* Pengumuman */}
+
               <Card
                 title="Pengumuman"
                 badge={announcementBadge.label}
@@ -490,7 +485,6 @@ const ScholarshipSelectionAnnouncement = () => {
                 {isStillInProgress && 'Status pengumuman akan tampil otomatis setelah seluruh tahap seleksi selesai.'}
               </Card>
 
-              {/* Seleksi Wawancara */}
               <Card title="Seleksi Wawancara" badge={interviewLabel} badgeIntent={interviewIntent} tone={interviewIntent}>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <Field label="Nama">{userName}</Field>
@@ -507,7 +501,6 @@ const ScholarshipSelectionAnnouncement = () => {
                 )}
               </Card>
 
-              {/* Seleksi Administrasi */}
               <Card title="Seleksi Administrasi" badge={administrasiLabel} badgeIntent={administrasiIntent} tone={administrasiIntent}>
                 {administrasiStatus === 'ADMINISTRASI_DITOLAK'
                   ? 'Mohon maaf, Anda belum lolos seleksi administrasi.'

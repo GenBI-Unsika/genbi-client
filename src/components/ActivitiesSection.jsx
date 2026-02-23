@@ -40,7 +40,7 @@ const ActivitiesSection = () => {
   return (
     <ScrollReveal as="section" className="py-14 sm:py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Activities */}
+
         <div className="mb-14 sm:mb-16">
           <div className="flex items-center justify-between gap-3 mb-6">
             <div>
@@ -79,7 +79,6 @@ const ActivitiesSection = () => {
 
         <div className="border-t border-gray-100 my-2 mb-12 sm:mb-14" />
 
-        {/* Projects */}
         <div>
           <div className="flex justify-between items-center mb-6">
             <div>

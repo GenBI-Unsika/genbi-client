@@ -1,6 +1,5 @@
 import clsx from 'clsx';
 
-/** Label konsisten */
 export const FieldLabel = ({ htmlFor, children, required }) => (
   <label htmlFor={htmlFor} className="mb-2 block text-sm font-medium text-neutral-700">
     {children}{' '}
@@ -22,7 +21,6 @@ export const Select = ({ className, children, ...props }) => (
   </select>
 );
 
-/** Textarea (tinggi fleksibel, tetap padding & focus) */
 export const Textarea = ({ className, rows = 4, ...props }) => (
   <textarea
     rows={rows}
@@ -31,5 +29,4 @@ export const Textarea = ({ className, rows = 4, ...props }) => (
   />
 );
 
-/** Wrapper setiap field: spasi vertikal sesuai spacing JSON */
 export const Field = ({ children }) => <div className="space-y-2">{children}</div>;

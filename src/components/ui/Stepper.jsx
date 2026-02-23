@@ -9,7 +9,7 @@ const Stepper = ({ current = 0, items = [], className }) => {
         return (
           <li key={label} className={clsx("flex-1 group relative", i !== items.length - 1 && "pr-4")}>
             <div className="flex items-center">
-              {/* Circle */}
+
               <div
                 className={clsx(
                   "flex items-center justify-center rounded-full border-2 transition-all duration-300 z-10 relative bg-white",
@@ -27,7 +27,6 @@ const Stepper = ({ current = 0, items = [], className }) => {
                 )}
               </div>
 
-              {/* Line Connector */}
               {i < items.length - 1 && (
                 <div className={clsx("h-1 flex-1 mx-2 rounded", done ? "bg-primary-600" : "bg-neutral-200")} />
               )}

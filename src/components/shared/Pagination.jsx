@@ -5,7 +5,6 @@ function buildPageItems(currentPage, totalPages) {
     const safeTotal = Math.max(1, Number(totalPages) || 1);
     const safeCurrent = Math.min(Math.max(1, Number(currentPage) || 1), safeTotal);
 
-    // Windowed pagination: show [1] … [p-2 p-1 p p+1 p+2] … [total]
     const windowSize = 2;
     const start = Math.max(2, safeCurrent - windowSize);
     const end = Math.min(safeTotal - 1, safeCurrent + windowSize);

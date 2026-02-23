@@ -29,7 +29,6 @@ const ArticlesPage = () => {
   const [sortOrder, setSortOrder] = useState(searchParams.get('sortOrder') || 'desc');
 
   useEffect(() => {
-    // Keep state in sync when user uses Back/Forward.
     if (urlPage !== page) setPage(urlPage);
   }, [urlPage]);
 
@@ -92,7 +91,6 @@ const ArticlesPage = () => {
 
   const totalPages = Math.max(1, Number(meta.totalPages) || 1);
 
-  // Clamp page if server reports fewer pages (prevents dead-end pages).
   useEffect(() => {
     if (page > totalPages) goToPage(totalPages);
   }, [page, totalPages]);
@@ -100,7 +98,7 @@ const ArticlesPage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        {/* Header & Filter */}
+
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
           <div>
             <h1 className="page-title mb-4">Apa Yang Baru Di GenBI Unsika</h1>
@@ -133,7 +131,6 @@ const ArticlesPage = () => {
           </div>
         </div>
 
-        {/* Articles Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
           {loading
             ? Array.from({ length: 6 }).map((_, i) => (
@@ -183,7 +180,6 @@ const ArticlesPage = () => {
           })}
         </div>
 
-        {/* Pagination */}
         <div className="mt-8">
           <Pagination currentPage={page} totalPages={totalPages} onPageChange={goToPage} disabled={loading} />
         </div>

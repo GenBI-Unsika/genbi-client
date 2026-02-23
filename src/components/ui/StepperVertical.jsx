@@ -27,7 +27,6 @@ const StepperVertical = ({ items = [], current = 0, className, heightClass = 'h-
               </div>
             </div>
 
-            {/* connector line */}
             <div className="ms-3.5 mt-2 h-full w-px justify-self-start group-last:hidden" style={{ backgroundColor: 'var(--neutral-200)' }} />
           </li>
         );

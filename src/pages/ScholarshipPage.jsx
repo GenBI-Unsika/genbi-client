@@ -28,7 +28,6 @@ const ScholarshipPage = () => {
     let alive = true;
     (async () => {
       try {
-        // Parallel fetch: Page content (CMS) & Registration Info (Admin Settings)
         const [pageRes, regRes] = await Promise.all([
           apiFetch('/public/scholarship-page', { method: 'GET', skipAuth: true }),
           apiFetch('/scholarships/registration', { method: 'GET', skipAuth: true }).catch(() => null),
@@ -41,14 +40,12 @@ const ScholarshipPage = () => {
           setContent({
             ...defaultScholarshipPage,
             ...pageData,
-            // Override with live registration data if available
             isOpen: regData.open ?? pageData.isOpen ?? defaultScholarshipPage.isOpen,
             year: regData.year ?? defaultScholarshipPage.year,
             batch: regData.batch ?? defaultScholarshipPage.batch,
           });
         }
       } catch {
-        // Use defaults on error
       } finally {
         if (alive) setLoading(false);
       }
@@ -64,13 +61,12 @@ const ScholarshipPage = () => {
     return (
       <div className="min-h-screen bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 animate-pulse">
-          {/* Header */}
+
           <div className="mb-12 space-y-3">
             <div className="h-9 w-72 bg-gray-200 rounded" />
             <div className="h-5 w-96 bg-gray-100 rounded" />
           </div>
 
-          {/* Persyaratan */}
           <div className="mb-12 space-y-4">
             <div className="h-6 w-36 bg-gray-200 rounded mb-6" />
             {Array.from({ length: 6 }).map((_, i) => (
@@ -78,7 +74,6 @@ const ScholarshipPage = () => {
             ))}
           </div>
 
-          {/* Dokumen */}
           <div className="mb-12 space-y-4">
             <div className="h-6 w-52 bg-gray-200 rounded mb-6" />
             {Array.from({ length: 5 }).map((_, i) => (
@@ -86,7 +81,6 @@ const ScholarshipPage = () => {
             ))}
           </div>
 
-          {/* CTA */}
           <div className="flex justify-center">
             <div className="h-11 w-40 bg-gray-200 rounded-lg" />
           </div>
@@ -98,7 +92,7 @@ const ScholarshipPage = () => {
   return (
     <div className="min-h-screen bg-white">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        {/* Banner ketika pendaftaran ditutup */}
+
         {!isOpen && (
           <div className="mb-10">
             <div className="mx-auto w-full max-w-4xl rounded-l-lg border-l-4 border-red-500 bg-red-50 px-4 py-4 text-left shadow-sm">
@@ -115,7 +109,6 @@ const ScholarshipPage = () => {
           </div>
         )}
 
-        {/* Header */}
         <div className="mb-12">
           <div className="flex flex-wrap gap-2 mb-4">
             <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">
@@ -129,7 +122,6 @@ const ScholarshipPage = () => {
           <p className="section-subtitle">{content.subtitle}</p>
         </div>
 
-        {/* Persyaratan */}
         <div className="mb-12">
           <h2 className="section-title mb-6">Persyaratan</h2>
           <ul className="space-y-4 text-gray-700 leading-relaxed">
@@ -144,7 +136,6 @@ const ScholarshipPage = () => {
           </ul>
         </div>
 
-        {/* Dokumen */}
         <div className="mb-12">
           <h2 className="section-title mb-6">Dokumen Yang Dibutuhkan</h2>
           <ul className="space-y-4 text-gray-700 leading-relaxed">
@@ -159,16 +150,15 @@ const ScholarshipPage = () => {
           </ul>
         </div>
 
-        {/* CTA */}
         <div className="text-center">
           <button
             type="button"
             aria-disabled={!isOpen}
             disabled={!isOpen}
             onClick={() => isOpen && navigate('/scholarship/register')}
-            className={`group relative inline-flex items-center gap-3 px-8 py-4 text-lg font-bold text-white transition-all duration-300 rounded-xl
+            className={`group relative inline-flex items-center gap-3 px-8 py-4 text-lg font-bold text-white transition-all duration-300 rounded-lg
               ${isOpen
-                ? 'bg-gradient-to-r from-primary-600 to-primary-800 hover:from-primary-700 hover:to-primary-900 shadow-lg shadow-primary-500/30 hover:shadow-primary-500/50 hover:-translate-y-1'
+                ? 'bg-primary-600 hover:bg-primary-700 hover:-translate-y-1'
                 : 'bg-neutral-300 cursor-not-allowed'
               }
             `}

@@ -23,7 +23,6 @@ export default function TopLoadingBar() {
         return;
       }
 
-      // count === 0
       if (showTimerRef.current) {
         clearTimeout(showTimerRef.current);
         showTimerRef.current = null;

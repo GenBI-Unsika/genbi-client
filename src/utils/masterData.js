@@ -10,7 +10,6 @@ export async function fetchFaculties() {
     facultiesCache = response.data || [];
     return facultiesCache;
   } catch (error) {
-    // Error fetching faculties
     return [];
   }
 }
@@ -21,11 +20,9 @@ export function clearFacultiesCache() {
 
 export async function fetchStudyProgramsByFaculty(facultyId) {
   try {
-    // FIX: The backend route is /study-programs?facultyId=... not /faculties/:id/study-programs
     const response = await apiFetch(`/master-data/study-programs?facultyId=${facultyId}`);
     return response.data || [];
   } catch (error) {
-    // Error fetching study programs
     return [];
   }
 }
@@ -40,7 +37,6 @@ export async function fetchDivisions() {
     divisionsCache = response.data || [];
     return divisionsCache;
   } catch (error) {
-    // Error fetching divisions
     return [];
   }
 }

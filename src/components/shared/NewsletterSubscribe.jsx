@@ -5,11 +5,6 @@ import toast from 'react-hot-toast';
 import { apiFetch } from '../../services/api.js';
 import { getMe } from '../../utils/auth.js';
 
-/**
- * Newsletter subscription form component
- * @param {object} props
- * @param {string} [props.className] - Additional wrapper classes
- */
 const NewsletterSubscribe = ({ className = '' }) => {
   const user = getMe();
   const navigate = useNavigate();
@@ -68,7 +63,7 @@ const NewsletterSubscribe = ({ className = '' }) => {
   return (
     <div className={`w-full bg-primary-600 rounded-2xl px-6 py-7 animate-in fade-in slide-in-from-bottom-3 duration-700 ${className}`}>
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-        {/* Left: Icon + Text */}
+
         <div className="flex items-center gap-4">
           <div className="bg-white/15 p-2.5 rounded-xl flex-shrink-0 transition-all duration-500 ease-out hover:scale-105 hover:rotate-2 hover:bg-white/25">
             <Mail className="w-6 h-6 text-white" />
@@ -79,7 +74,6 @@ const NewsletterSubscribe = ({ className = '' }) => {
           </div>
         </div>
 
-        {/* Right: Form */}
         {subscribed ? (
           <div className="flex-shrink-0 w-full md:w-auto">
             <div className="px-5 py-2.5 bg-emerald-600 text-white font-semibold rounded-xl flex items-center justify-center gap-2 text-sm whitespace-nowrap">

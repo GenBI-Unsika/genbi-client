@@ -95,7 +95,6 @@ const VisionMissionSection = () => {
         }
         if (json?.data?.image) setImage(json.data.image);
       } catch {
-        // Use defaults
       }
     })();
     return () => {

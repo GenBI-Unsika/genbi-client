@@ -1,4 +1,3 @@
-// components/shared/MediaPlaceholder.jsx
 import React from 'react';
 import { Image as ImageIcon, Camera } from 'lucide-react';
 
@@ -13,9 +12,9 @@ const FrameIcon = ({ className = '' }) => (
 );
 
 const MediaPlaceholder = ({
-  ratio = '16/9', // '16/9' | '4/3' | '1/1' | '3/2'
-  label = '', // teks kecil di tengah
-  icon = 'frame', // 'frame' | 'image' | 'camera'
+  ratio = '16/9',
+  label = '',
+  icon = 'frame',
   className = '',
 }) => {
   const aspect = ratio === '1/1' ? 'aspect-square' : ratio === '4/3' ? 'aspect-[4/3]' : ratio === '3/2' ? 'aspect-[3/2]' : 'aspect-[16/9]';

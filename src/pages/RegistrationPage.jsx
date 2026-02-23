@@ -33,7 +33,6 @@ const RegistrationPage = ({ eventId }) => {
         setError(null);
       })
       .catch((err) => {
-        // Error loading event
         setError(err.message || 'Gagal memuat event');
       })
       .finally(() => setLoading(false));
@@ -62,7 +61,6 @@ const RegistrationPage = ({ eventId }) => {
       });
       setSubmitted(true);
     } catch (err) {
-      // Error submitting registration
       alert(err.message || 'Gagal mendaftarkan. Silakan coba lagi.');
     } finally {
       setSubmitting(false);

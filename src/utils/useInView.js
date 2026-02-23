@@ -5,17 +5,6 @@ const getPrefersReducedMotion = () => {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 };
 
-/**
- * useInView - IntersectionObserver hook sederhana untuk scroll reveal.
- *
- * @param {Object} options
- * @param {boolean} [options.once=true] - Jika true, setelah pertama kali masuk viewport akan tetap "visible".
- * @param {string} [options.rootMargin='0px 0px -10% 0px'] - Root margin untuk trigger lebih awal.
- * @param {number|number[]} [options.threshold=0.15] - Threshold observer.
- * @param {Element|null} [options.root=null] - Root element.
- * @param {boolean} [options.initialInView=false] - State awal (jarang dipakai).
- * @param {boolean} [options.disabled=false] - Nonaktifkan observer.
- */
 export function useInView(options = {}) {
   const { once = true, rootMargin = '0px 0px -10% 0px', threshold = 0.15, root = null, initialInView = false, disabled = false } = options;
 

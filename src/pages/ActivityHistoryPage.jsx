@@ -15,7 +15,6 @@ function statusPillClass(tone) {
 function buildScholarshipHistory(app) {
   if (!app) return [];
 
-  // UX: show 1 card only (latest status), but keep progress trail in the subtitle.
   const baseTitle = 'Beasiswa GenBI Unsika';
   const progress = ['Diajukan'];
 
@@ -35,7 +34,6 @@ function buildScholarshipHistory(app) {
   if (isPassInterview) progress.push('Lolos Wawancara');
   else if (isFailInterview) progress.push('Tidak Lolos Wawancara');
 
-  // Determine latest status + highlight
   let status = 'Diajukan';
   let tone = 'info';
   if (isFailInterview) {
@@ -58,7 +56,6 @@ function buildScholarshipHistory(app) {
     tone = 'info';
   }
 
-  // Display period as "Periode: {year} • Batch {batch}"
   const fallbackYear = app.submittedAt ? new Date(app.submittedAt).getFullYear() : new Date().getFullYear();
   const periodYear = app.year ?? fallbackYear;
   const periodText = `Periode: ${periodYear} Batch ${app.batch || 1}`;
@@ -120,7 +117,6 @@ const ActivitiesPage = () => {
     <div className="bg-white rounded-lg p-4 sm:p-6 lg:p-8">
       <h2 className="text-h2 font-bold text-gray-900 mb-6 sm:mb-8">Riwayat Aktivitas</h2>
 
-      {/* Tab */}
       <div className="flex gap-4 sm:gap-8 mb-6 sm:mb-8 border-b border-gray-200">
         <button onClick={() => setActiveTab('beasiswa')} className={`pb-4 px-2 font-medium transition-colors ${activeTab === 'beasiswa' ? 'text-primary-500 border-b-2 border-primary-500' : 'text-gray-500 hover:text-gray-700'}`}>
           Beasiswa
@@ -130,7 +126,6 @@ const ActivitiesPage = () => {
         </button>
       </div>
 
-      {/* Konten */}
       <div className="space-y-6">
         {activeTab === 'beasiswa' && (
           <>

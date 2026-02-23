@@ -185,10 +185,8 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
     <header className="fixed top-0 left-0 right-0 z-50 bg-primary-50 shadow-sm w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        {/* ── Main bar ── */}
         <div className="flex items-center justify-between gap-4 py-3 md:py-4 lg:grid lg:grid-cols-[1fr_auto_1fr]">
 
-          {/* Logo */}
           <button
             type="button"
             onClick={() => handleNavigation('home')}
@@ -207,7 +205,6 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
             </span>
           </button>
 
-          {/* Desktop nav */}
           <nav className="hidden lg:flex items-center gap-0.5 text-sm">
             <button
               onClick={() => handleNavigation('home')}
@@ -249,10 +246,8 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
             </button>
           </nav>
 
-          {/* Right section: search + auth */}
           <div className="flex items-center gap-2 lg:justify-self-end">
 
-            {/* Desktop search */}
             <div className="relative hidden md:block" ref={searchRef}>
               <label>
                 <span className="sr-only">Cari</span>
@@ -324,7 +319,6 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
               )}
             </div>
 
-            {/* Auth */}
             {isLoggedIn ? (
               <div className="relative" ref={profileDropdownRef}>
                 <button
@@ -394,7 +388,6 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
               </div>
             )}
 
-            {/* Hamburger */}
             <button
               onClick={() => setIsMenuOpen((v) => !v)}
               className="lg:hidden p-2 rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary-100/60 cursor-pointer transition-colors duration-150"
@@ -406,7 +399,6 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
           </div>
         </div>
 
-        {/* ── Mobile menu ── */}
         <AnimatePresence>
           {isMenuOpen && (
             <MotionDiv
@@ -416,12 +408,11 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
               transition={{ duration: 0.25, ease: 'easeInOut' }}
               className="lg:hidden overflow-hidden"
             >
-              {/* Divider antara header dan menu */}
+
               <div className="h-px bg-gray-200 mx-0" />
 
               <div className="py-3 max-h-[calc(100dvh-56px)] overflow-y-auto">
 
-                {/* Mobile search */}
                 <div className="px-3 pb-3">
                   <div className="relative">
                     <SearchIcon
@@ -438,7 +429,6 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
                   </div>
                 </div>
 
-                {/* Nav items */}
                 <div className="flex flex-col px-2">
 
                   <button
@@ -448,7 +438,6 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
                     Beranda
                   </button>
 
-                  {/* Tentang Kami */}
                   <button
                     onClick={() => setMAboutOpen((v) => !v)}
                     aria-expanded={mAboutOpen}
@@ -493,7 +482,6 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
                     Beasiswa
                   </button>
 
-                  {/* Aktivitas */}
                   <button
                     onClick={() => setMActivityOpen((v) => !v)}
                     aria-expanded={mActivityOpen}
@@ -539,7 +527,6 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
                   </button>
                 </div>
 
-                {/* Auth buttons */}
                 <div className="px-3 mt-3 pt-3 border-t border-gray-200">
                   {!isLoggedIn ? (
                     <div className="grid grid-cols-2 gap-2">
@@ -569,7 +556,6 @@ const Header = ({ isLoggedIn, onLoginToggle, onNavigate, onLogout }) => {
                   )}
                 </div>
 
-                {/* Bottom padding */}
                 <div className="h-3" />
               </div>
             </MotionDiv>

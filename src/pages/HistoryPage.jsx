@@ -22,7 +22,6 @@ const HistoryPage = () => {
         const value = json?.data?.value;
         if (alive && value) setContent({ ...defaultHistoryContent, ...value });
       } catch {
-        // Keep default on error
       } finally {
         if (alive) setLoading(false);
       }
@@ -43,20 +42,18 @@ const HistoryPage = () => {
   return (
     <div className="min-h-screen bg-white">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        {/* Header */}
+
         <div className="mb-12">
           <h1 className="page-title mb-4">{content.title || 'Sejarah'}</h1>
           {content.subtitle ? <p className="section-subtitle">{content.subtitle}</p> : null}
         </div>
 
-        {/* Image Placeholder */}
         {imageSrc ? (
           <div className="mb-8">
             <img src={imageSrc} alt={content.title || 'Sejarah GenBI'} className="w-full aspect-video object-cover rounded-lg" loading="lazy" decoding="async" />
           </div>
         ) : null}
 
-        {/* Content */}
         {!content.body ? (
           <div className="py-8">
             <EmptyState icon="box" title="Konten belum tersedia" description="Silakan coba lagi nanti." variant="default" />

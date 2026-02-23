@@ -10,8 +10,7 @@ import { useConfirm } from '../../contexts/ConfirmContext.jsx';
 import { buildScholarshipFolderPath } from '../../utils/scholarshipHelpers.js';
 import { useFormDraft } from '../../utils/useFormDraft.js';
 
-// File validation constraints
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+const MAX_FILE_SIZE = 10 * 1024 * 1024;
 const ALLOWED_FILE_TYPES = ['.pdf', '.jpg', '.jpeg', '.png'];
 const ALLOWED_MIME_TYPES = ['application/pdf', 'image/jpeg', 'image/png'];
 
@@ -46,27 +45,22 @@ const ScholarshipRegister = () => {
   const fileInputRefs = useRef({});
   const draftRestoredRef = useRef(false);
 
-  // Draft auto-save (persists form text fields to localStorage)
   const { restoreDraft, saveDraft, saveDraftNow, clearDraft } = useFormDraft('scholarship-register', {
-    maxAgeMs: 7 * 24 * 60 * 60 * 1000, // 7 days
+    maxAgeMs: 7 * 24 * 60 * 60 * 1000,
   });
 
-  // Registration open status
-  const [regOpen, setRegOpen] = useState(null); // null = loading
+  const [regOpen, setRegOpen] = useState(null);
   const [regChecked, setRegChecked] = useState(false);
   const [regBatch, setRegBatch] = useState(null);
   const [registrationDocuments, setRegistrationDocuments] = useState(null);
 
-  // Master data: faculties & study programs
   const [faculties, setFaculties] = useState([]);
   const [studyPrograms, setStudyPrograms] = useState([]);
   const [loadingProdi, setLoadingProdi] = useState(false);
 
-  // Staged files for upload (tempIds mapped by doc key)
-  const [stagedFiles, setStagedFiles] = useState({}); // { docKey: { tempId, name, previewUrl } }
-  const [stagingFile, setStagingFile] = useState(null); // key currently being staged
+  const [stagedFiles, setStagedFiles] = useState({});
+  const [stagingFile, setStagingFile] = useState(null);
 
-  // MEMOIZED user to prevent re-renders (getMe returns new object every time)
   const user = useMemo(() => getMe(), []);
 
   const [form, setForm] = useState({
@@ -88,7 +82,6 @@ const ScholarshipRegister = () => {
     files: {},
   });
 
-  // Check registration status on mount
   useEffect(() => {
     let alive = true;
     (async () => {
@@ -116,7 +109,6 @@ const ScholarshipRegister = () => {
     };
   }, []);
 
-  // Guard: prevent applying twice in the same opening/batch
   useEffect(() => {
     if (!regChecked) return;
     if (!regOpen) return;
@@ -146,7 +138,6 @@ const ScholarshipRegister = () => {
     };
   }, [regChecked, regOpen, regBatch, user?.id, navigate]);
 
-  // Load faculties on mount
   useEffect(() => {
     (async () => {
       const data = await fetchFaculties();
@@ -154,9 +145,7 @@ const ScholarshipRegister = () => {
     })();
   }, []);
 
-  // Load study programs when faculty changes
   useEffect(() => {
-    // If no faculty selected, clear study programs
     if (!form.facultyId) {
       setStudyPrograms([]);
       return;
@@ -170,7 +159,6 @@ const ScholarshipRegister = () => {
         if (!alive) return;
         setStudyPrograms(data || []);
       } catch (err) {
-        // Error fetching study programs
         if (!alive) return;
         setStudyPrograms([]);
       } finally {
@@ -182,18 +170,13 @@ const ScholarshipRegister = () => {
     };
   }, [form.facultyId]);
 
-  // Pre-fill from user profile, then overlay any saved draft
-  // Pre-fill from user profile + Restore Draft
   useEffect(() => {
-    // 1. Prepare profile data (with formatting fixes)
     let profileData = {};
     if (user?.profile) {
-      // Fix Gender mapping (Backend uses full words, User might have 'L'/'P')
       let gender = user.profile.gender;
       if (gender === 'L') gender = 'Laki-laki';
       if (gender === 'P') gender = 'Perempuan';
 
-      // Fix Phone formatting (Standardize to 62...)
       let phone = user.profile.phone || '';
       phone = phone.replace(/\D/g, '');
       if (phone.startsWith('0')) phone = '62' + phone.slice(1);
@@ -211,18 +194,14 @@ const ScholarshipRegister = () => {
       };
     }
 
-    // 2. Restore Draft or Apply Profile
     if (!draftRestoredRef.current) {
       draftRestoredRef.current = true;
       const draft = restoreDraft();
 
       if (draft?.form) {
-        // Smart Merge: Handle specific field fallbacks
         let mergedGender = draft.form.gender;
-        // Fix legacy draft values
         if (mergedGender === 'L') mergedGender = 'Laki-laki';
         if (mergedGender === 'P') mergedGender = 'Perempuan';
-        // Fallback to profile if draft is empty (but profile has data)
         if (!mergedGender && profileData.gender) {
           mergedGender = profileData.gender;
         }
@@ -231,8 +210,8 @@ const ScholarshipRegister = () => {
           ...prev,
           ...profileData,
           ...draft.form,
-          gender: mergedGender || '', // Apply fixed gender
-          agree: false, // Never restore consent
+          gender: mergedGender || '',
+          agree: false,
           files: {
             ...(prev.files || {}),
             ...(draft.videoUrl ? { videoUrl: draft.videoUrl } : {}),
@@ -243,7 +222,6 @@ const ScholarshipRegister = () => {
           setStep(draft.step);
         }
         if (draft.stagedFiles && Object.keys(draft.stagedFiles).length > 0) {
-          // Hydrate previewUrl so staged/finalized docs are visible/usable after refresh
           const hydrated = {};
           for (const [key, val] of Object.entries(draft.stagedFiles)) {
             if (!val) continue;
@@ -264,26 +242,22 @@ const ScholarshipRegister = () => {
           setStagedFiles(hydrated);
         }
       } else {
-        // No draft -> Initialize with profile data
         setForm((prev) => ({ ...prev, ...profileData }));
       }
     }
   }, [user, restoreDraft]);
 
-  // Auto-save form data to localStorage on every change (debounced)
   useEffect(() => {
-    // Don't save while submitting or before initial load
     if (submitting || !regChecked) return;
     saveDraft({ form, step, stagedFiles });
   }, [form, step, stagedFiles, submitting, regChecked, saveDraft]);
 
-  // Save draft immediately if user refreshes/closes tab quickly
   useEffect(() => {
     const handler = () => {
       try {
         saveDraftNow({ form, step, stagedFiles });
       } catch {
-        /* ignore */
+
       }
     };
 
@@ -291,7 +265,6 @@ const ScholarshipRegister = () => {
     return () => window.removeEventListener('beforeunload', handler);
   }, [form, step, stagedFiles, saveDraftNow]);
 
-  // Auto-calculate age from birth date
   useEffect(() => {
     if (form.birth) {
       const birthDate = new Date(form.birth);
@@ -305,42 +278,38 @@ const ScholarshipRegister = () => {
     }
   }, [form.birth]);
 
-  // Cleanup blob URLs on unmount
   useEffect(() => {
     return () => {
       for (const url of Object.values(previewUrlsRef.current)) {
         try {
           URL.revokeObjectURL(url);
         } catch {
-          /* ignore */
+
         }
       }
       previewUrlsRef.current = {};
     };
   }, []);
 
-  // Stage file to temp storage immediately on selection
   const handleFileSelect = useCallback(
     async (key, file) => {
-      // Clear previous preview URL
       const existingUrl = previewUrlsRef.current[key];
       if (existingUrl) {
         try {
           URL.revokeObjectURL(existingUrl);
         } catch {
-          /* ignore */
+
         }
         delete previewUrlsRef.current[key];
       }
 
       if (!file) {
-        // Remove staged file
         const prev = stagedFiles[key];
         if (prev?.tempId) {
           try {
             await deleteStagingFile(prev.tempId);
           } catch {
-            /* ignore */
+
           }
         }
         setStagedFiles((s) => {
@@ -361,14 +330,12 @@ const ScholarshipRegister = () => {
         return;
       }
 
-      // Validate
       const error = validateFile(file);
       if (error) {
         toast.error(error);
         return;
       }
 
-      // Set local preview for images and PDFs
       if (file.type?.startsWith('image/') || file.type === 'application/pdf') {
         const url = URL.createObjectURL(file);
         previewUrlsRef.current[key] = url;
@@ -381,10 +348,8 @@ const ScholarshipRegister = () => {
         });
       }
 
-      // Hold file reference in form state for display
       setForm((old) => ({ ...old, files: { ...old.files, [key]: file } }));
 
-      // Stage to temp storage
       setStagingFile(key);
       try {
         const result = await uploadFileStaging(file);
@@ -401,7 +366,6 @@ const ScholarshipRegister = () => {
         toast.success(`${file.name} berhasil disimpan sementara`);
       } catch (err) {
         toast.error(`Gagal menyimpan ${file.name}: ${err.message}`);
-        // Cleanup on failure
         setForm((old) => {
           const f = { ...old.files };
           delete f[key];
@@ -438,7 +402,6 @@ const ScholarshipRegister = () => {
   const docs = useMemo(() => {
     if (!Array.isArray(registrationDocuments) || registrationDocuments.length === 0) return staticDocs;
 
-    // Normalize server payload and keep a stable, minimal shape expected by UI.
     return registrationDocuments
       .filter((d) => d && typeof d.key === 'string')
       .map((d) => ({
@@ -452,7 +415,6 @@ const ScholarshipRegister = () => {
   }, [registrationDocuments, staticDocs]);
 
   const next = () => {
-    // Validate step 0 (Data Pribadi)
     if (step === 0) {
       if (!form.name?.trim()) {
         toast.error('Nama lengkap wajib diisi.');
@@ -462,7 +424,6 @@ const ScholarshipRegister = () => {
         toast.error('Email wajib diisi.');
         return;
       }
-      // Email format check
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
         toast.error('Format email tidak valid.');
         return;
@@ -479,7 +440,6 @@ const ScholarshipRegister = () => {
         toast.error('NPM wajib diisi.');
         return;
       }
-      // NPM format: 13 digits for Unsika
       if (!/^\d{13}$/.test(form.npm.trim())) {
         toast.error('NPM harus terdiri dari 13 digit angka.');
         return;
@@ -488,7 +448,6 @@ const ScholarshipRegister = () => {
         toast.error('NIK wajib diisi.');
         return;
       }
-      // NIK format: 16 digits
       if (!/^\d{16}$/.test(form.nik.trim())) {
         toast.error('NIK harus terdiri dari 16 digit angka sesuai KTP.');
         return;
@@ -524,7 +483,6 @@ const ScholarshipRegister = () => {
         toast.error('Usia harus antara 15 hingga 40 tahun.');
         return;
       }
-      // Optional field format checks (only if filled)
       if (!form.phone?.trim()) {
         toast.error('No. telepon wajib diisi.');
         return;
@@ -539,7 +497,6 @@ const ScholarshipRegister = () => {
       }
     }
 
-    // Validate step 1 (Pemberkasan) — check all required docs are staged
     if (step === 1) {
       const missingDocs = [];
       for (const d of docs) {
@@ -574,7 +531,6 @@ const ScholarshipRegister = () => {
 
     if (step !== 2) return;
 
-    // Final defense: re-check all required docs before submit
     const missingDocs = [];
     for (const d of docs) {
       if (!d.required) continue;
@@ -587,7 +543,7 @@ const ScholarshipRegister = () => {
     }
     if (missingDocs.length > 0) {
       toast.error(`Dokumen wajib belum lengkap: ${missingDocs.join(', ')}`);
-      setStep(1); // bring back to document step
+      setStep(1);
       return;
     }
 
@@ -603,13 +559,11 @@ const ScholarshipRegister = () => {
     try {
       setSubmitting(true);
 
-      // Build organized folder path for this applicant
       const folderPath = buildScholarshipFolderPath({
         npm: form.npm,
         name: form.name,
       }).join('/');
 
-      // Collect staged files that need to be finalized to GDrive
       const filesToFinalize = [];
       const filesPayload = {};
 
@@ -620,7 +574,6 @@ const ScholarshipRegister = () => {
         }
 
         const staged = stagedFiles[d.key];
-        // If already finalized previously, reuse the permanent fileId (prevents re-upload on retry)
         if (staged?.fileId) {
           filesPayload[d.key] = String(staged.fileId);
         } else if (staged?.tempId) {
@@ -632,14 +585,11 @@ const ScholarshipRegister = () => {
         }
       }
 
-      // Finalize all staged files to GDrive in bulk (organized in applicant folder)
       if (filesToFinalize.length > 0) {
         setUploadProgress({ current: 0, total: filesToFinalize.length, currentFile: 'Menyiapkan upload...' });
 
         const bulkResult = await finalizeBulkUpload(filesToFinalize.map((f) => ({ tempId: f.tempId, folder: f.folder })));
 
-        // Promote successful staged files to permanent references immediately.
-        // This ensures that if the next API call fails, the user can retry without re-uploading.
         const uploadedByTempId = new Map((bulkResult?.uploaded || []).map((u) => [u.tempId, u]));
         setStagedFiles((prev) => {
           const next = { ...prev };
@@ -658,7 +608,6 @@ const ScholarshipRegister = () => {
           return next;
         });
 
-        // Map results back to doc keys
         for (const item of filesToFinalize) {
           const uploaded = uploadedByTempId.get(item.tempId);
           if (uploaded?.fileId) {
@@ -666,19 +615,16 @@ const ScholarshipRegister = () => {
           }
         }
 
-        // Check for errors
         if (bulkResult.errors?.length > 0) {
           const failedItems = filesToFinalize.filter((f) => bulkResult.errors.some((e) => e.tempId === f.tempId));
           const failedKeys = failedItems.map((f) => f.docKey);
 
-          // Remove failed files from stagedFiles so user MUST re-upload
           setStagedFiles((prev) => {
             const next = { ...prev };
             failedKeys.forEach((key) => delete next[key]);
             return next;
           });
 
-          // Also clear from form state to reset UI completely
           setForm((prev) => {
             const nextFiles = { ...prev.files };
             failedKeys.forEach((key) => delete nextFiles[key]);
@@ -691,7 +637,7 @@ const ScholarshipRegister = () => {
             .join(', ');
 
           toast.error(`Sesi file telah habis. Mohon unggah ulang dokumen: ${failedTitles}`);
-          setStep(1); // Return to document step
+          setStep(1);
           setSubmitting(false);
           return;
         }
@@ -699,7 +645,6 @@ const ScholarshipRegister = () => {
         setUploadProgress({ current: filesToFinalize.length, total: filesToFinalize.length, currentFile: 'Selesai!' });
       }
 
-      // Submit application with file IDs
       await scholarshipSubmitApplication({
         name: form.name,
         email: form.email,
@@ -719,7 +664,6 @@ const ScholarshipRegister = () => {
         files: filesPayload,
       });
 
-      // Clear saved draft on successful submission
       clearDraft();
       toast.success('Pendaftaran beasiswa berhasil dikirim!');
       navigate('/scholarship/success');
@@ -732,15 +676,14 @@ const ScholarshipRegister = () => {
     }
   };
 
-  // Show loading while checking registration status
   if (!regChecked) {
     return (
       <div className="min-h-screen bg-page">
         <div className="mx-auto max-w-4xl px-4 py-10">
           <div className="flex items-center justify-center py-20">
             <div className="text-center">
-              <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-4 border-primary-500 border-t-transparent" />
-              <p className="text-sm text-neutral-500">Memeriksa status pendaftaran...</p>
+              <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-4 border-primary-500 border-t-transparent" />
+              <p className="text-sm font-medium text-neutral-600">Mengecek data pendaftaran...</p>
             </div>
           </div>
         </div>
@@ -748,7 +691,6 @@ const ScholarshipRegister = () => {
     );
   }
 
-  // Show closed message if registration is not open
   if (regOpen === false) {
     return (
       <div className="min-h-screen bg-page">
@@ -789,7 +731,7 @@ const ScholarshipRegister = () => {
         </div>
 
         <form onSubmit={submit} className="rounded-xl border border-neutral-200 bg-surface p-6">
-          {/* STEP 1 — Data Pribadi */}
+
           {step === 0 && (
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <Field>
@@ -937,16 +879,13 @@ const ScholarshipRegister = () => {
                   inputMode="decimal"
                   value={form.gpa}
                   onChange={(e) => {
-                    // Replace comma with dot
                     let val = e.target.value.replace(/,/g, '.');
-                    // Allow only digits and one dot
                     if (!/^\d*\.?\d*$/.test(val)) return;
                     setForm({ ...form, gpa: val });
                   }}
                   onBlur={(e) => {
                     let val = parseFloat(e.target.value);
                     if (!isNaN(val)) {
-                      // Clamp between 0 and 4
                       if (val < 0) val = 0;
                       if (val > 4) val = 4;
                       setForm({ ...form, gpa: val.toFixed(2) });
@@ -986,7 +925,6 @@ const ScholarshipRegister = () => {
             </div>
           )}
 
-          {/* STEP 2 — Pemberkasan */}
           {step === 1 && (
             <div className="space-y-6">
               {docs.map((d) => (
@@ -1104,7 +1042,6 @@ const ScholarshipRegister = () => {
                             </button>
                           </div>
 
-                          {/* Inline Preview */}
                           {filePreviews[d.key] && (
                             <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-2 overflow-hidden">
                               {filePreviews[d.key].type?.startsWith('image/') ? (
@@ -1164,10 +1101,9 @@ const ScholarshipRegister = () => {
             </div>
           )}
 
-          {/* STEP 3 — Validasi Data */}
           {step === 2 && (
             <div className="space-y-4">
-              {/* Summary of staged files */}
+
               <div className="rounded-lg border border-neutral-200 p-4">
                 <p className="mb-3 text-sm font-semibold text-body">Ringkasan Dokumen</p>
                 <div className="space-y-2">

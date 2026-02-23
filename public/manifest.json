@@ -1,0 +1,20 @@
+{
+    "short_name": "GenBI Unsika",
+    "name": "Generasi Baru Indonesia Komisariat Unsika",
+    "icons": [
+        {
+            "src": "/favicon-genbi.webp",
+            "sizes": "192x192",
+            "type": "image/webp"
+        },
+        {
+            "src": "/favicon-genbi.webp",
+            "sizes": "512x512",
+            "type": "image/webp"
+        }
+    ],
+    "start_url": ".",
+    "display": "standalone",
+    "theme_color": "#0084ff",
+    "background_color": "#ffffff"
+}

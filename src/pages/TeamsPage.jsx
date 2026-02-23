@@ -20,7 +20,6 @@ const TeamsPage = () => {
         if (alive) setMembers(Array.isArray(items) ? items : []);
       } catch (e) {
         if (!alive) return;
-        // If endpoint isn't available yet (or no data), show empty-state instead of error.
         if (e?.status === 404) {
           setMembers([]);
           setError('');
@@ -43,7 +42,7 @@ const TeamsPage = () => {
     const seen = new Set();
     members.forEach((m) => {
       const k = (m.name || '').trim().toLowerCase();
-      if (seen.has(k)) { /* skip */ }
+      if (seen.has(k)) {  }
       seen.add(k);
     });
   }, [members]);
@@ -53,7 +52,6 @@ const TeamsPage = () => {
     for (const m of members) {
       const divisionLabel = m.divisionTitle || (typeof m.division === 'string' ? m.division : m.division && typeof m.division === 'object' ? m.division.name : '') || '';
 
-      // Skip members tanpa divisi
       if (!divisionLabel) continue;
 
       if (!map.has(divisionLabel)) map.set(divisionLabel, []);
@@ -65,7 +63,7 @@ const TeamsPage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        {/* Header */}
+
         <div className="mb-12">
           <h1 className="page-title mb-4">Anggota GenBI Unsika</h1>
           <p className="section-subtitle">Yuk, kenal lebih dekat dengan kami</p>
@@ -91,7 +89,6 @@ const TeamsPage = () => {
         ) : null}
         {!loading && error ? <EmptyState icon="error" title="Gagal memuat anggota" description={error} variant="warning" /> : null}
 
-        {/* Divisions (hasil grup otomatis) */}
         {!loading && !error ? (
           grouped.length === 0 ? (
             <div className="py-10">

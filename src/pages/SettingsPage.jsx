@@ -98,7 +98,7 @@ const SettingsPage = () => {
       <h2 className="text-h2 font-bold text-gray-900 mb-6 sm:mb-8">Pengaturan</h2>
 
       <div className="space-y-8">
-        {/* Change Password */}
+
         <div>
           <h3 className="text-lg font-semibold text-gray-900 mb-2">Ubah Password</h3>
           <p className="text-sm text-gray-600 mb-4">Jika akun Anda dibuat via Google, kolom password lama boleh dikosongkan.</p>
@@ -119,7 +119,6 @@ const SettingsPage = () => {
                 placeholder="Masukkan password baru"
               />
 
-              {/* Password Strength Indicator */}
               {passwordForm.newPassword && (
                 <div className="mt-2">
                   <div className="flex items-center gap-2">

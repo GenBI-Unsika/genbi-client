@@ -24,7 +24,6 @@ const ScholarshipSection = () => {
           setContent({ ...defaultScholarshipContent, ...value });
         }
       } catch {
-        // Use defaults on error
       }
     })();
     return () => {
@@ -40,11 +39,11 @@ const ScholarshipSection = () => {
 
   return (
     <ScrollReveal as="section" className="bg-white">
-      {/* Responsive radius (no big curve on small screens) */}
+
       <div className="py-12 sm:py-16 bg-primary-50 rounded-none md:rounded-r-[72px] xl:rounded-r-[100px]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-            {/* Left content */}
+
             <div className="order-2 lg:order-1 lg:col-span-6 space-y-4 sm:space-y-5 max-w-2xl">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-widest text-primary-500 mb-2">Beasiswa</p>
@@ -59,10 +58,9 @@ const ScholarshipSection = () => {
               </div>
             </div>
 
-            {/* Right image */}
             <div className="order-1 lg:order-2 lg:col-span-6">
               <div className="relative w-full overflow-hidden rounded-2xl shadow-md bg-white group">
-                {/* Aspect ratios per breakpoint to avoid layout shift */}
+
                 <div className="aspect-[4/3] sm:aspect-[16/10] lg:aspect-[3/2]">
                   <img
                     src={content.image || './read-book.webp'}

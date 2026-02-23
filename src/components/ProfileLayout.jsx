@@ -51,9 +51,9 @@ const ProfileLayout = ({ children, currentPage, onNavigate, onLogout }) => {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Welcome Header */}
+
         <div className="mb-8 flex flex-col sm:flex-row items-center sm:items-center gap-4">
-          <img src={userAvatar} alt={userName} className="w-16 h-16 rounded-full object-cover flex-shrink-0" referrerPolicy="no-referrer" />
+          <img src={userAvatar} alt={userName} className="w-16 h-16 rounded-full object-cover flex-shrink-0 border-2 border-primary-100 bg-primary-50" referrerPolicy="no-referrer" />
           <div className="text-center sm:text-left">
             <h1 className="text-h2 font-bold text-gray-900 mb-1">Halo, {userName}</h1>
             <p className="text-body text-gray-600">Berikut informasi mengenai profil dan aktivitas kamu</p>
@@ -61,7 +61,7 @@ const ProfileLayout = ({ children, currentPage, onNavigate, onLogout }) => {
         </div>
 
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
-          {/* Sidebar - horizontal scroll on mobile, vertical on desktop */}
+
           <div className="lg:w-80 flex-shrink-0">
             <div className="bg-transparent lg:bg-white rounded-lg lg:shadow-sm lg:border border-gray-200 overflow-hidden">
               <nav className="flex lg:flex-col overflow-x-auto lg:overflow-x-visible gap-3 lg:gap-0 p-1 lg:p-0 scrollbar-hide">
@@ -83,7 +83,6 @@ const ProfileLayout = ({ children, currentPage, onNavigate, onLogout }) => {
                   </button>
                 ))}
 
-                {/* Logout Button */}
                 <button
                   onClick={handleLogout}
                   className="flex items-center px-4 py-2 lg:px-6 lg:py-4 text-left text-red-600 lg:text-gray-700 bg-white lg:bg-transparent border border-red-100 lg:border-0 rounded-full lg:rounded-none hover:bg-red-50 lg:hover:bg-gray-50 transition-all duration-200 lg:hover:translate-x-1 whitespace-nowrap flex-shrink-0 lg:flex-shrink lg:w-full"
@@ -97,7 +96,6 @@ const ProfileLayout = ({ children, currentPage, onNavigate, onLogout }) => {
             </div>
           </div>
 
-          {/* Main Content */}
           <div className="flex-1">
             <div className="bg-white rounded-lg border border-gray-200 min-h-[600px]">{children}</div>
           </div>

@@ -37,7 +37,6 @@ const ProfilePage = () => {
           setFaculties(facultiesData);
         }
       } catch (error) {
-        // Error loading master data
       }
     })();
 
@@ -234,7 +233,6 @@ const ProfilePage = () => {
       <div className="bg-white rounded-lg p-6 sm:p-8 animate-pulse">
         <div className="h-7 w-36 bg-gray-200 rounded mb-8" />
 
-        {/* Avatar + info header skeleton */}
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 mb-8 pb-8 border-b border-gray-100">
           <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gray-200 shrink-0" />
           <div className="space-y-2 text-center sm:text-left">
@@ -244,19 +242,18 @@ const ProfilePage = () => {
           </div>
         </div>
 
-        {/* Form fields skeleton */}
         <div className="space-y-6">
-          {/* Nama Lengkap */}
+
           <div className="space-y-2">
             <div className="h-4 w-28 bg-gray-200 rounded" />
             <div className="h-11 w-full bg-gray-100 rounded-lg" />
           </div>
-          {/* Email */}
+
           <div className="space-y-2">
             <div className="h-4 w-12 bg-gray-200 rounded" />
             <div className="h-11 w-full bg-gray-100 rounded-lg" />
           </div>
-          {/* Tanggal Lahir + Gender */}
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div className="space-y-2">
               <div className="h-4 w-28 bg-gray-200 rounded" />
@@ -267,22 +264,22 @@ const ProfilePage = () => {
               <div className="h-11 w-full bg-gray-100 rounded-lg" />
             </div>
           </div>
-          {/* NPM */}
+
           <div className="space-y-2">
             <div className="h-4 w-10 bg-gray-200 rounded" />
             <div className="h-11 w-full bg-gray-100 rounded-lg" />
           </div>
-          {/* Fakultas */}
+
           <div className="space-y-2">
             <div className="h-4 w-16 bg-gray-200 rounded" />
             <div className="h-11 w-full bg-gray-100 rounded-lg" />
           </div>
-          {/* Prodi */}
+
           <div className="space-y-2">
             <div className="h-4 w-28 bg-gray-200 rounded" />
             <div className="h-11 w-full bg-gray-100 rounded-lg" />
           </div>
-          {/* Tombol submit */}
+
           <div className="flex justify-end pt-2">
             <div className="h-11 w-40 bg-gray-200 rounded-lg" />
           </div>
@@ -295,25 +292,35 @@ const ProfilePage = () => {
     <div className="bg-white rounded-lg p-6 sm:p-8">
       <h2 className="text-2xl font-bold text-gray-900 mb-6 sm:mb-8">Profil Saya</h2>
 
-      <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 mb-6 sm:mb-8 pb-6 sm:pb-8 border-b border-gray-200">
-        <div className="relative">
-          {userAvatar ? (
-            <img src={userAvatar} alt={formData.fullName || 'Profile'} className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-4 border-primary-100" referrerPolicy="no-referrer" />
-          ) : (
-            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gray-200 border-4 border-primary-100 flex items-center justify-center">
-              <svg className="w-10 h-10 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-              </svg>
+      {(() => {
+        const userName = formData.fullName || getMe()?.email?.split('@')[0] || 'Pengguna';
+        const displayAvatar = userAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=4F46E5&color=fff&size=256`;
+
+        return (
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 mb-4 pb-4 border-b border-gray-200">
+            <div className="relative shrink-0">
+              <img src={displayAvatar} alt={userName} className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-4 border-primary-100 bg-primary-50" referrerPolicy="no-referrer" />
             </div>
-          )}
+            <div className="text-center sm:text-left flex-1">
+              <h3 className="text-lg font-semibold text-gray-900 mb-1">{formData.fullName || 'Nama belum diisi'}</h3>
+              <p className="text-sm text-gray-600 mb-2">{formData.email}</p>
+              {formData.npm && <p className="text-sm text-gray-500">NPM: {formData.npm}</p>}
+              {formData.studyProgram && <p className="text-xs text-gray-400 mt-1">{formData.studyProgram}</p>}
+            </div>
+          </div>
+        );
+      })()}
+
+      {!userAvatar && (
+        <div className="mb-6 px-4 py-3 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-800 flex items-start sm:items-center gap-3">
+          <svg className="w-5 h-5 text-amber-500 shrink-0 mt-0.5 sm:mt-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <p>
+            Masuk dengan <strong>Google</strong> agar foto profil otomatis muncul.
+          </p>
         </div>
-        <div className="text-center sm:text-left">
-          <h3 className="text-lg font-semibold text-gray-900 mb-1">{formData.fullName || 'Nama belum diisi'}</h3>
-          <p className="text-sm text-gray-600 mb-2">{formData.email}</p>
-          {formData.npm && <p className="text-sm text-gray-500">NPM: {formData.npm}</p>}
-          {formData.studyProgram && <p className="text-xs text-gray-400 mt-1">{formData.studyProgram}</p>}
-        </div>
-      </div>
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
@@ -444,7 +451,7 @@ const ProfilePage = () => {
           </button>
         </div>
       </form>
-    </div>
+    </div >
   );
 };
 
