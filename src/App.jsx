@@ -63,6 +63,7 @@ const ScholarshipSelectionInterview = React.lazy(() => import('./pages/scholarsh
 const ScholarshipAnnouncementPublic = React.lazy(() => import('./pages/scholarship/ScholarshipSelectionAnnouncement'));
 const ScholarshipRegisterSuccess = React.lazy(() => import('./pages/scholarship/ScholarshipRegisterSuccess'));
 const InfoCenterPage = React.lazy(() => import('./pages/InfoCenterPage'));
+const NotFoundPage = React.lazy(() => import('./pages/NotFoundPage'));
 
 const pathForKey = (key) => {
   switch (key) {
@@ -629,6 +630,14 @@ function App() {
           <Route path="/riwayat-aktivitas" element={<Navigate to="/profile/activity-history" replace />} />
           <Route path="/pengaturan" element={<Navigate to="/profile/settings" replace />} />
 
+          <Route
+            path="*"
+            element={
+              <React.Suspense fallback={<DetailSkeleton />}>
+                <NotFoundPage />
+              </React.Suspense>
+            }
+          />
         </Routes>
       </AnimatePresence>
     </div>
